@@ -13,9 +13,9 @@ clc, clear, close all;
 cd ~/Desktop/projects/asi_lab_summer_internship/WaveSpectrum/src
 
 % Set text interpreter 
-set(0,'defaultTextInterpreter','latex');
 set(groot, 'DefaultTextInterpreter', 'latex')
 set(groot, 'DefaultLegendInterpreter', 'latex')
+set(groot, 'defaultAxesTickLabelInterpreter','latex'); 
 
 % Set path for figures
 fig_path = '../figs/'; 
@@ -23,21 +23,21 @@ fig_path = '../figs/';
 %%%%%%%%%% Initial global variables %%%%%%%%%%
 
 % Physical parameters
-g = 9.81;  % Gravitational acceleration (units: ms^-2)
-U = [0.5, 1, 2];  % Speed of wave glider (units: ms^-1)
-theta_r = (0:30:180);  % Relative angle between mean platform propagation and wave direction (units: degrees, reference north, CW, going towards)
+g = 9.81;                                                                   % Gravitational acceleration (units: ms^-2)
+U = [0.5, 1, 2];                                                            % Speed of wave glider (units: ms^-1)
+theta_r = (0:30:180);                                                       % Relative angle between mean platform propagation and wave direction (units: degrees, reference north, CW, going towards)
 
 % Frequency parameters
-df_ob = 0.001;  % Observed frequency resolution (units: Hz)
-df_in = 0.001;  % Intrinsic frequency resolution (units: Hz)
-f_ob = (0:df_ob:1)';  % Cyclical observed frequency (units: Hz)
-f_in = (0:df_in:1)';  % Cyclical intrinsic frequency (for inverse mapping) (units: Hz)
-f_cut = 1;  % Noise cutoff frequency (units: Hz)
-F.f_in = nan(length(f_ob), length(U), length(theta_r));  % Mapped cyclical observed frequency 
-F.f_ob = nan(length(f_ob), length(U), length(theta_r));  % Mapped cyclical intrinsic frequency 
-F.deriv_in = nan(length(f_ob), length(U), length(theta_r));  % Mapped first derivative of intrinsic frequency
-F.f_in_max = nan(length(U), length(theta_r));
-F.f_ob_max = nan(length(U), length(theta_r));
+df_ob = 0.001;                                                              % Observed frequency resolution (units: Hz)
+df_in = 0.001;                                                              % Intrinsic frequency resolution (units: Hz)
+f_ob = (0:df_ob:1)';                                                        % Cyclical observed frequency (units: Hz)
+f_in = (0:df_in:1)';                                                        % Cyclical intrinsic frequency (for inverse mapping f_ob(f_in)) (units: Hz)
+f_cut = 1;                                                                  % Noise cutoff frequency (units: Hz)
+F.f_in = nan(length(f_ob), length(U), length(theta_r));                     % Mapped cyclical observed frequency 
+F.f_ob = nan(length(f_ob), length(U), length(theta_r));                     % Mapped cyclical intrinsic frequency 
+F.deriv_in = nan(length(f_ob), length(U), length(theta_r));                 % Mapped first derivative of intrinsic frequency
+F.f_in_max = nan(length(U), length(theta_r));                               % Intrinsic frequency from fowards mapping f_in(f_ob) where df_in/df_ob approaches infinity
+F.f_ob_max = nan(length(U), length(theta_r));                               % Observed frequency from fowards mapping f_in(f_ob) where df_in/df_ob approaches infinity
 
 %% Compute intrinsic cyclical frequency
 
@@ -200,9 +200,10 @@ clc, close all
 figure( 'Name', 'Observed vs Intrinsic Frequency')
 
 % Set figure attributes
-POS = [100 100 2000 300]; %[100 100 500 2000];
+POS = [100 100 500 2000];                                                   %[100 100 2000 300];
 set(gcf,'color',[1 1 1])
 set(gcf,'position',POS) 
+fontsize = 13;
 
 % Obtain RGB triplet for colormap
 cmap = colormap(cbrewer2('RdYlBu'));
@@ -223,7 +224,7 @@ cmap = colormap(cmap_bin);
 for isubplot = 1:length(U)
     
     % Initialize subplot
-    subplot(1,3,isubplot)
+    subplot(3,1,isubplot)
     
     % Loop through angles
     for iangle = 1:length(theta_r)
@@ -236,7 +237,7 @@ for isubplot = 1:length(U)
             %Plot f_in as a function of f_ob in linear space
             plot(F.f_ob(:,isubplot,iangle), F.f_in(:,isubplot,iangle), '-', 'LineWidth', 2, 'Color', cmap(idx_c,:))
 
-            % Plot Ucos(theta_r) = 0 and Ucos(theta_r) = c_g 
+            % Plot Ucos(theta_r) = 0 and Ucos(theta_r) = -c_g 
             pc1 = plot(f_ob, f_ob, '--k', 'LineWidth', 2);
             pc2 = plot(f_ob, (2)*f_ob, 'LineStyle', '--', 'Color', [0.5 0.5 0.5], 'LineWidth', 2);
 
@@ -255,38 +256,44 @@ for isubplot = 1:length(U)
     if isubplot == 1
         ax1 = gca; 
         label = '(a)';
-        ylabel('$f_{in}$ (Hz)','Interpreter','Latex')
     elseif isubplot == 2  
         label = '(b)'; 
     elseif isubplot == 3
         ax3 = gca; 
         label = '(c)';
-        leg = legend([pc1, pc2, pc3], 'U$\cos(\theta_r) = 0$', 'U$\cos(\theta_r) = -c_g$', '$f_c(f_{ob})$','location', 'southeast', 'fontsize', 13);
+        xlabel('$f_{ob}$ (Hz)','Interpreter','Latex')
+        leg = legend([pc1, pc2, pc3], 'U$\cos(\theta_r) = 0$', 'U$\cos(\theta_r) = -c_g$', '$f_c(f_{ob})$','location', 'northwest', 'fontsize', fontsize);
     end
     title([label ' U $= \;$', num2str(U(isubplot)), ' ms$^{-1}$'])
-    xlabel('$f_{ob}$ (Hz)','Interpreter','Latex')
+    ylabel('$f_{in}$ (Hz)','Interpreter','Latex')
     xlim([-0.4,1])
     ylim([0,1])
     xticks(-0.4:0.2:1)
     yticks(0:0.2:1)
     grid on
-    set(gca,'FontSize',16)
+    set(gca,'FontSize',fontsize)
     set(gca,'Box','on')
 
 end
 
-%Set Colorbar
+%-------- Set Colorbar --------%
 colormap(cmap_bin);
 cb = colorbar;
-% cb.Position = [0.920138888888889,0.156666666666667,0.011805555555556,0.716666666666667];
+cb.Position = [0.8201 0.3949 0.0279 0.2415]; 
 cb.Ticks = z(2:2:end)/max(z);
 cb.TickLabelInterpreter = 'Latex'; 
 cb.Label.Interpreter = 'Latex';
-cb.TickLabels = {'0', '30', '60', '90', '120', '150', '180'}; %, '210', '240', '270', '300', '330', '360'}; 
-cb.FontSize = 16;
+cb.TickLabels = {'0', '30', '60', '90', '120', '150', '180'};   
+cb.FontSize = fontsize;
 cb.TickLabels = num2str(theta_r');
-cb.Label.String = '$\theta_r \;(^\circ)$';
+cb.Label.String = '';
 cb.TickDirection = 'out';
+annotation('textbox',[0.8130 0.6348 0.1080 0.0359],...
+           'String',{'$\theta_r \;(^\circ)$'},'Interpreter','latex',...
+           'FontSize',14,'EdgeColor','none');
+
+%-------- Set poition of legend --------%
+set(leg,'Position',[0.303 0.87889 0.2689 0.0042])
 
 %-------- Set the position of the subplots --------%
 % find current position [x,y,width,height]
