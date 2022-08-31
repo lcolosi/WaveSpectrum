@@ -40,7 +40,7 @@ WaveSpectrum/
 ├── data
 │   ├── DelMAR2020
 │   ├── SMODE2021
-│   └── BATHYMETRY
+│   └── BATHY
 ├── figs
 ├── src
 └── tools
