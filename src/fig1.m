@@ -3,8 +3,7 @@
 
 %--------------- Notes ---------------%
 % 1. Cutoff wavelength corresponding to approximately half the length of 
-%    the SV3 wave glider.  
-% 2. Put Wave glider trajectory ontop of heading so figure is one column. 
+%    the SV3 wave glider.   
 %-------------------------------------%
 
 % Caption: (a) Trajectories of Planck (blue) and Stokes (red) Wave 
