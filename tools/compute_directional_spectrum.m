@@ -62,6 +62,23 @@ function [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_no
     %   freq : Cyclical frequency. Units: Hz.
     %   theta : Azimutal direction for wave spectrum. Units: degrees 
     %           (directional convention set by dir_con).
+    % 
+    %   Notes
+    %   -----
+    %   (1) Original directional convention of theta before converting
+    %       convention to dir_con: 
+    %
+    %           CDIP -> [CCW, going towards, reference East]
+    %           WAFO -> [CCW, going towards, reference East] when bet = 1 (default). 
+    % 
+    %   (2) The WAFO toolbox can be found for download at the wafo website:
+    %        
+    %           https://www.maths.lth.se/matstat/wafo/download/index.html
+    % 
+    %       Further inforation may be found on thier github page: 
+    % 
+    %           https://github.com/wafo-project/wafo
+    %       
     %
     %%%%
     
@@ -110,20 +127,20 @@ function [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_no
 
         % Create in structure with field variables for mem_est function
         in.freq = f;  % Frequency 
-        in.dir = ones(size(in.freq));  % Directions 
-        in.ener_dens = Szz*df;  % Energy Density 
-        in.a1 = a1;  % First-order fourier coefficient
-        in.b1 = b1;  % First-order fourier coefficient
-        in.a2 = a2;  % Second-order fourier coefficient
-        in.b2 = b2;  % Second-order fourier coefficient
+        in.dir = ones(size(in.freq));                                       % Directions 
+        in.ener_dens = Szz*df;                                              % Energy  
+        in.a1 = a1;                                                         % First-order fourier coefficient
+        in.b1 = b1;                                                         % First-order fourier coefficient
+        in.a2 = a2;                                                         % Second-order fourier coefficient
+        in.b2 = b2;                                                         % Second-order fourier coefficient
 
         % Compute directional spectrum 
         [cdip,~] = mem_est(in);
 
         % Rename fields in cdip structure
-        freq = cdip.freq;  % Frequency
-        theta = cdip.dir';  % Directions
-        S = cdip.ds;  % Directional Wave Spectrum 
+        freq = cdip.freq;                                                   % Frequency
+        theta = cdip.dir';                                                  % Directions
+        S = cdip.ds;                                                        % Directional Wave Spectrum 
 
         % Set directional convention for 
         %---- Case 1: Going Towards ----%
@@ -176,9 +193,9 @@ function [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_no
         [E,~]  = pwelch(heave,nfft,nfft/2,nfft,fe);
 
         % Rename frequency, directions, and directional spectrum variables
-        freq = f; % Units: Hz
-        theta = wafo.theta * 180 / pi; % Units: degrees
-        S = wafo.S; % Units: m^2/(Hz deg)
+        freq = f;                                                           % Units: Hz
+        theta = wafo.theta * 180 / pi;                                      % Units: degrees
+        S = wafo.S;                                                         % Units: m^2/(Hz deg)
 
         % Set directional convention for 
         %---- Case 1: Clockwise, Going Towards, reference North ----%
@@ -199,17 +216,12 @@ function [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_no
         [theta,Iunique] = unique(theta);
 
         % Convert the Directional Wave Spectrum to units of m^2/Hz/deg
-        S = S(Isort(Iunique),:) / (2*pi);  % PSD in m^2/Hz/deg.
+        S = S(Isort(Iunique),:) / (2*pi);                                   % PSD in m^2/Hz/deg.
         
         % Scale ditrectional spectrum with variance from the heave power spectrum.
         if scaling == true
-            S = S * sum(E*df) / sum(sum(S*df,2)*dtheta); % scale with rectangular integration of the heave power spectrum 
+            S = S * sum(E*df) / sum(sum(S*df,2)*dtheta);                    % scale with rectangular integration of the heave power spectrum 
         end
         
     end
 end
-
-%% Notes
-
-% CDIP directional convention before conversion: [CCW, going towards, reference East]
-% WAFO directional convention before conversion: [CCW, going towards, reference East] when bet = 1 (default). 

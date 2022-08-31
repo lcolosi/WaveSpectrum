@@ -13,15 +13,17 @@ function [ground_speed,true_course] = platform_speed_dir(ve, vn, dir_con)
     %        Units: ms^-1. 
     %   vn : Northward component of velocity. May contain NaN values.
     %        Units: ms^-1.
-    %       %   dir_con : Specifies the directional convention for the 
-    %             platform's progation direction (nov.true_course). Format 
-    %             of the parameter is: dir_con = [rotation direction;
-    %             coming from/going towards; zero angle reference direction]
+    %   dir_con : Specifies the directional convention for the platform's 
+    %             progation direction. Format of keyword argument is: 
+    %             dir_con = {'rotation direction', 
+    %                        'coming from/going towards',
+    %                        'zero angle reference direction'}
     %             Options include: 
     %                 (1) rotation direction = 'CW' (Clockwise), 'CCW' (counter clockwise) 
     %                 (2) coming from/going towards = 'cf', 'gt'
     %                 (3) zero angle reference direction = 'rn' (refernece
     %                     north), 're' (reference east) 
+    %             Note, dir_con must be a cell array.
     % 
     %   Returns
     %   -------

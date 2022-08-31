@@ -1,7 +1,8 @@
 function [m_theta,std_theta, stdm_theta] = direction_stats(theta, dt, task)
 
     %%%%
-    % [m_theta,std_theta, stdm_theta] = direction_stats(theta)
+    % [m_theta,std_theta, stdm_theta] = direction_stats(theta, dt, task)
+    %
     % Function for computing the mean and standard deviation of an array of
     % direction measurements. 
     %
@@ -18,7 +19,7 @@ function [m_theta,std_theta, stdm_theta] = direction_stats(theta, dt, task)
     % 
     %   Returns
     %   -------
-    %   mtheta_eps : Mean direction.
+    %   m_theta : Mean direction.
     %   std_theta : Standard deviation of direction. 
     %   stdm_theta : Standard error of the mean direction. 
     %   
