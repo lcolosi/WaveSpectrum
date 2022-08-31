@@ -16,13 +16,10 @@
 
 clc, clearvars -except Np Ns Wp Ws bathy, close all;
 
-% Set the current working directory
-cd ~/Desktop/projects/asi_lab_summer_internship/WaveSpectrum/src
-
 % Set text interpreter 
-set(0,'defaultTextInterpreter','latex');
 set(groot, 'DefaultTextInterpreter', 'latex')
 set(groot, 'DefaultLegendInterpreter', 'latex')
+set(groot, 'defaultAxesTickLabelInterpreter','latex'); 
 
 % Set path to data
 %%%% Vehicle %%%%.
@@ -31,7 +28,7 @@ vehicle2 = 'STOKES';
 
 %%%% Root %%%%
 ROOT = '../data/DELMAR2020/';
-ROOT_bathy = '../data/sccoos/';
+ROOT_bathy = '../data/BATHY/';
 
 % Set path for figures
 fig_path = '../figs/';
@@ -329,8 +326,6 @@ title('(a)')
 axis equal
 xlim([lon_exp_l, lon_exp_h])
 ylim([lat_exp_l, lat_exp_h])
-%xlabel('Longitude', 'Interpreter', 'latex')
-%ylabel('Latitude', 'Interpreter', 'latex')
 legend([pc2, pc3, pc4, pc5], 'Planck', 'Stokes', 'Initial Position', 'Final Position', 'Location', 'northeast', 'Fontsize', fontsize)
 grid on
 set(gca,'FontSize',fontsize)
@@ -344,7 +339,7 @@ shading flat
 cmap = colormap(cmocean('topo'));
 
 % Create a depth vector corresponding to the levels of the colormap
-cmap_z = linspace(cb_l,cb_h, 256); 
+cmap_z = linspace(cb_l,cb_h, length(cmap)); 
 
 % Find the max and min values of the bathymetry in the experiment site
 z_max = max(z_exp,[],'All'); z_min = min(z_exp,[],'All'); 
@@ -374,7 +369,6 @@ cb.TickLabelInterpreter = 'latex';
 % for the new axis using that position data.
 p_ax1 = get(gca, 'Position');                                               % Note: position vector: [left bottom width height]
 p_ax2 = [p_ax1(1)+0.165 p_ax1(2)+0.035 p_ax1(3)-.5 p_ax1(4)-.2];           
-
 
 % Apply empirical corrections to x and y end points for annotate function in
 % order to account for the modulation due to the axis square command and
