@@ -1,34 +1,32 @@
 %% Figure 4: Bifurcation frequency as a function of relative angle and platform speed
 % Luke Colosi | lcolosi@ucsd.edu | August 17th, 2022
 
-% Caption: (a) Bifurcation frequency as a function of platform speed and the
+%-------------------------------- Caption --------------------------------%
+% (a) Bifurcation frequency as a function of platform speed and the
 % relative angle between platform heading and wave direction. Relative 
 % angles range from 0 to 90 degrees correspond to the platform moving 
 % with the waves. (b) Bifurcation frequency as a function of platform speed
 % for a platform moving strictly in the direction of wave propagation.  
-
-% Set default interpreter to latex for all text in figures
-set(0,'defaultTextInterpreter','latex');
-set(groot, 'defaultAxesTickLabelInterpreter','latex'); 
-set(groot, 'defaultLegendInterpreter','latex');
+%-------------------------------------------------------------------------%
 
 clc, clear, close all;
 
-% Initialize physical parameters
-g = 9.81;  % Gravitational acceleration
-
-% Set the current working directory
-cd ~/Desktop/projects/asi_lab_summer_internship/WaveSpectrum/src/
+% Set default interpreter to latex for all text in figures
+set(groot, 'DefaultTextInterpreter', 'latex')
+set(groot, 'DefaultLegendInterpreter', 'latex')
+set(groot, 'defaultAxesTickLabelInterpreter','latex'); 
 
 % Set path for figures
 fig_path = '../figs/';
 
-% Set variables for plotting
-fontsize = 15; 
+%%%%%%%%%% Initial global variables %%%%%%%%%%
 
-% Initialize Speed and relative angle parameters on a grid
-u = 0:0.025:4; % Speed of wave glider (units: ms^-1) 
-theta_r = 0:1:90; % Relative angle between mean current and wave direction (units: degrees)
+% Physical parameters
+g = 9.81;                                                                   % Gravitational acceleration
+u = 0:0.025:4;                                                              % Speed of wave glider (units: ms^-1) 
+theta_r = 0:1:90;                                                           % Relative angle between mean current and wave direction (units: degrees)
+
+% Initialize speed and relative angle parameters on a grid
 [U, Theta_r] = meshgrid(u, theta_r);    
 
 % Compute bifurcation frequency (units: Hz)
@@ -45,6 +43,7 @@ idx_theta = theta_r == 0;                                                   % In
 LineWidth = 0.5;
 LineColor = 'k';
 LineStyle = '-';
+fontsize = 15;
 
 % Create Figure and axes
 figure('units','normalized','outerposition',[0 0 1 1], 'Name', 'Birfurcation frequency in polar space');
@@ -68,7 +67,7 @@ cb.FontSize = fontsize;
 cb.Position = [0.4347    0.6399    0.0111    0.1985];
 annotation('textbox',[0.4267 0.8434 0.0484 0.0374],'String',{'$f_c$ (Hz)'},...
            'Interpreter','latex','FontSize',15,'FontName','Helvetica Neue',...
-           'EdgeColor',[1 1 1]);
+           'EdgeColor','none');
 
 % Set figure attributes
 title('(a)')
