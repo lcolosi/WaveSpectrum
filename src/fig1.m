@@ -293,10 +293,10 @@ blue = [0 0.4470 0.7410];
 fontsize = 11;
 
 % Create Figure and axes
-fig = figure('units','normalized','outerposition',[0 0 0.45 1]); % [0 0 1 1]
+fig = figure('units','normalized','outerposition',[0 0 0.45 1], 'Name', 'Experiment site/assets and environmental conditions for DELMAR2020'); 
 
 %--------------- Subplot 1 ---------------%
-subplot(5,1,[1 2]) % subplot(3,2,[1 3 5])
+subplot(5,1,[1 2]) 
 
 % Plot bathymetry 
 pcolor(lon_exp,lat_exp,z_exp');
