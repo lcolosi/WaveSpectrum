@@ -450,7 +450,7 @@ annotation('textarrow',xa,ya,'String','10 Rev ','Color','w', 'LineWidth', ...
 %----- Planck Small Box -----%
 xa = [0.632716049382716 0.612654320987653];
 ya = [0.661311914323962 0.661311914323961];
-annotation('line',xa,ya,'Color','w', 'LineWidth', 1.5)
+annotation('line',xa-0.001,ya,'Color','w', 'LineWidth', 1.5)
 xa = [0.611111111111109 0.611111111111109];
 ya = [0.660311914323962 0.681392235609102];
 annotation('textarrow',xa,ya,'String','9 Rev ','Color','w', 'LineWidth', ...
@@ -470,7 +470,7 @@ annotation('textarrow',xa,ya,'String','11 Rev ','Color','w', 'LineWidth', ...
 %----- Stokes Small Box -----%
 xa = [0.666666666666666 0.666666666666667];
 ya = [0.659973226238286 0.682730923694779];
-annotation('line',xa,ya,'Color','w', 'LineWidth', 1.5)
+annotation('line',xa,ya+0.001,'Color','w', 'LineWidth', 1.5)
 xa = [0.666666666666666 0.645061728395059];
 ya = [0.661311914323962 0.661311914323961];
 annotation('textarrow',xa,ya,'String','9 Rev ', 'TextRotation', 0, 'Color', ...
