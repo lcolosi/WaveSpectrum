@@ -32,7 +32,14 @@ function [varargout] = polarcontourf(R,theta,Z,varargin)
 %        - autoOrigin: 'on' (the first circle of the plar grid has a radius
 %          equal to the lowest value of R) or 'off'.
 %        - Nspokes: number of spokes for the grid definition.
-%        - colBar: display the colorbar or not.
+%        - colBar: display the colorbar or not. Options include: 
+%                  colBar = 1: Linear colorbar
+%                  colBar = 2: Logarithmic colorbar (no lower or upper 
+%                              color set for values outside levels range)
+%                  colBar = 3: Logarithmic colorbar with lower color set
+%                              for values outside levels range. 
+%                  Any other value other than 1, 2, or 3 does not generate
+%                  a colorbar. 
 %        - labelR: title for radial axis.
 %        - RtickLabel: Tick label for the radial axis.
 %        - colormap: Colormap for the contourf function
@@ -166,9 +173,9 @@ YY = (rNorm)'*cosd(theta);
 XX = (rNorm)'*sind(theta);
 
 if colBar==1,
-    h = contourf(XX,YY,Z,Contours,'parent',cax);
-elseif colBar==2,
-    h = contourf(XX,YY,log10(Z),log10(Contours),'parent',cax, 'LineColor','none');
+    h = contourf(XX,YY,Z,Contours,'parent',cax,'LineColor','none');
+elseif colBar==2 || colBar==3,
+    h = contourf(XX,YY,log10(Z),log10(Contours),'parent',cax,'LineColor','none');
 end
 
 if ~isempty(ncolor)
@@ -197,6 +204,9 @@ if colBar==1,
 elseif colBar==2, 
     c = colorbar('YTick',log10(Contours),'YTickLabel',Contours,'location', 'WestOutside', 'FontSize', fontsize);
     caxis(log10([Contours(1) Contours(length(Contours))]));
+elseif colBar==3, 
+    c = colorbar('YTick',log10(Contours),'YTickLabel',Contours,'location', 'WestOutside', 'FontSize', fontsize);
+    caxis(log10([Contours(2) Contours(length(Contours))]));
 else
     c = [];
 end

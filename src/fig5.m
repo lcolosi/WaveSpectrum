@@ -1,12 +1,6 @@
 %% Figure 5: Example of a directional spectrum 
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2022
 
-%--------------- Notes ---------------%
-% 
-% (1) I need to check if the interpolation is working properly. 
-%
-%-------------------------------------%
-
 %-------------------------------- Caption --------------------------------%
 % Observed directional wave spectrum during one leg of the small
 % box trajectory of the Stokes wave glider. 
@@ -92,12 +86,14 @@ pos = linspace(nov_s.f_ob(2), nov_s.f_ob(end), Ncircles);                   % Po
 theta_s = linspace(0,360,length(nov_s.theta));                              % Set theta for plotting
 Rticks = {'0.01 Hz','0.03 Hz','0.06 Hz','0.16 Hz', '0.40 Hz', '1 Hz'};      % Frequency labels (obtained by logspace(log10(nov_p.f_in(2)), log10(nov_p.f_in(end)), Ncircles))
 Contours = logspace(-9,-6.5,30);                                                   
-cmap = colormap(flipud(cbrewer2('RdYlBu', numel(Contours))));              
+cmap = colormap(flipud(cbrewer2('RdYlBu', numel(Contours)))); 
+Contours_n = [10^-16, Contours];
+cmap_n = cat(1,cmap(1,:), cmap);
 fontsize = 18;
 LineWidth = 0.5;
 LineColor = 'k';
 LineStyle = '-';
-TextColor = 'k';
+TextColor = 'w';
 
 % Smooth out directional spectra
 Sd_smooth = movmean(nov_s.Sd_f_ob(:,:,30),3,2);
@@ -109,8 +105,8 @@ figure('units','normalized','outerposition',[0 0 0.8 0.8])
 [~,cb] = polarcontourf(nov_s.f_ob(2:end), theta_s, Sd_smooth(:,2:end), ...
                        'circlesPos', pos, 'Rscale', 'log',...
                        'Ncircles', Ncircles, 'Nspokes', Nspokes,...
-                       'typeRose' ,'meteo', 'Contours', Contours,...
-                       'colBar', 2, 'fontsize', fontsize, 'colormap', cmap,...
+                       'typeRose' ,'meteo', 'Contours', Contours_n,...
+                       'colBar', 3, 'fontsize', fontsize, 'colormap', cmap_n,...
                        'LineWidth', LineWidth, 'LineColor', LineColor,...
                        'LineStyle', LineStyle, 'RtickLabel', Rticks, ...
                        'TextColor', TextColor);
