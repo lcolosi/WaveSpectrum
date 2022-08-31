@@ -1,18 +1,15 @@
 %% Figure 1: Overview of experiment site/assets and environmental conditions for DELMAR2020
-% Luke Colosi | lcolosi@ucsd.edu | October 5th, 2021
+% Luke Colosi | lcolosi@ucsd.edu | August 31st, 2022
 
-%--------------- Notes ---------------%
-% 1. Cutoff wavelength corresponding to approximately half the length of 
-%    the SV3 wave glider.   
-%-------------------------------------%
-
-% Caption: (a) Trajectories of Planck (blue) and Stokes (red) Wave 
+%-------------------------------- Caption --------------------------------%
+% (a) Trajectories of Planck (blue) and Stokes (red) Wave 
 % Gliders during the Delmar2020 experiment for the time period of 
 % September 9th at 2:30:00 UTC to September 11th at 16:10:00 UTC. (b)
 % Geographic region with location of experiment site (white box). Mean 
 % platform direction (c), Wind speed and direction (d), and significant
 % wave height (e) display the environmental conditions and additional
 % pertinent trajectory information.  
+%-------------------------------------------------------------------------%
 
 clc, clearvars -except Np Ns Wp Ws bathy, close all;
 
@@ -287,7 +284,6 @@ for is = 1:length(T0)
 end 
 
 %% Plot platform trajectory and environmental conditions
-clc, close all
 
 % Set plotting parameters
 cb_l = -1000; cb_h = 1000;

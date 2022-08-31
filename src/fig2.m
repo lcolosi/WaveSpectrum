@@ -1,18 +1,15 @@
 %% Figure 2: Overview of experiment site/assets and environmental conditions for SMODE2021
-% Luke Colosi | lcolosi@ucsd.edu | August 22nd, 2021
+% Luke Colosi | lcolosi@ucsd.edu | August 31st, 2022
 
-%--------------- Notes ---------------%
-% 1. Cutoff wavelength corresponding to approximately half the length of 
-%    the SV3 wave glider.   
-%-------------------------------------%
-
-% Caption: (a) Trajectories of WHOI43 (blue) Wave 
+%-------------------------------- Caption --------------------------------%
+% (a) Trajectories of WHOI43 (blue) Wave 
 % Gliders during the SMODE2021 experiment for the time period of 
 % October 29th at 0:00:00 UTC to November 3rd at 23:00:00 UTC. (b)
 % Geographic region with location of experiment site (white box). Mean 
 % platform direction (c), Wind speed and direction (d), and significant
 % wave height (e) display the environmental conditions and additional
 % pertinent trajectory information for wave glider.  
+%-------------------------------------------------------------------------%
 
 clc, clearvars -except N W bathy_g bathy_sc bathy_nc, close all;
 
@@ -56,7 +53,7 @@ df = 0.01;                                                                  % Fr
 dtheta = 5;                                                                 % Azimuthal resolution 
 nfft = fe_n/df;                                                             % Window Length
 f = (0:df:fn);                                                              % Observed frequency 
-lambda_c = 1.5613;                                                          % Wavelength cutoff (meters)
+lambda_c = 1.5613;                                                          % Wavelength cutoff (meters): corresponding to approximately half the length of the SV3 wave glider.
 f_noise = sqrt(g/(2*pi*lambda_c));                                          % Noise frequency cutoff 
 freq_band = find(f >= 0.02 & f <= f_noise);                                 % Frequency band (for computing significant wave height)
 toolbox = 'WAFO';                                                           % Method used to compute directional spectrum 
@@ -363,7 +360,6 @@ for is = 1:(length(T0) - 1)
 end
 
 %% Plot platform trajectory and environmental conditions
-clc, close all
 
 % Set plotting parameters
 cb_l = -4000; cb_h = 4000;

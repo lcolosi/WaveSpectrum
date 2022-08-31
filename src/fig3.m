@@ -1,16 +1,17 @@
 %% Figure 3: Mapping observed to intrinsic frequency
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2021
 
-% Caption: Mapping from observed to intrinsic frequency for a platform 
-%          moving at 0.5 ms$^{-1}$ (a), 1 ms$^{-1}$ (b), and 2 ms$^{-1}$ 
-%          (c) and with directions relative to the incoming waves ranging
-%          from 0 $^{\circ}$ (with waves) to 180 $^{\circ}$ (against
-%          waves). 
+%-------------------------------- Caption --------------------------------%
+% Mapping from observed to intrinsic frequency for a platform 
+% moving at 0.5 ms$^{-1}$ (a), 1 ms$^{-1}$ (b), and 2 ms$^{-1}$ 
+% (c) with line color corresponding to the platform's direction relative
+% to the incoming waves. 0 $^{\circ}$ means the platform is moving 
+% strictly with waves) and 180 $^{\circ}$ means the platform is moving 
+% against waves. Gray dashed line is the cutoff frequency $f_c$ with gray
+% circles being $f_c$ for given given directions. 
+%-------------------------------------------------------------------------%
 
 clc, clear, close all;
-
-% Set the current working directory
-cd ~/Desktop/projects/asi_lab_summer_internship/WaveSpectrum/src
 
 % Set text interpreter 
 set(groot, 'DefaultTextInterpreter', 'latex')
@@ -197,13 +198,13 @@ end
 clc, close all 
 
 % Create Figure and axes
-figure( 'Name', 'Observed vs Intrinsic Frequency')
+fig = figure( 'Name', 'Observed vs Intrinsic Frequency');
 
 % Set figure attributes
 POS = [100 100 500 2000];                                                   %[100 100 2000 300];
 set(gcf,'color',[1 1 1])
 set(gcf,'position',POS) 
-fontsize = 13;
+fontsize = 12;
 
 % Obtain RGB triplet for colormap
 cmap = colormap(cbrewer2('RdYlBu'));
@@ -290,7 +291,7 @@ cb.Label.String = '';
 cb.TickDirection = 'out';
 annotation('textbox',[0.8130 0.6348 0.1080 0.0359],...
            'String',{'$\theta_r \;(^\circ)$'},'Interpreter','latex',...
-           'FontSize',14,'EdgeColor','none');
+           'FontSize',fontsize,'EdgeColor','none');
 
 %-------- Set poition of legend --------%
 set(leg,'Position',[0.303 0.87889 0.2689 0.0042])
@@ -306,4 +307,4 @@ pos3(4) = pos1(4);
 set(ax3,'Position',pos3)
 
 % Save Figure
-saveas(gcf, strcat(fig_path, 'figure_3.png'))
+saveas(fig, strcat(fig_path, 'figure_3.png'))
