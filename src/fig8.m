@@ -24,7 +24,15 @@
 %-------------------------------------%
 
 %-------------------------------- Caption --------------------------------%
-% (a)  
+% (a)  Stokes wave glider heading using the coming from direction convention for
+% small box legs. Red triangles denote the legs 
+% where the platform is moving in the direction of wave propagation for 
+% high frequency waves ($f_ob > 10^{-1}$). Blue triangles denote the legs 
+% where the platform is moving against the direction of wave propagation 
+% for high frequency waves These high frequency waves have a mean wave 
+% direction coming from $\sim 300^\circ$. (b) Saturation spectrogram for
+% the Stokes wave glider small box trajectory. (c) Two examples of
+% saturation spectra for against (red curve) and with (blue curve). 
 %-------------------------------------------------------------------------% 
 
 clc, clear, close all;
@@ -69,7 +77,7 @@ nfft = fe_n/df;                                                             % Wi
 f = (0:df:fn);                                                              % Observed frequency (Hz)
 dtheta = 5;                                                                 % Angular resolution (degrees)
 ntheta = 360/dtheta+1;                                                      % Number of angles
-lambda_c = 1.5613;                                                          % % Wavelength cutoff (meters)
+lambda_c = 1.5613;                                                          % Wavelength cutoff (meters)
 f_noise = sqrt(g/(2*pi*lambda_c));                                          % Noise frequency cutoff 
 toolbox = 'WAFO';                                                           % Method used to compute directional spectrum 
 variables = 'heave_velocity';                                               % Heave and horizontal velocity are used to compute the direction spectrum
