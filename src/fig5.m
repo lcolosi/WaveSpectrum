@@ -2,8 +2,9 @@
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2022
 
 %-------------------------------- Caption --------------------------------%
-% Observed directional wave spectrum during one leg of the small
-% box trajectory of the Stokes wave glider. 
+% Observed directional wave spectrum computed from measurement collected 
+% aboard the Stokes wave glider's during the large box trajectory 
+% (07:57:22 to 08:42:02 September 10, 2020). 
 %-------------------------------------------------------------------------%
 
 clc, clear, close all;
@@ -94,9 +95,10 @@ LineWidth = 0.5;
 LineColor = 'k';
 LineStyle = '-';
 TextColor = 'w';
+itime = 30; 
 
 % Smooth out directional spectra
-Sd_smooth = movmean(nov_s.Sd_f_ob(:,:,30),3,2);
+Sd_smooth = movmean(nov_s.Sd_f_ob(:,:,itime),3,2);
 
 % Create figure
 figure('units','normalized','outerposition',[0 0 0.8 0.8])
@@ -125,6 +127,11 @@ cb.FontSize = fontsize;
 set(gcf,'color','w')
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
+
+% Display time frame directional spectrum is computed over
+t_initial = eval(['datestr(nov_s.L' num2str(itime) '.time_20hz(1))']); 
+t_final = eval(['datestr(nov_s.L' num2str(itime) '.time_20hz(end))']);
+disp(['Time Frame: ' t_initial ' to ' t_final])
 
 % Save Figure
 saveas(gcf, [fig_path 'figure_5.png'])

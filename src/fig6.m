@@ -78,7 +78,6 @@ for n = 1:nlegs_s
     % Compute transition frequencies
     nov_s.fst(n) = ((g*sqrt(r))/(2*pi*w_s.mfv(n)));                         % Equilibrium to saturation range frequency transition
 
-
 end
 
 % Obtain indicies frequency below high frequency cut off
