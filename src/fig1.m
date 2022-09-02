@@ -553,6 +553,7 @@ hold off
  
 % Set figure attributes
 title('(e)')
+xlabel('UTC time from Sep 9$^{\textrm{th}}$, 2020', 'Interpreter', 'latex')
 ylabel('H$_s$ (m)')
 ylim([0.8, 1.4])
 xticks(datenum(t_ticks))

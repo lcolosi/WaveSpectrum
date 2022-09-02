@@ -23,7 +23,7 @@ set(groot, 'defaultAxesTickLabelInterpreter','latex');
 vehicle = 'WHOI43';
 
 %%%% Root %%%%
-ROOT = '../data/SMODE_P2021/';
+ROOT = '../data/SMODE2021/';
 ROOT_bathy = '../data/BATHY/';
 
 % Set path for figures
@@ -393,6 +393,8 @@ title('(a)')
 axis equal
 xlim([lon_exp_l, lon_exp_h])
 ylim([lat_exp_l, lat_exp_h])
+xticks(-124.2:0.2:-123.4)
+yticks(36.8:0.2:37.4)
 legend([pc2, pc3, pc4], 'WHOI43', 'Initial Position', 'Final Position', 'Location', 'east', 'Fontsize', fontsize)
 grid on
 set(gca,'FontSize',fontsize)
@@ -555,6 +557,7 @@ pc1 = plot(EC.time, EC.Hs_spec, '-', 'Color', blue, 'LineWidth', 1.5);
  
 % Set figure attributes
 title('(e)')
+xlabel('UTC time from Oct 29$^{\textrm{th}}$, 2021', 'Interpreter', 'latex')
 ylabel('H$_s$ (m)')
 xlim([EC.time(1), EC.time(end)])
 ylim([1, 5])
