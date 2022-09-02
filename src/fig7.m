@@ -217,7 +217,7 @@ cb = colorbar;
 colormap(flipud(cbrewer2('RdYlBu')))
 set(gca,'ColorScale','log')
 cb.Label.Interpreter = 'Latex';
-cb.Label.String = 'S($f_{ob}$) (m$^2$ Hz$^{-1}$)';
+cb.Label.String = 'S($t,f_{ob}$) (m$^2$ Hz$^{-1}$)';
 caxis([10^-9, 10^-4]);
 cb.Ticks = [10^-9; 10^-8; 10^-7; 10^-6; 10^-5; 10^-4] ;
 cb.TickLabels = {'$10^{-9}$'; '$10^{-8}$'; '$10^{-7}$'; '$10^{-6}$'; '$10^{-5}$'; '$10^{-4}$'} ; 
@@ -263,7 +263,7 @@ cb = colorbar;
 colormap(flipud(cbrewer2('RdYlBu')))
 set(gca,'ColorScale','log')
 cb.Label.Interpreter = 'Latex';
-cb.Label.String = '$f_{ob}^5 \cdot$ S($f_{ob}$) (m$^2$ Hz$^{4}$)';
+cb.Label.String = '$f_{ob}^5 \cdot$ S($t,f_{ob}$) (m$^2$ Hz$^{4}$)';
 caxis([10^-12, 10^-7.5]);
 cb.Ticks = [ 10^-12; 10^-11; 10^-10; 10^-9; 10^-8] ;
 cb.TickLabels = { '$10^{-12}$'; '$10^{-11}$'; '$10^{-10}$'; '$10^{-9}$'; '$10^{-8}$'} ; 
