@@ -3,7 +3,8 @@
 
 %-------------------------------- Caption --------------------------------%
 % Observed omni-directional (a) and saturation (b) wave spectra 
-% for one leg of the Stokes wave glider's big box trajectory. 
+% computed from measurement collected aboard the Stokes wave glider's 
+% during the large box trajectory (07:57:22 to 08:42:02 September 10, 2020). 
 %-------------------------------------------------------------------------%
 
 clc, clear, close all;
