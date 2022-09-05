@@ -87,6 +87,7 @@ ax.XAxis.TickLabels = labels;
 xlim([DM.time(2), DM.time(end)])
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
+set(gca,'Box','on')
 
 % Set colorbar attributes
 cb = colorbar;
@@ -119,6 +120,7 @@ xticks(datenum(t_ticks_sm))
 datetick('x', 'mmm dd', 'keepticks')
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
+set(gca,'Box','on')
 
 % Set colorbar attributes
 cb = colorbar;
@@ -157,6 +159,7 @@ ax.XAxis.TickLabels = labels;
 xlim([DM.time(2), DM.time(end)])
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
+set(gca,'Box','on')
 
 % Set colorbar attributes
 cb = colorbar;
@@ -190,6 +193,7 @@ xticks(datenum(t_ticks_sm))
 datetick('x', 'mmm dd', 'keepticks')
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
+set(gca,'Box','on')
 
 % Set colorbar attributes
 cb = colorbar;
