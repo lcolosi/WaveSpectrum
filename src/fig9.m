@@ -142,9 +142,9 @@ nov_s.sat_spectrogram_omni_f_in_2d = nov_s.spectrogram_omni_f_in_2d .* (nov_s.f_
 clc, close all 
 
 % Set frequency low cutoff and latitude for small box cutoff
-Ifreq_l = find(nov_s.f_ob > 0.03);  %Frequency low cutoff 
-Ifreq_h = find(nov_s.f_ob > 0.03 & nov_s.f_ob < 0.4); %Frequency low and high cutoff
-Ilat_s = find(nov_s.mlat_legs < 32.93); % Indices for legs in small box
+Ifreq_l = find(nov_s.f_ob > 0.03);                                          %Frequency low cutoff 
+Ifreq_h = find(nov_s.f_ob > 0.03 & nov_s.f_ob < 0.4);                       %Frequency low and high cutoff
+Ilat_s = find(nov_s.mlat_legs < 32.93);                                     % Indices for legs in small box
 
 % Set plotting variables
 [T,F] = meshgrid(nov_s.time_legs(Ilat_s), nov_s.f_ob(Ifreq_h));
