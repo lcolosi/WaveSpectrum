@@ -67,14 +67,17 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
     %   variance : Matrix containing four values for the variance computed
     %              over a given frequency band using rectangular (Riemann) 
     %             integration method: 
-    %         (1) f_ob_0.01 : Variance computed from integrating 
-    %                         S(f_obs)*df_obs from 0.01 to 1 Hz
-    %         (2) f_in_0.01 : Total variance computed from integrating
-    %                         S(f_int)*df_obs/df_int*df_int from 0.01 to 1 Hz
-    %         (3) f_ob_0.1 : Variance computed from integrating 
-    %                        S(f_obs)*df_obs from 0.1 to 1 Hz
-    %         (4) f_in_0.1 : Variance computed from integrating
-    %                        S(f_int)*df_obs/df_int*df_int from 0.1 to 1 Hz
+    %                   variance = [f_ob_0.01, f_in_0.01, f_ob_0.1, f_in_0.1]
+    %             where: 
+    %
+    %             (1) f_ob_0.01 : Variance computed from integrating 
+    %                             S(f_obs)*df_obs from 0.01 to 1 Hz
+    %             (2) f_in_0.01 : Total variance computed from integrating
+    %                             S(f_int)*df_obs/df_int*df_int from 0.01 to 1 Hz
+    %             (3) f_ob_0.1 : Variance computed from integrating 
+    %                            S(f_obs)*df_obs from 0.1 to 1 Hz
+    %             (4) f_in_0.1 : Variance computed from integrating
+    %                            S(f_int)*df_obs/df_int*df_int from 0.1 to 1 Hz
     %
     %%%%
     
@@ -224,11 +227,11 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
             
             %-------- f_sat less than noise cutoff frequency  --------%
             if f_cut > f_sat 
-                disp('f_sat less than noise cutoff frequency')
+                % disp('f_sat less than noise cutoff frequency')
                 
                 %-------- Blocking frequency in Equilibrium range --------%
                 if f_a <= f_sat 
-                    disp('Blocking frequency in Equilibrium range')
+                    % disp('Blocking frequency in Equilibrium range')
 
                     % Preform least squares fit within frequency range 
                     % [f_eq f_b] and set the power spectral density at the
@@ -254,8 +257,8 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
 
                 %-------- Blocking frequency in Saturation range --------%
                 elseif f_a > f_sat
-                    disp('Blocking frequency in Saturation range')
-                    disp([num2str(length(find(f_truc >= f_sat)))])
+                    % disp('Blocking frequency in Saturation range')
+                    % disp([num2str(length(find(f_truc >= f_sat)))])
 
                     %-------- Enough frequencies in saturation range to preform least squares fit  --------%
                     if length(find(f_truc >= f_sat)) >= 2
@@ -286,7 +289,7 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
                 
             %-------- f_sat frequency more than cutoff frequency  --------%
             elseif f_cut < f_sat
-                disp('f_sat frequency more than cutoff frequency')
+                % disp('f_sat frequency more than cutoff frequency')
 
                 % Preform least squares fit within frequency range 
                 % [f_eq f_b] and set the power spectral density at the
@@ -332,7 +335,7 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
         idx_fob_l = (f_obs >= 0.01)'; idx_fob_h = (f_obs >= 0.1)'; 
 
         % Compute double integral for variance before and after mapping
-        variance = [sum(sum(S_fob(idx_fob_l,:) * df_obs, 1)*dtheta), sum(sum(S_fin(idx_fob_l,:) * df_obs, 1)*dtheta), sum(sum(S_fob(idx_fob_h,:) * df_obs, 1)*dtheta), sum(sum(S_fin(idx_fob_l,:) * df_obs, 1)*dtheta)];
+        variance = [sum(sum(S_fob(idx_fob_l,:) * df_obs, 1)*dtheta), sum(sum(S_fin(idx_fob_l,:) * df_obs, 1)*dtheta), sum(sum(S_fob(idx_fob_h,:) * df_obs, 1)*dtheta), sum(sum(S_fin(idx_fob_h,:) * df_obs, 1)*dtheta)];
         
     %------ Spectral tail NOT added ------%
     elseif tail(1) == false
