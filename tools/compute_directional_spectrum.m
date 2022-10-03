@@ -143,17 +143,23 @@ function [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_no
         S = cdip.ds;                                                        % Directional Wave Spectrum 
 
         % Set directional convention for 
-        %---- Case 1: Going Towards ----%
-        if strcmp(dir_con(1), 'CW') && strcmp(dir_con(2), 'gt') && strcmp(dir_con(3), 'rn')
-    
-            theta = mod(90-theta,360);
-    
-        %---- Case 2: Coming From ----%
-        elseif strcmp(dir_con(1), 'CW') && strcmp(dir_con(2), 'cf') && strcmp(dir_con(3), 'rn')
-
-            theta = mod(270-theta,360); 
-
+        %---- Clockwise/Counter-Clockwise ----%
+        if strcmp(dir_con(1), 'CW')
+            theta = -theta;
         end
+    
+        %---- Going-to/Coming-from ----%
+        if strcmp(dir_con(2), 'cf')
+            theta = theta + 180; 
+        end
+
+        %---- Reference North/East ----%
+        if strcmp(dir_con(3), 'rn')
+            theta = theta + 90;
+        end
+        
+        % Make theta range from 0 to 360 
+        theta = mod(theta,360);
 
         % Sort directions and the directional index of the Directional Wave Spectrum
         % in ascending order 0 to 360 degrees
@@ -198,17 +204,23 @@ function [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_no
         S = wafo.S;                                                         % Units: m^2/(Hz deg)
 
         % Set directional convention for 
-        %---- Case 1: Clockwise, Going Towards, reference North ----%
-        if strcmp(dir_con(1), 'CW') && strcmp(dir_con(2), 'gt') && strcmp(dir_con(3), 'rn')
-    
-            theta = mod(90-theta,360);
-    
-        %---- Case 2: Clockwise, Coming From, reference North ----%
-        elseif strcmp(dir_con(1), 'CW') && strcmp(dir_con(2), 'cf') && strcmp(dir_con(3), 'rn')
-
-            theta = mod(270-theta,360); 
-
+        %---- Clockwise/Counter-Clockwise ----%
+        if strcmp(dir_con(1), 'CW')
+            theta = -theta;
         end
+    
+        %---- Going-to/Coming-from ----%
+        if strcmp(dir_con(2), 'cf')
+            theta = theta + 180; 
+        end
+
+        %---- Reference North/East ----%
+        if strcmp(dir_con(3), 'rn')
+            theta = theta + 90;
+        end
+        
+        % Make theta range from 0 to 360 
+        theta = mod(theta,360);
 
         % Sort directions in ascending order 0 to 360 degrees and grabs unique
         % directions. 
