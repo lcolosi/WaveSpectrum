@@ -8,6 +8,8 @@ Surface waves play an important role in the ocean-atmosphere coupled climate sys
 
 # Plain Language Summary
 
+Waves at the ocean surface play an essential role in the Earth's climate system by influencing how the ocean and atmosphere interact. These interactions occur between winds, waves, and currents as they exchange properties such as energy, heat, and gases. Uncrewed vehicles that glide across the ocean surface have been used to investigate ocean-atmosphere interactions at the space and time scales of surface waves with the goal of better understanding the ocean physics. This information can be applied in climate models to improve forecasting capabilities. Achieving this requires accurate measurements of short wavelength waves because these waves are crucial for transferring energy from winds to waves. A challenge for moving vehicles is that the platform's speed and direction relative to the incoming waves influence the wave period observed aboard the vehicle. This causes the energy associated with each distinct wave period present in the wave field to be shifted to different period. Here, we introduce a new approach to correct this effect so that wave properties that are dependent on wave period are not affected by the platform's motion. This novel approach may be apply to any uncrewed surface vehicle. The method is tested using a unique data set collected from a fleet of Wave Gliders, a type of uncrewed surface vehicle.
+
 # Authors 
 * [Luke Colosi](https://lcolosi.github.io/)<<lcolosi@ucsd.edu>>
 * [Nicholas Pizzo](https://scripps.ucsd.edu/profiles/npizzo) <<npizzo@ucsd.edu>>
