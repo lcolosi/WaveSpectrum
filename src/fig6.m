@@ -145,7 +145,7 @@ loglog(nov_s.f_ob, nov_s.sat_spectrogram_omni_f_ob(:,itime), '-', 'LineWidth', 2
 
 % Set figure Attributes
 title('(b)')
-ylabel('$f_{ob}^{5} \cdot$ S($f_{ob}$) (m$^2$ Hz$^{4}$)','Interpreter','Latex')
+ylabel('B($f_{ob}$) (m$^2$ Hz$^{4}$)','Interpreter','Latex')
 xlabel('$f_{ob}$ (Hz)','Interpreter','Latex')
 xlim([10^-2 10^0])
 set(gca,'FontSize',fontsize)
