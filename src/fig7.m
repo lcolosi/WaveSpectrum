@@ -31,7 +31,7 @@ g = 9.81;                                                                   % gr
 dir_con = {'CW', 'cf', 'rn'};                                               % Directional conventions
 
 % Temporal parameters
-period = 5;                                                                 % Time duration for computing wave spectra
+period = 10;                                                                 % Time duration for computing wave spectra
 date_i = '09-Sep-2020 02:30:00';                                            % Start date 
 date_f = '11-Sep-2020 16:10:00';                                            % End date
 date_o = {date_i, date_f}; 
@@ -263,7 +263,7 @@ cb = colorbar;
 colormap(flipud(cbrewer2('RdYlBu')))
 set(gca,'ColorScale','log')
 cb.Label.Interpreter = 'Latex';
-cb.Label.String = '$f_{ob}^5 \cdot$ S($t,f_{ob}$) (m$^2$ Hz$^{4}$)';
+cb.Label.String = 'B($t,f_{ob}$) (m$^2$ Hz$^{4}$)';
 caxis([10^-12, 10^-7.5]);
 cb.Ticks = [ 10^-12; 10^-11; 10^-10; 10^-9; 10^-8] ;
 cb.TickLabels = { '$10^{-12}$'; '$10^{-11}$'; '$10^{-10}$'; '$10^{-9}$'; '$10^{-8}$'} ; 
