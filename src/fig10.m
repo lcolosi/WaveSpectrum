@@ -58,21 +58,22 @@ SM.spec_ob(idx_zero_sm) = NaN; SM.spec_in(idx_zero_sm) = NaN;
 Ifreq = find(DM.f > 0.03);                                                  %Frequency low cutoff 
 
 % Set plotting parameters
-t_ticks_dm = datetime('09-Sep-2020 12:00:00'):hours(12):datetime('11-Sep-2020 12:00:00');
+t_ticks_dm = datetime('09-Sep-2020 00:00:00'):hours(12):datetime('12-Sep-2020 00:00:00');
 t_ticks_sm = datetime('29-Oct-2021 00:00:00'):days(1):datetime('04-Nov-2021 00:00:00'); 
 fontsize = 16;
 
 % Create figure
-figure('units','normalized','outerposition',[0 0 1 0.6])
+figure('units','normalized','outerposition',[0 0 0.4 1])
 
 %------------ Subplot 1 ------------% 
-subplot(2,2,1)
+ax1 = subplot(4,1,1);
 
 % Plot observed saturation spectrogram from DELMAR2020
 pc = pcolor(DM.time, DM.f(Ifreq), DM.spec_ob(Ifreq,:));
 
 % Set figure attributes
-title('(a)')
+t = title('(a)');
+t.Units = 'normalized'; t.Position = [t.Position(1) t.Position(2) - 0.018 0];       
 pc.EdgeColor = 'none';
 ylabel('$f_{ob}$ (Hz)', 'Interpreter', 'latex')
 set(gca,'Yscale','log')
@@ -94,7 +95,7 @@ cb = colorbar;
 colormap(flipud(cbrewer2('RdYlBu', 100)))
 set(gca,'ColorScale','log')
 cb.Label.Interpreter = 'Latex';
-cb.Label.String = '$f_{ob}^5 \cdot$ S($t,f_{ob}$) (m$^2$ Hz$^{4}$)';
+cb.Label.String = 'B($t,f$) (m$^2$ Hz$^{4}$)';
 caxis([10^-12, 10^-7.5]);
 cb.Ticks = [ 10^-12; 10^-11; 10^-10; 10^-9; 10^-8] ;
 cb.TickLabels = { '$10^{-12}$'; '$10^{-11}$'; '$10^{-10}$'; '$10^{-9}$'; '$10^{-8}$'} ;  
@@ -102,50 +103,19 @@ cb.TickLabelInterpreter = 'latex';
 cb.TickDirection = 'out';
 cb.TickLength = 0.03;
 cb.FontSize = fontsize;
+cb.Position = [0.84114583333333 0.598118279569893 0.0286458333333363 0.260752688172046]; 
 
 %------------ Subplot 2 ------------% 
-subplot(2,2,2)
-
-% Plot observed saturation spectrogram from SMODE2021
-pc = pcolor(SM.time, SM.f(Ifreq), SM.spec_ob(Ifreq,:));
-
-% Set figure attributes
-title('(b)')
-pc.EdgeColor = 'none';
-xlim([SM.time(1), SM.time(end)])
-set(gca,'Yscale','log')
-set(gca,'TickDir','out');
-set(gca, 'TickLength', [0.007, 0.007]) 
-xticks(datenum(t_ticks_sm))
-datetick('x', 'mmm dd', 'keepticks')
-set(gca,'FontSize',fontsize)
-set(gca,'TickLabelInterpreter','latex')
-set(gca,'Box','on')
-
-% Set colorbar attributes
-cb = colorbar;
-colormap(flipud(cbrewer2('RdYlBu', 50)))
-set(gca,'ColorScale','log')
-cb.Label.Interpreter = 'Latex';
-cb.Label.String = '$f_{ob}^5 \cdot$ S($t,f_{ob}$) (m$^2$ Hz$^{4}$)';
-caxis([10^-7, 2*10^-3]);
-cb.Ticks = [10^-7; 10^-6; 10^-5; 10^-4; 10^-3];
-cb.TickLabels = {'$10^{-7}$'; '$10^{-6}$'; '$10^{-5}$'; '$10^{-4}$'; '$10^{-3}$'}; 
-cb.TickLabelInterpreter = 'latex';
-cb.TickDirection = 'out';
-cb.TickLength = 0.03;
-cb.FontSize = fontsize;
-
-%------------ Subplot 3 ------------% 
-subplot(2,2,3)
+ax2 = subplot(4,1,2);
 
 % Plot intrinsic frequency saturation spectrogram from DELMAR2020
 pc = pcolor(DM.time, DM.f(Ifreq), DM.spec_in(Ifreq,:));
 
 % Set figure attributes
-title('(c)')
+t = title('(b)');
+t.Units = 'normalized'; t.Position = [t.Position(1) t.Position(2) - 0.018 0]; % Change the position of the title so there is more empty space between subplots
 pc.EdgeColor = 'none';
-xlabel('UTC time from Sep 9$^{\textrm{th}}$, 2020', 'Interpreter', 'latex')
+% xlabel('UTC time from Sep 9$^{\textrm{th}}$, 2020', 'Interpreter', 'latex')
 ylabel('$f_{in}$ (Hz)', 'Interpreter', 'latex')
 set(gca,'Yscale','log')
 set(gca,'TickDir','out');
@@ -166,7 +136,7 @@ cb = colorbar;
 colormap(flipud(cbrewer2('RdYlBu', 100)))
 set(gca,'ColorScale','log')
 cb.Label.Interpreter = 'Latex';
-cb.Label.String = '$f_{in}^{5} \cdot$ S($t,f_{in}$) $\cdot \frac{df_{ob}}{df_{in}}$ (m$^2$ Hz$^{4}$)';
+cb.Label.String = 'B$_{in}$($t,f_{in}$) (m$^2$ Hz$^{4}$)';
 caxis([10^-12, 10^-7.5]);
 cb.Ticks = [ 10^-12; 10^-11; 10^-10; 10^-9; 10^-8] ;
 cb.TickLabels = { '$10^{-12}$'; '$10^{-11}$'; '$10^{-10}$'; '$10^{-9}$'; '$10^{-8}$'} ;  
@@ -175,22 +145,73 @@ cb.TickDirection = 'out';
 cb.TickLength = 0.03;
 cb.FontSize = fontsize;
 
+% Turn off colorbar
+colorbar('off')
+
+%------------ Subplot 3 ------------% 
+ax3 = subplot(4,1,3);
+
+% Plot observed saturation spectrogram from SMODE2021
+pc = pcolor(SM.time, SM.f(Ifreq), SM.spec_ob(Ifreq,:));
+
+% Set figure attributes
+t = title('(c)'); 
+t.Units = 'normalized'; t.Position = [t.Position(1) t.Position(2) - 0.018 0]; 
+pc.EdgeColor = 'none';
+xlim([SM.time(1), SM.time(end)])
+xticks(datenum(t_ticks_sm))
+ylabel('$f_{ob}$ (Hz)', 'Interpreter', 'latex')
+set(gca,'Yscale','log')
+set(gca,'TickDir','out');
+set(gca, 'TickLength', [0.007, 0.007]) 
+datetick('x', 'mmm dd', 'keepticks')
+ax = gca;
+labels = string(ax.XAxis.TickLabels);
+labels(1:2:end) = ' ';
+ax.XAxis.TickLabels = labels;
+ax.XAxis.TickLabelRotation = 0;
+set(gca,'FontSize',fontsize)
+set(gca,'TickLabelInterpreter','latex')
+set(gca,'Box','on')
+
+% Set colorbar attributes
+cb = colorbar;
+colormap(flipud(cbrewer2('RdYlBu', 50)))
+set(gca,'ColorScale','log')
+cb.Label.Interpreter = 'Latex';
+cb.Label.String = 'B($t,f$) (m$^2$ Hz$^{4}$)';
+caxis([10^-7, 2*10^-3]);
+cb.Ticks = [10^-7; 10^-6; 10^-5; 10^-4; 10^-3];
+cb.TickLabels = {'$10^{-7}$'; '$10^{-6}$'; '$10^{-5}$'; '$10^{-4}$'; '$10^{-3}$'}; 
+cb.TickLabelInterpreter = 'latex';
+cb.TickDirection = 'out';
+cb.TickLength = 0.03;
+cb.FontSize = fontsize;
+cb.Position = [0.84114583333333 0.17 0.0286458333333363 0.260752688172046]; 
+
 %------------ Subplot 4 ------------% 
-subplot(2,2,4)
+ax4 = subplot(4,1,4);
 
 % Plot intrinsic frequency saturation spectrogram from SMODE2021
 pc = pcolor(SM.time, SM.f(Ifreq), SM.spec_in(Ifreq,:));
 
 % Set figure attributes
-title('(d)')
+t = title('(d)'); 
+t.Units = 'normalized'; t.Position = [t.Position(1) t.Position(2) - 0.018 0]; 
 pc.EdgeColor = 'none';
 xlim([SM.time(1), SM.time(end)])
-xlabel('UTC time from Oct 29$^{\textrm{th}}$, 2021', 'Interpreter', 'latex')
+xlabel('UTC time')                                                          % xlabel('UTC time from Oct 29$^{\textrm{th}}$, 2021', 'Interpreter', 'latex')
+ylabel('$f_{in}$ (Hz)', 'Interpreter', 'latex')
 set(gca,'Yscale','log')
 set(gca,'TickDir','out');
 set(gca, 'TickLength', [0.007, 0.007]) 
 xticks(datenum(t_ticks_sm))
 datetick('x', 'mmm dd', 'keepticks')
+ax = gca;
+labels = string(ax.XAxis.TickLabels);
+labels(1:2:end) = ' ';
+ax.XAxis.TickLabels = labels;
+ax.XAxis.TickLabelRotation = 0; 
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
 set(gca,'Box','on')
@@ -200,7 +221,7 @@ cb = colorbar;
 colormap(flipud(cbrewer2('RdYlBu', 100)))
 set(gca,'ColorScale','log')
 cb.Label.Interpreter = 'Latex';
-cb.Label.String = '$f_{in}^{5} \cdot$ S($t,f_{in}$) $\cdot \frac{df_{ob}}{df_{in}}$ (m$^2$ Hz$^{4}$)';
+cb.Label.String = 'B$_{in}$($t,f_{in}$) (m$^2$ Hz$^{4}$)';
 caxis([10^-7, 2*10^-3]);
 cb.Ticks = [10^-7; 10^-6; 10^-5; 10^-4; 10^-3];
 cb.TickLabels = {'$10^{-7}$'; '$10^{-6}$'; '$10^{-5}$'; '$10^{-4}$'; '$10^{-3}$'};  
@@ -208,6 +229,27 @@ cb.TickLabelInterpreter = 'latex';
 cb.TickDirection = 'out';
 cb.TickLength = 0.03;
 cb.FontSize = fontsize;
+
+% Turn off colorbar
+colorbar('off')
+
+%-------- Set the position of the subplots --------%
+% find current position [x,y,width,height]
+pos1 = get(ax1,'Position');
+pos2 = get(ax2,'Position');
+pos3 = get(ax3,'Position');
+pos4 = get(ax4,'Position');
+
+% set width of the axes equal to a set width
+width = 0.6986; 
+pos1(3) = width; 
+pos2(3) = width;
+pos3(3) = width;
+pos4(3) = width;
+set(ax1,'Position',pos1)
+set(ax2,'Position',pos2)
+set(ax3,'Position',pos3)
+set(ax4,'Position',pos4)
 
 % Save Figure
 saveas(gcf, [fig_path 'figure_10.png'])
