@@ -4,7 +4,7 @@
 clc, clearvars -except N W, close all;
 
 % Set the current working directory
-cd ~/Desktop/projects/asi_lab_summer_internship/WaveGlider/src/
+cd ~/Desktop/projects/asi_lab_summer_internship/WaveSpectrum/src/
 
 % Set text interpreter 
 set(0,'defaultTextInterpreter','latex');
@@ -16,10 +16,10 @@ set(groot, 'DefaultLegendInterpreter', 'latex')
 vehicle = 'WHOI43';
 
 %%%% Root %%%%
-ROOT = '../data/SMODE_P2021/';
+ROOT = '../data/SMODE2021/';
 
 % Set path for figures
-fig_path = '../figs/SMODE_P2021/';
+fig_path = '../figs/SMODE2021/';
 
 %%%%%%%%%% Initial global variables %%%%%%%%%%
 
@@ -143,16 +143,16 @@ clc, close all;
 
 % Convert the 20 Hz time record into two time records with increments
 % specified by period beginning at date_i and ending at date_f
-dt_defined = period*60; % Units: seconds
-T0_i= 0:dt_defined:max(time_int_n); % Units: seconds
+dt_defined = period*60;                                                     % Units: seconds
+T0_i= 0:dt_defined:max(time_int_n);                                         % Units: seconds
 
 % Define the 1 minute time offset for the high pass filtered data
-time_offset = 60; % Units: seconds
-np_n = fe_n*time_offset; % Number of non-weather measurements taken in time offset duration
-np_w = fe_w*time_offset; % Number of weather measurements taken in time offset duration
+time_offset = 60;                                                           % Units: seconds
+np_n = fe_n*time_offset;                                                    % Number of non-weather measurements taken in time offset duration
+np_w = fe_w*time_offset;                                                    % Number of weather measurements taken in time offset duration
 
 % Extend T0 to account for the offset from the truncation
-i = length(T0_i) - 1 + ((5/2)*(dt_defined/time_offset) + 1);  
+i = 865;                                                                    % Old code used to compute time offset: length(T0_i) - 1 + ((5/2)*(dt_defined/time_offset) + 1);  
 T0 = [T0_i(1:end-1) T0_i(end):dt_defined:T0_i(end)+(i+(i-2))*time_offset];
 
 % Loop through legs
@@ -196,7 +196,7 @@ for is = 1:(length(T0) - 1)
         eval(['fast.' name ' = w.' name '(:,It_w);'])
 
     end
-    
+
     % Index non-datenum time series
     fast.ttime_n = time_int_n(It_n);
     
@@ -239,7 +239,7 @@ for is = 1:(length(T0) - 1)
         eval(['fast.high_pass.' name ' = fast. ' name '(np_w:end-np_w);'])
         
     end
-    
+
     % Compute mean wind speed over time interval and friction velocity 
     fast.high_pass.mTWS = mean(fast.high_pass.TWS);
     [fast.high_pass.mfv(is),~,~] = FUNC_ustar_Z(z_station,fast.high_pass.mTWS);
@@ -426,6 +426,7 @@ clc, close all;
 first = datetime(2021, 10, 29,0,0,0);
 last = datetime(2021, 11, 04,0,0,0);
 t_ticks = datenum(first:days(1):last);
+fontsize = 18; 
 
 % Set frequency low cutoff and latitude for small box cutoff
 Ifreq = find(n.f_ob > 0.02);  %Frequency low cutoff 
@@ -480,10 +481,10 @@ hold off
 pc1.EdgeColor = 'none';
 xlabel('UTC time from Oct. $29^{\textrm{th}}$, $2021$', 'Interpreter', 'latex')
 ylabel('$f_{in} \;(Hz)$', 'Interpreter', 'latex')
-xlim([datenum(first), n.time_legs(end)])
+xlim([datenum(first), datenum(last)])
 datetick('x', 'mm/dd', 'keeplimits')
 %xlim([datenum(2021,11,1,0,0,0), datenum(2021,11,2,0,0,0)])
-%datetick('x', 'HH:MM', 'keeplimits')
+datetick('x', 'mmm dd', 'keepticks')
 set(gca,'Yscale','log')
 set(gca,'TickDir','out');
 set(gca,'FontSize',fontsize-2)
@@ -510,6 +511,8 @@ saveas(gcf, [fig_path 'whoi_wg_smode_pilot_map_sat_specgram_heave_velocity_filte
 close all
 
 % Set plotting variables
+red = [0.6350 0.0780 0.1840]; 
+blue = [0 0.4470 0.7410];  
 t_ticks = datetime(date_i):days(1):datetime(date_f);
 
 % Create Figure and axes
@@ -519,7 +522,7 @@ fig = figure('units','normalized','outerposition',[0 0 0.7 1]);
 ax1 = subplot(2,1,1);
 
 % Plot the Wind direction
-pc1 = plot(n.time_legs,n.mD, '.', 'Color', [0 0.4470 0.7410], 'MarkerSize', 5); 
+pc1 = plot(n.time_legs,n.mD, '^-', 'Color', blue, 'MarkerSize', 4, 'MarkerFaceColor',blue, 'LineWidth', 0.5); 
 
 % Set figure attributes
 ylabel('$\textrm{Direction} (\textrm{Going Towards}\; ^{\circ})$', 'Interpreter', 'latex')
@@ -527,7 +530,7 @@ xlim([n.time_legs(1), n.time_legs(end)])
 ylim([0,360])
 xticks(datenum(t_ticks))
 yticks([0,90,180,270,360])
-datetick('x', 'mm/dd', 'keepticks')
+datetick('x', 'mmm dd', 'keepticks')
 set(gca,'FontSize',12)
 set(gca,'TickLabelInterpreter','latex')
 title('$\bf{(a)}$', 'FontSize', 15)
@@ -544,7 +547,7 @@ ylabel('$| \vec{u} | \;(ms^{-1})$', 'Interpreter', 'latex')
 xlim([n.time_legs(1), n.time_legs(end)])
 ylim([0, 1.5])
 xticks(datenum(t_ticks))
-datetick('x', 'mm/dd', 'keepticks')
+datetick('x', 'mmm dd', 'keepticks')
 set(gca,'FontSize',12)
 set(gca,'TickLabelInterpreter','latex')
 set(ax2, 'box', 'on', 'Visible', 'on')
@@ -638,8 +641,11 @@ saveas(gcf, [fig_path 'freq_integral_spectrogram_heave_velocity_filter.png'])
 % Create figure axes 
 fig = figure('units','normalized','outerposition',[0 0 1 1]);
 
-% Plot a scatter plot of the U and V current at mooring PS30M
-scatter(av_sat_spec_fob(idx_sbox),n.mD(idx_sbox),15,'b', 'filled')
+% Plot scatter plot before and after mapping
+hold on 
+scatter(av_sat_spec_fob,n.mD,15,'r', 'filled')
+scatter(av_sat_spec_fin,n.mD,15,'b', 'filled')
+hold off
 
 % Set figure attributes
 xlabel('$I(t) \;(m^2 Hz^{4})$', 'Interpreter', 'latex')
@@ -654,11 +660,11 @@ set(gca,'TickLabelInterpreter','latex')
 % Save Figure
 %saveas(fig, [fig_path 'figure_5.png'])
 
-figure(5);
-subplot(2,1,1)
-plot(n.time_legs, av_sat_spec_fob, '-b')
-subplot(2,1,2)
-plot(n.time_legs, n.mD, 'r')
+% figure(5);
+% subplot(2,1,1)
+% plot(n.time_legs, av_sat_spec_fob, '-b')
+% subplot(2,1,2)
+% plot(n.time_legs, n.mD, 'r')
 
 %% Developmental Code 
 % %% Plot transition frequencies 
@@ -690,3 +696,24 @@ plot(n.time_legs, n.mD, 'r')
 % fe_w = 1;  % Sampling rate (Hz) of the Wave Glider (weather)
 % dt = 1/fe;  % Time interval between measurements (s) (non-weather)
 % dt_w = 1/fe_w;  % Time interval between measurements (s) (weather)
+
+% Debugging time interval
+% % Create figure
+% figure('units','normalized','outerposition',[0 0 0.6 0.6])
+
+% % Plot
+% hold on 
+%     plot(fast.high_pass.time, is*ones(1,length(fast.high_pass.time)), '.-', 'LineWidth', 1.5, 'Markersize', 8)
+%     plot(fast.time, is*ones(1,length(fast.time))-0.5, '.-', 'LineWidth', 1.5, 'Markersize', 8)
+% hold off 
+% xlabel('Time')
+% ylabel('Loop Variable')
+% if is == 10
+% xticks(datenum(datetime('29-Oct-2021 00:00:00'):minutes(10):datetime('29-Oct-2021 02:00:00')));
+% end
+% datetick('x', 'HH:MM:SS', 'keepticks')
+% grid on
+% 
+% % Display length of record
+% disp(['Duration of time interval: ', num2str(round((fast.high_pass.time(end) - fast.high_pass.time(1))*24*60)), ' minutes'])
+    
