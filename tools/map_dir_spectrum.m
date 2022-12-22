@@ -32,16 +32,6 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
     %             and the direction of propagation of waves. This quantity 
     %             is a evaluated at all directions of wave propagation.
     %             Units: Degrees, CW, going towards, reference north.
-    %   tail : Specifies whether a spectral tail with a given slope is 
-    %          added to the intrinsic frequency spectrum after the 
-    %          blocking frequency (if the f_b < f_cut). Options include:
-    %                   tail = [true, f_eq, f_sat] or [false, f_eq, f_sat] 
-    %          where true or false determines if the tail will be added or
-    %          not. f_eq is the transition from the spectral peak to the 
-    %          equilibrium range f_sat os the transition between the 
-    %          equilibrium and saturation ranges. Nomially, the equilibrium
-    %          range has a spectral slope of f^{-4} and the saturation 
-    %          range has a spectral slope of f^{-5}. Frequency units: Hz. 
     % 
     %   Returns
     %   -------
@@ -78,6 +68,17 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
     %                            S(f_obs)*df_obs from 0.1 to 1 Hz
     %             (4) f_in_0.1 : Variance computed from integrating
     %                            S(f_int)*df_obs/df_int*df_int from 0.1 to 1 Hz
+    % 
+    %   Notes
+    %   -----
+    %   (1) Add a spectral tail to the directional spectrum requires
+    %       information about the deirectional dependence of the spectral
+    %       slope in the equilibirum and saturation ranges. The
+    %       conventional spectral forms of the spectra (i.e., f^-4 and f^-5)
+    %       do not include this information. Therefore, the functional form
+    %       must be either updated to include directional dependence or the
+    %       spectral tail attachment must be preformed on the
+    %       omni-directional spectrum. I choose the later. 
     %
     %%%%
     
@@ -111,7 +112,7 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
             
         %---------- Branch 2 : Moving noraml to waves ----------%
         elseif cosd(itheta_r) == 0 || U == 0
-            %disp('Branch 2 : Moving noraml to waves ');
+            %disp('Branch 2 : Moving normal to waves');
 
             % Compute intrinsic frequency for branch 2 
             f_int(:,iangle) = f_obs;
@@ -201,148 +202,30 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
         % f_obs introduces new nans because ranges are incompatible)
         idx_nan = ~isnan(S_fin(:,iangle)); 
 
-        % Set the non-nan values for the intrinsic frequency and power
-        % spectrum to truc variables
+        % Set the non-nan values for the intrinsic frequency 
         f_truc = f_obs(idx_nan);
-        S_truc = S_fin(idx_nan,iangle);
 
         % Set blocking frequency
         f_b(iangle,2) = f_truc(end);
         
-        %------ Add a spectral tail ------%
-        if tail(1) == true 
-            
-            % Set frequency at which the tail will be attached at
-            f_a = f_truc(end);
-            
-            % Obtain frequencies of tail
-            f_tail = [f_a, f_obs(~idx_nan)];
+        % Obtain indices for integration (non-NaN values at frequencies higher the 0.01 and 0.1 Hz)
+        idx_fob_l = ~isnan(S_fob(:,iangle)) & (f_obs >= 0.01)'; idx_fin_l = ~isnan(S_fin(:,iangle)) & (f_int(:,iangle) >= 0.01);
+        idx_fob_h = ~isnan(S_fob(:,iangle)) & (f_obs >= 0.1)'; idx_fin_h = ~isnan(S_fin(:,iangle)) & (f_int(:,iangle) >= 0.1);
 
-            % disp(['Length of tail: ' num2str(length(f_tail))])
-            
-            %%%%%%%%%% Frequency Transition Conditional statements %%%%%%%%%%
-            % Set transition frequencies
-            f_eq = tail(2); % Spectral peak to equilibrium range 
-            f_sat = tail(3); % Equilibrium to saturation range 
-            
-            %-------- f_sat less than noise cutoff frequency  --------%
-            if f_cut > f_sat 
-                % disp('f_sat less than noise cutoff frequency')
-                
-                %-------- Blocking frequency in Equilibrium range --------%
-                if f_a <= f_sat 
-                    % disp('Blocking frequency in Equilibrium range')
+        % Compute frequency integral for the ith angle excluding NaNs
+        % and specified frequency bands from integral
 
-                    % Preform least squares fit within frequency range 
-                    % [f_eq f_b] and set the power spectral density at the
-                    % attachment frequency
-                    [~, ~, fit, ~] = spectral_slope(f_truc, S_truc, f_eq, f_a);
-                    S_c = fit(end);
+        %----- Frequency band: 0.01 to 1 Hz -----% 
+        int_S_fob_l(iangle,1) = sum(S_fob(idx_fob_l,iangle)*df_obs); 
+        int_S_fin_l(iangle,1) = sum(S_fin(idx_fin_l,iangle)*df_obs);
 
-                    % Obtain frequency indices for transition frequency and 
-                    % spectral tails in equilibrium and saturation ranges
-                    idx_f_eq = f_tail >= f_a & f_tail <= f_sat; 
-                    idx_f_sat = f_tail >= f_sat; 
-
-                    % Obtain frequencies of tail from each frequency range
-                    f_tail_eq = f_tail(idx_f_eq);
-                    f_tail_sat = f_tail(idx_f_sat);
-
-                    % Compute Spectal tail in linear space
-                    S_tail_eq = S_c * (f_tail_eq/f_a).^(-4); 
-                    S_tail_sat = S_tail_eq(end) * (f_tail_sat/f_tail_sat(1)).^(-5); % Note: f_tail_sat(1) instead of f_t is used in the denominator because we want the first PSD level to be equal to PSD level at the last frequency in the equilibrium range.
-
-                    % Attach tail onto end of spectrum
-                    S_fin(:,iangle) = [S_truc; S_tail_eq(2:end)'; S_tail_sat(1:end)'];
-
-                %-------- Blocking frequency in Saturation range --------%
-                elseif f_a > f_sat
-                    % disp('Blocking frequency in Saturation range')
-                    % disp([num2str(length(find(f_truc >= f_sat)))])
-
-                    %-------- Enough frequencies in saturation range to preform least squares fit  --------%
-                    if length(find(f_truc >= f_sat)) >= 2
-
-                        % Preform least squares fit within frequency range 
-                        % [f_sat f_b] and set the power spectral density at the
-                        % attachment frequency
-                        [~, ~, fit, ~] = spectral_slope(f_truc, S_truc, f_sat, f_a);
-                        S_c = fit(end);
-
-                    %-------- NOT Enough frequencies in saturation range to preform least squares fit  --------%
-                    else 
-                    
-                        % Preform least squares fit within frequency range 
-                        % [f_eq f_b] and set the power spectral density at the
-                        % attachment frequency
-                        [~, ~, fit, ~] = spectral_slope(f_truc, S_truc, f_eq, f_a);
-                        S_c = fit(end);
-                    end 
-
-                    % Compute spectal tail 
-                    S_tail = S_c * (f_tail/f_a).^(-5);
-
-                    % Attach tail onto end of spectrum
-                    S_fin(:,iangle) = [S_truc; S_tail(2:end)'];
-
-                end
-                
-            %-------- f_sat frequency more than cutoff frequency  --------%
-            elseif f_cut < f_sat
-                % disp('f_sat frequency more than cutoff frequency')
-
-                % Preform least squares fit within frequency range 
-                % [f_eq f_b] and set the power spectral density at the
-                % attachment frequency
-                [~, ~, fit, ~] = spectral_slope(f_truc, S_truc, f_eq, f_a);
-                S_c = fit(end);
-                
-                % Compute spectal tail in equilibrium range
-                S_tail = S_c * (f_tail/f_a).^(-4);
-
-                % Attach tail onto end of spectrum
-                S_fin(:,iangle) = [S_truc; S_tail(2:end)'];
-                
-            end
-            
-        elseif tail(1) == false 
-            
-            % Obtain indices for integration (non-NaN values at frequencies higher the 0.01 and 0.1 Hz)
-            idx_fob_l = ~isnan(S_fob(:,iangle)) & (f_obs >= 0.01)'; idx_fin_l = ~isnan(S_fin(:,iangle)) & (f_int(:,iangle) >= 0.01);
-            idx_fob_h = ~isnan(S_fob(:,iangle)) & (f_obs >= 0.1)'; idx_fin_h = ~isnan(S_fin(:,iangle)) & (f_int(:,iangle) >= 0.1);
-
-            % Compute frequency integral for the ith angle excluding NaNs
-            % and specified frequency bands from integral
-
-            %----- Frequency band: 0.01 to 1 Hz -----% 
-            int_S_fob_l(iangle,1) = sum(S_fob(idx_fob_l,iangle)*df_obs); 
-            int_S_fin_l(iangle,1) = sum(S_fin(idx_fin_l,iangle)*df_obs);
-
-            %----- Frequency band: 0.1 to 1 Hz -----% 
-            int_S_fob_h(iangle,1) = sum(S_fob(idx_fob_h,iangle)*df_obs); 
-            int_S_fin_h(iangle,1) = sum(S_fin(idx_fin_h,iangle)*df_obs);
-            
-        end
-        
+        %----- Frequency band: 0.1 to 1 Hz -----% 
+        int_S_fob_h(iangle,1) = sum(S_fob(idx_fob_h,iangle)*df_obs); 
+        int_S_fin_h(iangle,1) = sum(S_fin(idx_fin_h,iangle)*df_obs);
+             
     end  
 
-    % Compute variance by interagting over two frequency bands of the spectrum
-    
-    %------ Spectral tail added ------%
-     if tail(1) == true
-        
-        % Obtain indices for integration (non-NaN values at frequencies higher the 0.01 and 0.1 Hz)
-        idx_fob_l = (f_obs >= 0.01)'; idx_fob_h = (f_obs >= 0.1)'; 
-
-        % Compute double integral for variance before and after mapping
-        variance = [sum(sum(S_fob(idx_fob_l,:) * df_obs, 1)*dtheta), sum(sum(S_fin(idx_fob_l,:) * df_obs, 1)*dtheta), sum(sum(S_fob(idx_fob_h,:) * df_obs, 1)*dtheta), sum(sum(S_fin(idx_fob_h,:) * df_obs, 1)*dtheta)];
-        
-    %------ Spectral tail NOT added ------%
-    elseif tail(1) == false
-        
-        % Compute azimuthal integral for variance before and after mapping
-        variance = [sum(int_S_fob_l*dtheta), sum(int_S_fin_l*dtheta),sum(int_S_fob_h*dtheta), sum(int_S_fin_h*dtheta)];
-    
-    end   
+    % Compute azimuthal integral for variance before and after mapping
+    variance = [sum(int_S_fob_l*dtheta), sum(int_S_fin_l*dtheta),sum(int_S_fob_h*dtheta), sum(int_S_fin_h*dtheta)];  
     
 end
