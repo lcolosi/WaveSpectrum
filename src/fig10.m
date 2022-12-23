@@ -2,8 +2,9 @@
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2022
 
 %-------------------------------- Caption --------------------------------%
-% Observed omni-directional (a) and saturation (b) wave spectrograms 
-% for the Stokes wave glider.  
+% Saturation wave spectrograms during the DELMAR2020 ((a) Observed and (b)
+% intrinsic frequency space) and SMODE2021 ((c) Observed and (d) intrinsic
+% frequency space) experiments. 
 %-------------------------------------------------------------------------% 
 
 clc, clearvars -except DM SM, close all;
@@ -30,14 +31,14 @@ fig_path = '../figs/';
 %--------- DELMAR 2020 ---------% 
 if isempty(whos('DM')) 
 
-    DM = load([ROOT_dm vehicle1 '/DELMAR2020_spec_' vehicle1 '.mat']); % Mapping variables computed in delmar_intrinsic_freq_spectrogram.m file
+    DM = load([ROOT_dm vehicle1 '/DELMAR2020_spec_' vehicle1 '.mat']);      % Mapping variables computed in delmar_intrinsic_freq_spectrogram.m file
 
 end
 
 %--------- SMODE Pilot 2021 ---------% 
 if isempty(whos('SM')) 
 
-    SM = load([ROOT_sm vehicle2 '/SMODE2021_spec_' vehicle2 '.mat']); % Mapping variables computed in smode_intrinsic_freq_spectrogram.m file
+    SM = load([ROOT_sm vehicle2 '/SMODE2021_spec_' vehicle2 '.mat']);       % Mapping variables computed in smode_intrinsic_freq_spectrogram.m file
 
 end
 
@@ -73,7 +74,7 @@ pc = pcolor(DM.time, DM.f(Ifreq), DM.spec_ob(Ifreq,:));
 
 % Set figure attributes
 t = title('(a)');
-t.Units = 'normalized'; t.Position = [t.Position(1) t.Position(2) - 0.018 0];       
+t.Units = 'normalized'; t.Position = [t.Position(1) t.Position(2) - 0.01 0];       
 pc.EdgeColor = 'none';
 ylabel('$f_{ob}$ (Hz)', 'Interpreter', 'latex')
 set(gca,'Yscale','log')
@@ -113,7 +114,7 @@ pc = pcolor(DM.time, DM.f(Ifreq), DM.spec_in(Ifreq,:));
 
 % Set figure attributes
 t = title('(b)');
-t.Units = 'normalized'; t.Position = [t.Position(1) t.Position(2) - 0.018 0]; % Change the position of the title so there is more empty space between subplots
+t.Units = 'normalized'; t.Position = [t.Position(1) t.Position(2) - 0.01 0]; % Change the position of the title so there is more empty space between subplots
 pc.EdgeColor = 'none';
 % xlabel('UTC time from Sep 9$^{\textrm{th}}$, 2020', 'Interpreter', 'latex')
 ylabel('$f_{in}$ (Hz)', 'Interpreter', 'latex')
@@ -156,7 +157,7 @@ pc = pcolor(SM.time, SM.f(Ifreq), SM.spec_ob(Ifreq,:));
 
 % Set figure attributes
 t = title('(c)'); 
-t.Units = 'normalized'; t.Position = [t.Position(1) t.Position(2) - 0.018 0]; 
+t.Units = 'normalized'; t.Position = [t.Position(1) t.Position(2) - 0.01 0]; 
 pc.EdgeColor = 'none';
 xlim([SM.time(1), SM.time(end)])
 xticks(datenum(t_ticks_sm))
@@ -197,7 +198,7 @@ pc = pcolor(SM.time, SM.f(Ifreq), SM.spec_in(Ifreq,:));
 
 % Set figure attributes
 t = title('(d)'); 
-t.Units = 'normalized'; t.Position = [t.Position(1) t.Position(2) - 0.018 0]; 
+t.Units = 'normalized'; t.Position = [t.Position(1) t.Position(2) - 0.01 0]; 
 pc.EdgeColor = 'none';
 xlim([SM.time(1), SM.time(end)])
 xlabel('UTC time')                                                          % xlabel('UTC time from Oct 29$^{\textrm{th}}$, 2021', 'Interpreter', 'latex')
