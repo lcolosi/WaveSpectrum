@@ -85,12 +85,12 @@ Nspokes = 13;                                                               % Nu
 Ncircles = 6;                                                               % Number of azimuthal circles
 pos = linspace(nov_s.f_ob(2), nov_s.f_ob(end), Ncircles);                   % Position of frequency labels
 theta_s = linspace(0,360,length(nov_s.theta));                              % Set theta for plotting
-Rticks = {'0.01 Hz','0.03 Hz','0.06 Hz','0.16 Hz', '0.40 Hz', '1 Hz'};      % Frequency labels (obtained by logspace(log10(nov_p.f_in(2)), log10(nov_p.f_in(end)), Ncircles))
+Rticks = {'0.01 Hz','0.03 Hz','0.06 Hz','0.16 Hz', '0.40 Hz', '1 Hz'};                        % Frequency labels (obtained by logspace(log10(nov_p.f_in(2)), log10(nov_p.f_in(end)), Ncircles))
 Contours = logspace(-9,-6.5,30);                                                   
 cmap = colormap(flipud(cbrewer2('RdYlBu', numel(Contours)))); 
 Contours_n = [10^-16, Contours];
 cmap_n = cat(1,cmap(1,:), cmap);
-fontsize = 18;
+fontsize = 23;
 LineWidth = 0.5;
 LineColor = 'k';
 LineStyle = '-';
@@ -101,7 +101,7 @@ itime = 30;
 Sd_smooth = movmean(nov_s.Sd_f_ob(:,:,itime),3,2);
 
 % Create figure
-figure('units','normalized','outerposition',[0 0 0.8 0.8])
+figure('units','normalized','outerposition',[0 0 1 1])
 
 % Plot Directional spectra  
 [~,cb] = polarcontourf(nov_s.f_ob(2:end), theta_s, Sd_smooth(:,2:end), ...
@@ -116,7 +116,7 @@ figure('units','normalized','outerposition',[0 0 0.8 0.8])
 % Set logarithmic colorbar
 cb.Ticks = log10([10^-9, 10^-8, 10^-7]);
 cb.TickLabels = {'10$^{-9}$'; '10$^{-8}$'; '10$^{-7}$'}; 
-cb.Label.String = 'S($f_{ob}$, $\theta$) (m$^2$ Hz$^{-1}$ deg$^{-1}$)';
+cb.Label.String = 'S$_{ob}$($f_{ob}$, $\theta$) (m$^2$ Hz$^{-1}$ deg$^{-1}$)';
 cb.TickDirection = 'out';
 cb.Label.Interpreter = 'latex';
 cb.Label.FontSize = fontsize;
