@@ -24,15 +24,19 @@
 %-------------------------------------%
 
 %-------------------------------- Caption --------------------------------%
-% (a)  Stokes wave glider heading using the coming from direction convention for
-% small box legs. Red triangles denote the legs 
-% where the platform is moving in the direction of wave propagation for 
-% high frequency waves ($f_ob > 10^{-1}$). Blue triangles denote the legs 
-% where the platform is moving against the direction of wave propagation 
-% for high frequency waves These high frequency waves have a mean wave 
-% direction coming from $\sim 300^\circ$. (b) Saturation spectrogram for
-% the Stokes wave glider small box trajectory. (c) Two examples of
-% saturation spectra for against (red curve) and with (blue curve). 
+% (a)  Stokes Wave Glider heading (using the coming from directional
+% convention) for small box legs. Red triangles denote the legs where the
+% platform is moving in the direction of wave propagation for high
+% frequency waves ($f_{ob} > 10^{-1}$). Blue triangles denote the legs
+% where the platform is moving against the direction of wave propagation
+% for high frequency waves. These high frequency waves have a mean wave
+% direction coming from $\sim 300^\circ$. (b) Saturation spectrogram
+% for the Stokes Wave Glider small box formation with red and blue colored
+% ovals along the top axis specifying the high-frequency wave relative 
+% angle using same color code as in Figure~\ref{f8}a. The red and blue 
+% highlighted saturation spectra correspond to the averaged spectra in 
+% Figure~\ref{f8}c. (c) Two averaged saturation spectra for against 
+% (red curve) and with (blue curve) wave cases.
 %-------------------------------------------------------------------------% 
 
 clc, clear, close all;
@@ -168,7 +172,7 @@ first = datetime(2020, 09, 10,23,0,0);
 last = datetime(2020, 09, 11,13,0,0);
 t_ticks = datenum(first:hours(1):last);
 t_case = find(nov_s.time_legs > datenum(2020, 09, 11,2,0,0) & nov_s.time_legs < datenum(2020, 09, 11,3,20,0));
-fontsize = 18;
+fontsize = 19;
 red = [0.6350 0.0780 0.1840]; 
 blue = [0 0.4470 0.7410];
 
@@ -252,7 +256,7 @@ cb = colorbar;
 colormap(flipud(cbrewer2('RdYlBu')))
 set(gca,'ColorScale','log')
 cb.Label.Interpreter = 'Latex';
-cb.Label.String = '$f_{ob}^5 \cdot$ S($t,f_{ob}$) (m$^2$ Hz$^{4}$)';
+cb.Label.String = 'B$_{ob}$($t,f_{ob}$) (m$^2$ Hz$^{4}$)';
 caxis([10^-12, 10^-7.5]);
 cb.Ticks = [10^-12; 10^-11; 10^-10; 10^-9; 10^-8] ;
 cb.TickLabels = { '$10^{-12}$'; '$10^{-11}$'; '$10^{-10}$'; '$10^{-9}$'; '$10^{-8}$'} ; 
@@ -273,7 +277,7 @@ hold off
 
 % Set figure Attributes
 title('(c)')
-ylabel('$f_{ob}^5 \cdot$ S($f_{ob}$) (m$^2$ Hz$^{4}$)','Interpreter','Latex')
+ylabel('B$_{ob}$($f_{ob}$) (m$^2$ Hz$^{4}$)','Interpreter','Latex')
 xlabel('$f_{ob}$ (Hz)','Interpreter','Latex')
 xlim([3*10^-2 10^0])
 grid on 
