@@ -2,9 +2,10 @@
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2022
 
 %-------------------------------- Caption --------------------------------%
-% Observed omni-directional (a) and saturation (b) wave spectra 
-% computed from measurement collected aboard the Stokes wave glider's 
-% during the large box trajectory (07:57:22 to 08:42:02 September 10, 2020). 
+% Observed omni-directional (a) and saturation (b) wave spectra computed
+% from the directional wave spectrum in Figure~\ref{f5}. The dashed and
+% dot-dashed lines a have $f_{ob}^{-4}$ and $f_{ob}^{-5}$ spectral slopes
+% respectively.
 %-------------------------------------------------------------------------%
 
 clc, clear, close all;
@@ -101,7 +102,7 @@ fontsize = 18;
 itime = 30; 
 
 % Set variables 
-fi = 4*10^-1; % nov_s.fst(itime);
+fi = 4*10^-1;                                                               % nov_s.fst(itime);
 Si = 2*10^-7;
 
 % Compute f^-5 slope lines
@@ -109,7 +110,7 @@ slope4 = Si*((nov_s.f_ob/fi).^(-4));
 slope5 = Si*((nov_s.f_ob/fi).^(-5));
 
 % Create figure
-figure('units','normalized','outerposition',[0 0 0.8 0.8])
+figure('units','normalized','outerposition',[0 0 1 1])
 
 %------------- Subplot 1 -------------%
 subplot(1,2,1);
@@ -119,12 +120,12 @@ loglog(nov_s.f_ob, nov_s.spectrogram_omni_f_ob(:,itime), '-', 'LineWidth', 2, 'C
 
 hold on 
     pc1 = loglog(nov_s.f_ob,slope4, '--', 'LineWidth', 1.5, 'Color', [0.5 0.5 0.5]);
-    pc2 = loglog(nov_s.f_ob,slope5, ':', 'LineWidth', 1.5, 'Color', [0.5 0.5 0.5]);
+    pc2 = loglog(nov_s.f_ob,slope5, '-.', 'LineWidth', 1.5, 'Color', [0.5 0.5 0.5]);
 hold off
 
 % Set figure Attributes
 title('(a)')
-ylabel('S($f_{ob}$)  (m$^2$ Hz$^{-1}$)','Interpreter','Latex')
+ylabel('S$_{ob}(f_{ob})$  (m$^2$ Hz$^{-1}$)','Interpreter','Latex')
 xlabel('$f_{ob}$ (Hz)','Interpreter','Latex')
 xlim([10^-2 10^0])
 ylim([10^-10 10^-4])
@@ -145,7 +146,7 @@ loglog(nov_s.f_ob, nov_s.sat_spectrogram_omni_f_ob(:,itime), '-', 'LineWidth', 2
 
 % Set figure Attributes
 title('(b)')
-ylabel('B($f_{ob}$) (m$^2$ Hz$^{4}$)','Interpreter','Latex')
+ylabel('B$_{ob}(f_{ob})$ (m$^2$ Hz$^{4}$)','Interpreter','Latex')
 xlabel('$f_{ob}$ (Hz)','Interpreter','Latex')
 xlim([10^-2 10^0])
 set(gca,'FontSize',fontsize)
