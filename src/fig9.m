@@ -2,10 +2,34 @@
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2022
 
 %-------------------------------- Caption --------------------------------%
-% Sarturation wave spectrogram in observed frequency space (a) and
-% instrinsic frequency space using the (b) 1D- and (c) 2D-methods. The 
-% black curve is the 6*10^(-10) m$^2$Hz$^4$ power spectral density contour 
-% where the correlation coefficient $r$ is computed. 
+% Saturation wave spectrogram for the Stokes Wave Glider small box
+% trajectory in (a) observed frequency space and intrinsic frequency space
+% using the (b) 1D- and (c) 2D-methods. The black curve is the
+% $6\times10^{-10}$ m$^2$Hz$^4$ saturation spectral level contour where
+% the correlation coefficient $r$ is computed. 
+%-------------------------------------------------------------------------% 
+
+%--------------------------------- Notes ---------------------------------%
+% (1) Explanation for what's going wrong with attaching a spectral tail:
+% The spectral tail fitting works descently well when the blocking
+% frequency is within the saturation range and I fit a line in log10 space
+% from the equilibrium to saturation range transition frequency to
+% the highest accurately resolved frequency, the spectral tail is pretty
+% good. But when I try to fit the spectral tail in the equilibrium range,
+% the spectral tail is really bad! There are two reasons for this: 
+%
+%   (a) The transition frequency from the spectral peak to the equilibrium
+%   range is pretty low and close to the spectral peak. This transition
+%   frequency's function form was used in Lenain et al. 2017 (references
+%   Phillips 1985). I need to understand exactly where this comes from. 
+% 
+%   (b) As a result of (a), the linear fit includes a large band of the
+%   wave spectrum. For the delmar experiment, there exist multiple wave
+%   systems in the wave field (swell and developing wind seas). This biases
+%   the linear fit and makes it least squares approach unaffective. 
+% 
+% To resolve this problem, reduce the range of frequencies that we preform 
+% the least squares fit for the equilibrium range case. 
 %-------------------------------------------------------------------------% 
 
 clc, clear, close all;
@@ -52,7 +76,7 @@ nfft = fe_n/df;                                                             % Wi
 f = (0:df:fn);                                                              % Observed frequency (Hz)
 dtheta = 5;                                                                 % Angular resolution (degrees)
 ntheta = 360/dtheta+1;                                                      % Number of angles
-lambda_c = 1.5613;                                                          % % Wavelength cutoff (meters)
+lambda_c = 1.5613;                                                          % Wavelength cutoff (meters)
 f_noise = sqrt(g/(2*pi*lambda_c));                                          % Noise frequency cutoff 
 toolbox = 'WAFO';                                                           % Method used to compute directional spectrum 
 variables = 'heave_velocity';                                               % Heave and horizontal velocity are used to compute the direction spectrum
@@ -113,7 +137,7 @@ nov_s.Sd_f_ob = nov_s.Sd(:,Inoise_s,:);
 nov_s.sat_spectrogram_omni_f_ob = nov_s.spectrogram_omni_f_ob .* (nov_s.f_ob').^(5);
 
 %% Account for Doppler shifts by mapping observed frequency to intrinsic frequency
-clc
+clc, close all; 
 
 % Set variables for mapping
 tail = [zeros(size(nov_s.fst)); nov_s.feq; nov_s.fst]; 
@@ -130,7 +154,41 @@ for ileg = 1:nlegs_s
     [nov_s.dir_spectrogram_f_in(:,:,ileg), nov_s.f_in_2d(:,:,ileg), nov_s.dir_spectrogram_f_ob(:,:,ileg), ~, nov_s.fb_2d(:,:,ileg), ~, ~, ~]  = map_dir_spectrum(nov_s.Sd_f_ob(:,:,ileg)', nov_s.f_ob, f_noise, df, dtheta, nov_s.mspeed_legs(ileg), nov_s.rel_theta_legs(:,ileg), tail(:,ileg));
     
     % Compute Omni-directional Spectra from directional spectra 
-    nov_s.spectrogram_omni_f_in_2d(:,ileg) = sum(nov_s.dir_spectrogram_f_in(:,:,ileg) * dtheta, 2);
+    spectrogram_omni_f_in_2d_nt = sum(nov_s.dir_spectrogram_f_in(:,:,ileg) * dtheta, 2);
+
+    % Find non-nan values in S_fin after mapping
+    idx_nan = ~isnan(spectrogram_omni_f_in_2d_nt); 
+
+    % Attach a spectral tail if specified
+    if tail(1,ileg) == true
+        S_truc = spectrogram_omni_f_in_2d_nt(idx_nan);
+        f_truc = nov_s.f_ob(idx_nan);
+        f_tail = [f_truc(end), nov_s.f_ob(~idx_nan)];
+        [nov_s.spectrogram_omni_f_in_2d(:,ileg), ~, fit, f_fit] = omnidir_spectral_tail(S_truc, f_truc, f_tail, tail(2,ileg), tail(3,ileg), f_noise);
+    else
+        nov_s.spectrogram_omni_f_in_2d(:,ileg) = spectrogram_omni_f_in_2d_nt;
+    end
+
+%     % Plot omni-directional spectra with and without tails
+%     figure('units','normalized','outerposition',[0.6 0.5 0.4 0.6]);
+%     loglog(nov_s.f_ob, spectrogram_omni_f_in_2d_nt, '-b', 'LineWidth', 2)
+% 
+%     % Set figure attributes
+%     xlabel('f (Hz)')
+%     ylabel('S(f) ($m^2 Hz^{-1}$)')
+%     xlim([10^-2 10^0])
+%     ylim([10^-10 10^-4])
+%     set(gca, 'FontSize', 15)
+% 
+%     % Save Figure
+%     saveas(gcf, '../../WaveGlider/figs/SMODE_P2021/omnidir_spec_tail_1.png')
+% 
+%     % Plot the least-square fit and the omni-directional spectrum with
+%     % spectral tail 
+%     hold on 
+%     loglog(nov_s.f_ob, nov_s.spectrogram_omni_f_in_2d(:,ileg), ':r', 'LineWidth', 2)
+%     loglog(f_fit, fit, '.-k', 'LineWidth', 2)
+%     hold off
 
 end
 
@@ -139,11 +197,11 @@ nov_s.sat_spectrogram_omni_f_in_1d = nov_s.spectrogram_omni_f_in_1d .* (nov_s.f_
 nov_s.sat_spectrogram_omni_f_in_2d = nov_s.spectrogram_omni_f_in_2d .* (nov_s.f_ob').^(5); 
 
 %% Plot Observed and Intrinsic Saturation Spectrograms
-clc, close all 
+clc
 
 % Set frequency low cutoff and latitude for small box cutoff
-Ifreq_l = find(nov_s.f_ob > 0.03);                                          %Frequency low cutoff 
-Ifreq_h = find(nov_s.f_ob > 0.03 & nov_s.f_ob < 0.4);                       %Frequency low and high cutoff
+Ifreq_l = find(nov_s.f_ob > 0.03);                                          % Frequency low cutoff 
+Ifreq_h = find(nov_s.f_ob > 0.03 & nov_s.f_ob < 0.4);                       % Frequency low and high cutoff
 Ilat_s = find(nov_s.mlat_legs < 32.93);                                     % Indices for legs in small box
 
 % Set plotting variables
@@ -155,7 +213,7 @@ t_ticks = datenum(first:hours(1):last);
 fontsize = 18;
 
 % Create Figure and axes
-figure('units','normalized','outerposition',[0 0 0.4 1])
+figure('units','normalized','outerposition',[0 0 0.45 1])
 
 %------------------- Observed Frequency Saturation Spectrogram -------------------%
 ax1 = subplot(3,1,1);
@@ -184,7 +242,7 @@ cb = colorbar;
 colormap(flipud(cbrewer2('RdYlBu', 100)))
 set(gca,'ColorScale','log')
 cb.Label.Interpreter = 'Latex';
-cb.Label.String = '$f_{ob}^{5} \cdot$ S($t,f_{ob}$) (m$^2$ Hz$^{4}$)';
+cb.Label.String = 'B($t,f$) (m$^2$ Hz$^{4}$)';
 caxis([10^-12, 10^-7.5]);
 cb.Ticks = [10^-12; 10^-11; 10^-10; 10^-9; 10^-8] ;
 cb.TickLabels = { '$10^{-12}$'; '$10^{-11}$'; '$10^{-10}$'; '$10^{-9}$'; '$10^{-8}$'} ; 
@@ -192,6 +250,7 @@ cb.TickLabelInterpreter = 'latex';
 cb.TickDirection = 'out';
 cb.TickLength = 0.02;
 cb.FontSize = fontsize-2;
+cb.Position = [0.860243103645498 0.270161290322581 0.0286457852433912 0.478648761961135]; 
 
 %------------------- 1D-method Intrinsic Frequency Saturation Spectrogram -------------------%
 ax2 = subplot(3,1,2);
@@ -220,14 +279,17 @@ cb = colorbar;
 colormap(flipud(cbrewer2('RdYlBu')))
 set(gca,'ColorScale','log')
 cb.Label.Interpreter = 'Latex';
-cb.Label.String = '$f_{in}^{5} \cdot$ S($t,f_{in}$) $\cdot \frac{df_{ob}}{df_{in}}$ (m$^2$ Hz$^{4}$)';
+cb.Label.String = 'B$_{in}$($t,f_{in}$) (m$^2$ Hz$^{4}$)';
 caxis([10^-12, 10^-7.5]);
 cb.Ticks = [10^-12; 10^-11; 10^-10; 10^-9; 10^-8] ;
 cb.TickLabels = { '$10^{-12}$'; '$10^{-11}$'; '$10^{-10}$'; '$10^{-9}$'; '$10^{-8}$'} ;  
 cb.TickLabelInterpreter = 'latex';
 cb.TickDirection = 'out';
 cb.TickLength = 0.02;
-cb.FontSize = fontsize-2;
+cb.FontSize = fontsize;
+
+% Turn off colorbar
+colorbar('off')
 
 %------------------- 2D-method Intrinsic Frequency Saturation Spectrogram -------------------%
 ax3 = subplot(3,1,3);
@@ -257,14 +319,32 @@ cb = colorbar;
 colormap(flipud(cbrewer2('RdYlBu')))
 set(gca,'ColorScale','log')
 cb.Label.Interpreter = 'Latex';
-cb.Label.String = '$f_{in}^{5} \cdot$ S($t,f_{in}$) $\cdot \frac{df_{ob}}{df_{in}}$ (m$^2$ Hz$^{4}$)';
+cb.Label.String = 'B$_{in}$($t,f_{in}$) (m$^2$ Hz$^{4}$)';
 caxis([10^-12, 10^-7.5]);
 cb.Ticks = [10^-12; 10^-11; 10^-10; 10^-9; 10^-8] ;
 cb.TickLabels = { '$10^{-12}$'; '$10^{-11}$'; '$10^{-10}$'; '$10^{-9}$'; '$10^{-8}$'} ;  
 cb.TickLabelInterpreter = 'latex';
 cb.TickDirection = 'out';
 cb.TickLength = 0.02;
-cb.FontSize = fontsize-2;
+cb.FontSize = fontsize;
+
+% Turn off colorbar
+colorbar('off')
+
+%-------- Set the position of the subplots --------%
+% find current position [x,y,width,height]
+pos1 = get(ax1,'Position');
+pos2 = get(ax2,'Position');
+pos3 = get(ax3,'Position');
+
+% set width of the axes equal to a set width
+width = 0.6986; 
+pos1(3) = width; 
+pos2(3) = width;
+pos3(3) = width;
+set(ax1,'Position',pos1)
+set(ax2,'Position',pos2)
+set(ax3,'Position',pos3)
 
 % Save Figure
 saveas(gcf, [fig_path 'figure_9.png'])
