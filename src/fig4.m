@@ -38,7 +38,7 @@ freq_b = (g)./(4*pi*U.*cosd(Theta_r));
 Ncircles = 5;                                                               % Number of azimuthal circles
 pos = linspace(0, 4, Ncircles);                                             % Position of azimuthal circles and their labels
 Contours = [0.1:0.1:2,5,10];                                                % Logarithmic scale colorbar tickmarks 
-cmap = colormap(flipud(cbrewer2('RdYlBu', numel(Contours))));               % Colormap (flip so that red represents high f_b and blue represents low f_b) % , numel(levels)
+cmap = colormap(flipud(cbrewer2('RdBu', numel(Contours))));               % Colormap (flip so that red represents high f_b and blue represents low f_b) % , numel(levels)
 idx_theta = theta_r == 0;                                                   % Index where theta vanishes
 LineWidth = 0.5;
 LineColor = 'k';
@@ -46,7 +46,7 @@ LineStyle = '-';
 fontsize = 15;
 
 % Create Figure and axes
-figure('units','normalized','outerposition',[0 0 1 1], 'Name', 'Birfurcation frequency in polar space');
+figure('units','normalized','outerposition',[0 0 1 0.918], 'Name', 'Birfurcation frequency in polar space');
 
 %------------------- Subplot 1 -------------------%
 subplot(1,2,1)
