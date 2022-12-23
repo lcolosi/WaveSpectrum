@@ -54,7 +54,7 @@ WaveSpectrum/
 
 4. If you follow the steps above you should be able to reproduce all figures, by running `figXX.m` from the `src` directory without having to adjust any paths.
 
-**Note on MatLab software Version:** Code was developed using MatLab R2022a. Version released before and after this may run into some errors. 
+**Note on MatLab software version:** Code was developed using MatLab R2022a. Version released before and after this may run into some errors. 
 
 # How to cite this code
 
