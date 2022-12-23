@@ -2,13 +2,13 @@
 % Luke Colosi | lcolosi@ucsd.edu | August 31st, 2022
 
 %-------------------------------- Caption --------------------------------%
-% (a) Trajectories of Planck (blue) and Stokes (red) Wave 
-% Gliders during the Delmar2020 experiment for the time period of 
-% September 9th at 2:30:00 UTC to September 11th at 16:10:00 UTC. (b)
-% Geographic region with location of experiment site (white box). Mean 
-% platform direction (c), Wind speed and direction (d), and significant
-% wave height (e) display the environmental conditions and additional
-% pertinent trajectory information.  
+% (a) Trajectories of Planck (blue) and Stokes (red) Wave Gliders during
+% the Delmar2020 experiment for the time period of September 9th at 
+% 2:30:00 UTC to September 11th at 16:10:00 UTC. (b) The geographic region
+% with the location of experiment site (white box). Mean platform direction
+% (c), wind speed at 10 meters above the ocean surface and direction at 
+% 1 meter above the ocean surface (d), and significant wave height (e) for
+% Planck (blue) and Stokes (red).  
 %-------------------------------------------------------------------------%
 
 clc, clearvars -except Np Ns Wp Ws bathy, close all;
