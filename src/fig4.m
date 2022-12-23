@@ -2,11 +2,12 @@
 % Luke Colosi | lcolosi@ucsd.edu | August 17th, 2022
 
 %-------------------------------- Caption --------------------------------%
-% (a) Bifurcation frequency as a function of platform speed and the
-% relative angle between platform heading and wave direction. Relative 
-% angles range from 0 to 90 degrees correspond to the platform moving 
-% with the waves. (b) Bifurcation frequency as a function of platform speed
-% for a platform moving strictly in the direction of wave propagation.  
+% (a) Cutoff frequency $f_c$ as a function of platform speed and the
+% relative angle between platform and wave propagation direction. 
+% Relative angles range from 0 to 90 degrees correspond to the platform
+% moving with the waves. (b) Cutoff frequency as a function of platform
+% speed for a platform moving strictly in the direction of wave
+% propagation.  
 %-------------------------------------------------------------------------%
 
 clc, clear, close all;
@@ -67,7 +68,7 @@ cb.TickLabelInterpreter = 'latex';
 cb.FontSize = fontsize;
 cb.Position = [0.4347    0.6399    0.0111    0.1985];
 annotation('textbox',[0.4267 0.8434 0.0484 0.0374],'String',{'$f_c$ (Hz)'},...
-           'Interpreter','latex','FontSize',15,'FontName','Helvetica Neue',...
+           'Interpreter','latex','FontSize',fontsize,'FontName','Helvetica Neue',...
            'EdgeColor','none');
 
 % Set figure attributes
@@ -92,22 +93,22 @@ annotation('textbox',[0.3371 0.7577 0.0397 0.0375],...                      % Az
            'FontName','Helvetica Neue','EdgeColor',[1 1 1]);
 annotation('textbox',[0.10348,0.5019,0.0592,0.0375],...                     % Radial axis tick label
            'String',{'U (ms$^{-1}$)'},'Interpreter','latex',...
-           'FontSize',15,'FontName','Helvetica Neue','EdgeColor',[1 1 1],...
-           'Rotation', 90);
+           'FontSize',fontsize,'FontName','Helvetica Neue', ...
+           'EdgeColor',[1 1 1],'Rotation', 90);
 annotation('textbox',[0.1086 0.81923 0.0164 0.0281],...                     % Radial axis tick marks
-           'String','4','Interpreter','latex','FontSize',15, ...
+           'String','4','Interpreter','latex','FontSize',fontsize, ...
            'FontName','Helvetica Neue','EdgeColor',[1 1 1]);
 annotation('textbox',[0.1107 0.6586 0.0164 0.0281],...
-           'String','3','Interpreter','latex','FontSize',15,...
+           'String','3','Interpreter','latex','FontSize',fontsize,...
            'FontName','Helvetica Neue','EdgeColor',[1 1 1]);
 annotation('textbox',[0.1093 0.5020 0.0164 0.0281],...
-           'String','2','Interpreter','latex','FontSize',15,...
+           'String','2','Interpreter','latex','FontSize',fontsize,...
            'FontName','Helvetica Neue','EdgeColor',[1 1 1]);
 annotation('textbox',[0.1100 0.3414 0.0164 0.0281],...
-           'String','1','Interpreter','latex','FontSize',15,...
+           'String','1','Interpreter','latex','FontSize',fontsize,...
            'FontName','Helvetica Neue','EdgeColor',[1 1 1]);
 annotation('textbox',[0.1107 0.1821 0.0164 0.0281],...
-           'String','0','Interpreter','latex','FontSize',15,...
+           'String','0','Interpreter','latex','FontSize',fontsize,...
            'FontName','Helvetica Neue','EdgeColor',[1 1 1]);
 
 % Set axis positions of figure
@@ -145,8 +146,10 @@ annotation('line',xa,ya,'Color','k', 'LineWidth', linewidth)
 
 %-- Text box --%
 str = '\bf{Wave Glider}';
-dim = [0.1443 0.1480 0.0564 0.0295];
-annotation('textbox',dim ,'String',str,'FitBoxToText','on','EdgeColor', 'none', 'Interpreter', 'latex');
+dim = [0.135272222222222 0.147930107526882 0.08112670050727 0.0376344086021505];
+annotation('textbox',dim,'String',str,'FitBoxToText','on', ...
+           'EdgeColor', 'none', 'Interpreter', 'latex', ...
+           'Fontsize', fontsize);
 
 %----- Sail Drone speed scale -----%
 
@@ -165,8 +168,10 @@ annotation('line',xa,ya,'Color','k', 'LineWidth', 1.5)
 
 %-- Text box --%
 str = '\bf{Saildrone}';
-dim = [0.2353 0.1235 0.0497 0.0295];
-annotation('textbox',dim ,'String',str,'FitBoxToText','on','EdgeColor', 'none', 'Interpreter', 'latex');
+dim = [0.233216666666667 0.120741935483871 0.0644818252987332 0.0376344086021505];
+annotation('textbox',dim,'String',str,'FitBoxToText','on', ...
+           'EdgeColor', 'none', 'Interpreter', 'latex', ...
+           'Fontsize', fontsize);
 
 %------------------- Subplot 2 -------------------%
 subplot(1,2,2)
@@ -217,8 +222,10 @@ annotation('line',xa,ya,'Color','k', 'LineWidth', linewidth)
 
 %-- Text box --%
 str = '\bf{Wave Glider}';
-dim = [0.6699 0.2284 0.0564 0.0295];
-annotation('textbox',dim ,'String',str,'FitBoxToText','on','EdgeColor', 'none', 'Interpreter', 'latex', 'Rotation',90);
+dim = [0.672677777777778 0.20279247311828 0.08112670050727 0.0376344086021505];
+annotation('textbox',dim,'String',str,'FitBoxToText','on', ...
+           'EdgeColor', 'none','Interpreter', 'latex', ...
+           'Fontsize', fontsize,'Rotation',90);
 
 %----- Sail Drone speed scale -----%
 
@@ -237,8 +244,10 @@ annotation('line',xa,ya,'Color','k', 'LineWidth', 1.5)
 
 %-- Text box --%
 str = '\bf{Saildrone}';
-dim = [0.6895 0.3886 0.0453 0.0295];
-annotation('textbox',dim ,'String',str,'FitBoxToText','on','EdgeColor', 'none', 'Interpreter', 'latex','Rotation',90);
+dim = [0.690888888888889 0.376433333333333 0.0644818252987331 0.0376344086021506];
+annotation('textbox',dim,'String',str,'FitBoxToText','on', ...
+           'EdgeColor','none','Interpreter','latex', ...
+           'Fontsize', fontsize, 'Rotation',90);
 
 % Save Figure
 saveas(gcf, [fig_path 'figure_4.png'])
