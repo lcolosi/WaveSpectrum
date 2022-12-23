@@ -152,7 +152,7 @@ np_n = fe_n*time_offset;                                                    % Nu
 np_w = fe_w*time_offset;                                                    % Number of weather measurements taken in time offset duration
 
 % Extend T0 to account for the offset from the truncation
-i = 865;                                                                    % Old code used to compute time offset: length(T0_i) - 1 + ((5/2)*(dt_defined/time_offset) + 1);  
+i = 865;                                                                    % Old code used to compute time offset (hard coded this instead): length(T0_i) - 1 + ((5/2)*(dt_defined/time_offset) + 1);  
 T0 = [T0_i(1:end-1) T0_i(end):dt_defined:T0_i(end)+(i+(i-2))*time_offset];
 
 % Loop through legs
