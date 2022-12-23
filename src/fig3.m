@@ -2,13 +2,17 @@
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2021
 
 %-------------------------------- Caption --------------------------------%
-% Mapping from observed to intrinsic frequency for a platform 
-% moving at 0.5 ms$^{-1}$ (a), 1 ms$^{-1}$ (b), and 2 ms$^{-1}$ 
-% (c) with line color corresponding to the platform's direction relative
-% to the incoming waves. 0 $^{\circ}$ means the platform is moving 
-% strictly with waves) and 180 $^{\circ}$ means the platform is moving 
-% against waves. Gray dashed line is the cutoff frequency $f_c$ with gray
-% circles being $f_c$ for given given directions. 
+% Mapping from observed to intrinsic frequency for a platform moving at 
+% 0.5 ms$^{-1}$ (a), 1 ms$^{-1}$ (b), and 2 ms$^{-1}$ (c) with line color
+% corresponding to the platform's direction relative to the waves. The
+% platform is moving with the waves when $\theta_r$ ranges from 
+% $0^\circ \leq \theta_r < 90^\circ$ (red curves) and is moving against 
+% the waves when $\theta_r$ ranges from 
+% $90^\circ < \theta_r \leq 180^\circ$ (blue curves). The platform is
+% moving perpendicular to the waves when $\theta_r = 90^\circ$. The gray
+% dashed line is the cutoff frequency $f_c$ with gray circles being $f_c$
+% for a given directions. The black dashed line is the one-to-one line
+% occurring when the projected speed vanishes. 
 %-------------------------------------------------------------------------%
 
 clc, clear, close all;
@@ -204,7 +208,7 @@ fig = figure( 'Name', 'Observed vs Intrinsic Frequency');
 POS = [100 100 500 2000];                                                   %[100 100 2000 300];
 set(gcf,'color',[1 1 1])
 set(gcf,'position',POS) 
-fontsize = 12;
+fontsize = 13;
 
 % Obtain RGB triplet for colormap
 cmap = colormap(cbrewer2('RdYlBu'));
