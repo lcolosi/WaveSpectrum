@@ -32,7 +32,8 @@ theta_r = 0:1:90;                                                           % Re
 % Compute bifurcation frequency (units: Hz)
 freq_b = (g)./(4*pi*U.*cosd(Theta_r));  
 
-%% Plot bifurcation frequency in polar space  
+%% Plot bifurcation frequency in polar space 
+close all
 
 % Set variables for plotting: 
 Ncircles = 5;                                                               % Number of azimuthal circles
@@ -46,7 +47,7 @@ LineStyle = '-';
 fontsize = 15;
 
 % Create Figure and axes
-figure('units','normalized','outerposition',[0 0 1 0.918], 'Name', 'Birfurcation frequency in polar space');
+figure('units','normalized','outerposition',[0 0 1 1], 'Name', 'Birfurcation frequency in polar space');
 
 %------------------- Subplot 1 -------------------%
 subplot(1,2,1)
@@ -75,25 +76,25 @@ set(gcf,'color',[1,1,1])
 ax = gca;
 ax.FontSize = fontsize;
 set(gca,'TickLabelInterpreter','latex')
-annotation('line', [0.13056,0.1222], [0.83300,0.83300])
-annotation('line', [0.13056,0.1222], [0.67369,0.67369])
+annotation('line', [0.13056,0.1222], [0.83434,0.83434])                     % Horizontal lines along vertical radial axis in subplot (a)
+annotation('line', [0.13056,0.1222], [0.67503,0.67503])
 annotation('line', [0.13056,0.1222], [0.51439,0.51439])
-annotation('line', [0.13056,0.1222], [0.35509,0.35509])
-annotation('line', [0.13125,0.1229], [0.19578,0.1958])
-annotation('line', [0.21250,0.2125], [0.19712,0.1821])
+annotation('line', [0.13056,0.1222], [0.35374,0.35374])
+annotation('line', [0.13125,0.1229], [0.19443,0.19443])
+annotation('line', [0.12986,0.12986],[0.19579 0.1807])                      % Vertical lines along horizontal radial axis in subplot (a)
+annotation('line', [0.21250,0.2125], [0.19712,0.1821])                      
 annotation('line', [0.29514,0.2951], [0.19440,0.1794])
 annotation('line', [0.37847,0.3785], [0.19445,0.1794])
 annotation('line', [0.46042,0.4604], [0.19579,0.1807])
-annotation('line', [0.12986,0.12986],[0.19579 0.1807])
-annotation('textbox',[0.3371 0.7577 0.0397 0.0375],...
+annotation('textbox',[0.3371 0.7577 0.0397 0.0375],...                      % Azimuthal axis tick label
            'String','$\theta_r \;(^\circ)$',...
            'Interpreter','latex','FontSize',15,...
            'FontName','Helvetica Neue','EdgeColor',[1 1 1]);
-annotation('textbox',[0.10348,0.5019,0.0592,0.0375],...
+annotation('textbox',[0.10348,0.5019,0.0592,0.0375],...                     % Radial axis tick label
            'String',{'U (ms$^{-1}$)'},'Interpreter','latex',...
            'FontSize',15,'FontName','Helvetica Neue','EdgeColor',[1 1 1],...
            'Rotation', 90);
-annotation('textbox',[0.1086 0.81923 0.0164 0.0281],...
+annotation('textbox',[0.1086 0.81923 0.0164 0.0281],...                     % Radial axis tick marks
            'String','4','Interpreter','latex','FontSize',15, ...
            'FontName','Helvetica Neue','EdgeColor',[1 1 1]);
 annotation('textbox',[0.1107 0.6586 0.0164 0.0281],...
