@@ -2,8 +2,9 @@
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2022
 
 %-------------------------------- Caption --------------------------------%
-% Observed directional wave spectrum computed from measurement collected 
-% aboard the Stokes wave glider's during the large box trajectory 
+% An observed directional wave spectrum computed from measurement collected
+% aboard the Stokes Wave Glider during a single leg of the large box 
+% trajectory in the DELMAR2020 experiment 
 % (07:57:22 to 08:42:02 September 10, 2020). 
 %-------------------------------------------------------------------------%
 
