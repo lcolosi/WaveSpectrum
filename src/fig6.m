@@ -98,7 +98,7 @@ clc, close all;
 % Set plotting parameters
 red = [0.6350 0.0780 0.1840]; 
 blue = [0 0.4470 0.7410];
-fontsize = 18;
+fontsize = 24;
 itime = 30; 
 
 % Set variables 
