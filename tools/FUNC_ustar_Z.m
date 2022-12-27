@@ -2,6 +2,10 @@ function [ustar, z0, U10] = FUNC_ustar_Z(z, Uz, varargin)
 
     %%%%
     % [ustar, z0, U10] = FUNC_ustar_Z(z, Uz, varargin)
+    % 
+    % Code written by Fairall (associated with his 2003 paper: Bulk 
+    % Parameterization of Air–Sea Fluxes: Updates and Verification for the 
+    % COARE Algorithm). May be found in the COARE model toolbox. 
     %
     % Function for computing the friction velocity, surface roughness
     % length, and the wind speed 10 meters above the ocean surface by
@@ -74,16 +78,20 @@ function [ustar, z0, U10] = FUNC_ustar_Z(z, Uz, varargin)
     %           (2) Oost et al. (2002) Model: 
     %                   z0 = 50/(2*pi)*Lp*(ustar/Cp)^4.5 + 0.11*nu/ustar
     %  
-    %           (3) No charnock-wave Model: 
-    %                   z0 = alpha*ustar^2/g + 0.11*nu
+    %           (3) Fairall et al. (2003) Model (No charnock-wave Model):  
+    %                   z0 = alpha*ustar^2/g + 0.11*nu/ustar
     %                   
     %       Here, Hs is significant wave height, Lp is the peak wavelength,
     %       Cp is the phase speed at the peak of the spectrum, g is
     %       gravitational acceleration, alpha is the charnock parameter 
-    %       and nu is .
+    %       and nu is kinematic visocity.
     % 
     %       The Charnock-wave models can produce weird result, so check 
-    %       solution with no charnock-wave model output.     
+    %       solution with no charnock-wave model output.  
+    % 
+    %       The Fairall et al. model specifies the surface roughness as the
+    %       conventional charnock expression plus a smooth flow limit (see
+    %       Smith (1988) for more details). 
     %   
     %   (2) In matlab, 1d-4 = 10^-4 and 15d-6 = 1.5*10^-5. The notation 
     %       nd-m where n and m are any positive integers provides a more 
@@ -220,9 +228,6 @@ end
 %       Because the size of the x array is so large (20,000 elements), this
 %       is where most of the time expensive computing occurs
 %       especially if you are iterating over multiple Uz values. 
-%
-%   (2) Where does the second term in the charnock relation for z0 come
-%       from? What are parameters nu and 0.11? 
 %
 %   (3) Why do you find where fustar > 0 for the case where multiple u_star
 %       values provide a difference between estimates equal to zero? This
