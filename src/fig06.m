@@ -99,7 +99,7 @@ clc, close all;
 red = [0.6350 0.0780 0.1840]; 
 blue = [0 0.4470 0.7410];
 fontsize = 24;
-itime = 30; 
+itime = 15; 
 
 % Set variables 
 fi = 4*10^-1;                                                               % nov_s.fst(itime);
@@ -164,3 +164,7 @@ disp(['Time Frame: ' t_initial ' to ' t_final])
 
 % Save Figure
 saveas(gcf, [fig_path 'figure_6.png'])
+
+disp(num2str(w_s.mfv(itime)))
+disp(num2str(nov_s.fst(itime)))
+
