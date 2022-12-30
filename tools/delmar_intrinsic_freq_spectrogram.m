@@ -3,9 +3,6 @@
 
 clc, clearvars -except Ns Ws, close all;
 
-% Set the current working directory
-cd ~/Desktop/projects/asi_lab_summer_internship/WaveGlider/src
-
 % Set text interpreter 
 set(0,'defaultTextInterpreter','latex');
 set(groot, 'DefaultTextInterpreter', 'latex')
@@ -183,8 +180,11 @@ for is = 1:length(T0)
     % Compute mean direction of platform
     [nov_s.mD(kr), ~] = direction_stats(nov_s.true_course, dt_n, 0);        % Convention: CW, going towards, ref north
     
-    % Compute mean speed using instantaneous speed
+    % Compute mean speed using instantaneous speed and projected
+    % velocity
     nov_s.mspeed(kr) = mean(nov_s.ground_speed_ms);
+    nov_s.ground_speed_ms_proj = nov_s.ground_speed_ms .* cosd(nov_s.true_course - nov_s.mD(kr));
+    nov_s.mspeed_proj(kr) = mean(nov_s.ground_speed_ms_proj);
     
     % Compute relative angle between platform and wave direction
     nov_s.rel_theta(:,kr) = mod(nov_s.theta - nov_s.mD(kr), 360);           % Convention: CW, going towards, ref north
@@ -218,16 +218,29 @@ clc
 % Set variables for mapping
 tail = [zeros(size(nov_s.fst)); nov_s.feq; nov_s.fst]; 
 
-%------ Map wave spectra using Instantaneous Speed ------%
+%------ Map wave spectra ------%
 
 % Loop through time increments
 for it = 1:length(T0)
     
     % Map Directional Spectra 
-    [nov_s.dir_spectrogram_f_in(:,:,it), nov_s.f_in(:,:,it), nov_s.dir_spectrogram_f_ob(:,:,it), ~, nov_s.fb(:,:,it), ~, ~, ~]  = doppler_correct_dir_spectrum(nov_s.Sd_f_ob(:,:,it)', nov_s.f_ob, f_noise, df, dtheta, nov_s.mspeed(it), nov_s.rel_theta(:,it), tail(:,it));
+    [nov_s.dir_spectrogram_f_in(:,:,it), nov_s.f_in(:,:,it), nov_s.dir_spectrogram_f_ob(:,:,it), ~, nov_s.fb(:,:,it), ~, ~, ~]  = map_dir_spectrum(nov_s.Sd_f_ob(:,:,it)', nov_s.f_ob, f_noise, df, dtheta, nov_s.mspeed_proj(it), nov_s.rel_theta(:,it));
     
     % Compute Omni-directional Spectra from directional spectra 
-    nov_s.spectrogram_omni_f_in(:,it) = sum(nov_s.dir_spectrogram_f_in(:,:,it) * dtheta, 2);
+    spectrogram_omni_f_in_nt = sum(nov_s.dir_spectrogram_f_in(:,:,it) * dtheta, 2);
+
+    % Find non-nan values in S_fin after mapping
+    idx_nan = ~isnan(spectrogram_omni_f_in_nt);
+
+    % Attach a spectral tail if specified
+    if tail(1,it) == true
+        S_truc = spectrogram_omni_f_in_nt(idx_nan);
+        f_truc = nov_s.f_ob(idx_nan);
+        f_tail = [f_truc(end), nov_s.f_ob(~idx_nan)];
+        [nov_s.spectrogram_omni_f_in(:,it), ~, fit, f_fit] = omnidir_spectral_tail(S_truc, f_truc, f_tail, tail(2,it), tail(3,it), f_noise);
+    else
+        nov_s.spectrogram_omni_f_in(:,it) = spectrogram_omni_f_in_nt;
+    end
 
 end
 

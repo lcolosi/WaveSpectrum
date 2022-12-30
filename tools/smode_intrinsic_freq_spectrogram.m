@@ -3,9 +3,6 @@
 
 clc, clearvars -except N W, close all;
 
-% Set the current working directory
-cd ~/Desktop/projects/asi_lab_summer_internship/WaveSpectrum/src/
-
 % Set text interpreter 
 set(0,'defaultTextInterpreter','latex');
 set(groot, 'DefaultTextInterpreter', 'latex')
@@ -247,7 +244,7 @@ for is = 1:(length(T0) - 1)
     %Compute Directional Spectrum 
     [n.Sd(:,:,is), n.f, n.theta] = compute_directional_spectrum(fast.high_pass.alt, fast.high_pass.ve, fast.high_pass.vn, fast.high_pass.vu, fast.high_pass.ttime_n, f, df, dtheta, nfft, fe_n, toolbox, variables, scaling, dir_con);
 
-    % Compute the Omni-directional Spectra from directional wave spectra 
+    % Compute the Omnidirectional Spectra from directional wave spectra 
     n.spectrogram_omni(:,is) = sum(n.Sd(:,:,is) * dtheta, 1);
     
     % Compute heave spectra
@@ -305,415 +302,52 @@ clc, close all;
 % Set variables for mapping 
 tail = [zeros(size(n.fst)); n.feq; n.fst];
    
-% Doppler correct wave spectra
-
-% ----------------- Instantaneous Speed ----------------- % 
+%------ Map wave spectra ------%
 
 % Loop through legs 
 for i = 1:(length(T0)-1 ) 
-    
-    % Display center interval 
-    disp(datestr(n.time_legs(i)))
       
     % Correct Directional Spectra 
-    [n.inst_speed.dir_spectrogram_f_in(:,:,i), n.inst_speed.f_in_2d(:,:,i), n.inst_speed.dir_spectrogram_f_ob(:,:,i), ~, n.inst_speed.fb(:,:,i), ~, n.inst_speed.J(:,:,i), n.inst_speed.var_2d(:,i)]  = doppler_correct_dir_spectrum(n.Sd_f_ob(:,:,i)', n.f_ob, f_noise, df, dtheta, n.mspeed(i), n.rel_theta(:,i), tail(:,i)); 
+    [n.dir_spectrogram_f_in(:,:,i), n.f_in_2d(:,:,i), n.dir_spectrogram_f_ob(:,:,i), ~, n.fb(:,:,i), ~, n.J(:,:,i), n.var_2d(:,i)]  = map_dir_spectrum(n.Sd_f_ob(:,:,i)', n.f_ob, f_noise, df, dtheta, n.mspeed_proj(i), n.rel_theta(:,i)); 
     
     % Compute Omni-directional Spectra from directional spectra 
-    n.inst_speed.spectrogram_omni_f_in(:,i) = sum(n.inst_speed.dir_spectrogram_f_in(:,:,i) * dtheta, 2);
+    spectrogram_omni_f_in_nt = sum(n.dir_spectrogram_f_in(:,:,i) * dtheta, 2);
+
+    % Find non-nan values in S_fin after mapping
+    idx_nan = ~isnan(spectrogram_omni_f_in_nt);
+
+    % Attach a spectral tail if specified
+    if tail(1,i) == true
+        S_truc = spectrogram_omni_f_in_nt(idx_nan);
+        f_truc = n.f_ob(idx_nan);
+        f_tail = [f_truc(end), n.f_ob(~idx_nan)];
+        [n.spectrogram_omni_f_in(:,i), ~, fit, f_fit] = omnidir_spectral_tail(S_truc, f_truc, f_tail, tail(2,i), tail(3,i), f_noise);
+    else
+        n.spectrogram_omni_f_in(:,i) = spectrogram_omni_f_in_nt;
+    end
     
 end
 
 % Compute equivalent saturation spectrum for corrected spectra
-
-% --------- Instant Speed --------- % 
-n.inst_speed.sat_spectrogram_omni_f_in = n.inst_speed.spectrogram_omni_f_in .* (n.f_ob').^(5); 
+n.sat_spectrogram_omni_f_in = n.spectrogram_omni_f_in .* (n.f_ob').^(5); 
 
 % Save spectrograms to mat file
-time = n.time_legs; f = n.f_ob; spec_ob = n.sat_spectrogram_omni_f_ob; spec_in = n.inst_speed.sat_spectrogram_omni_f_in;
+time = n.time_legs; f = n.f_ob; spec_ob = n.sat_spectrogram_omni_f_ob; spec_in = n.sat_spectrogram_omni_f_in;
 save([ROOT vehicle '/SMODE2021_spec_' vehicle '.mat'], 'time', 'f', 'spec_ob', 'spec_in')
 
-%% Compute frequency band integrated/averaged unmapped and mapped wave spectrogram 
-clc
-
-% Set significance level
-alpha = 0.05; 
-
-% Set the frequency band to integrate/average over
-idx_low = n.f_ob >= 2*10^(-1);
-idx_high = n.f_ob <= 5*10^(-1);
-Ifreq_band = logical(idx_low.*idx_high);
-
-% Average over a frequency band 
-av_sat_spec_fob = mean(n.sat_spectrogram_omni_f_ob(Ifreq_band,:),1,'omitnan');
-av_sat_spec_fin = mean(n.inst_speed.sat_spectrogram_omni_f_in(Ifreq_band,:),1,'omitnan');
-
-% Compute the integral over frequency band for observed spectrogram: 
-int_spec_fob = trapz(n.f_ob(Ifreq_band),n.spectrogram_omni_f_ob(Ifreq_band,:),1); 
-
-% Loop through legs 
-for ileg = 1:(length(T0)-1)
-    
-    % Find the indices of NaN values for 1
-    idx_nan_2d = ~isnan(n.inst_speed.spectrogram_omni_f_in(:,ileg)); 
-    
-    % Find the indices where frequency band and non-nans overlap
-    idx_2d = logical(idx_nan_2d .* Ifreq_band'); 
-    
-    % Integrate over a frequency band for intrinsic frequency spectrograms:
-    int_spec_fin(:,ileg) = trapz(n.f_ob(idx_2d),n.inst_speed.spectrogram_omni_f_in(idx_2d,ileg));
-
-end
-
-% Compute the correlation between the heading and integrated/averaged unmapped and mapped wave spectrogram
-[r_av_fob, pval_av_fob] = corr(n.mD',av_sat_spec_fob'); 
-[r_av_fin, pval_av_fin] = corr(n.mD',av_sat_spec_fin'); 
-[r_int_fob, pval_int_fob] = corr(n.mD',int_spec_fob'); 
-[r_int_fin, pval_int_fin] = corr(n.mD',int_spec_fin'); 
-
-% Compute correlation with my own function 
-r_mf = corr_coef(n.mD', av_sat_spec_fob');
-
-% Compute the coefficient of determination 
-[r2_av_fob] = coef_det(n.mD,av_sat_spec_fob);
-[r2_av_fin] = coef_det(n.mD,av_sat_spec_fin); 
-[r2_int_fob] = coef_det(n.mD,int_spec_fob); 
-[r2_int_fin] = coef_det(n.mD,int_spec_fin); 
-
-% Display results 
-disp('Averaged Saturation Spectrum')
-disp(['Correlation: before ' num2str(r_av_fob) ' and after ' num2str(r_av_fin)])
-disp(['Significance of correlation at 95% CL: before ' num2str(pval_av_fob < alpha) ' and after ' num2str(pval_av_fin < alpha) ' mapping'])
-disp(['R^2: before ' num2str(r2_av_fob) ' and after ' num2str(r2_av_fin)])
-disp(' ')
-disp('Integrated Saturation Spectrum')
-disp(['Correlation: before ' num2str(r_int_fob) ' and after ' num2str(r_int_fin)])
-disp(['Significance of correlation at 95% CL: before ' num2str(pval_int_fob < alpha) ' and after ' num2str(pval_int_fin < alpha) ' mapping'])
-disp(['R^2: before ' num2str(r2_int_fob) ' and after ' num2str(r2_int_fin)])
-
-% Initialize variable
-freqs = [0.1, 0.2, 0.3, 0.4, 0.5];
-r_fob = zeros(size(freqs)); r_fin = zeros(size(freqs)); 
-pval_fob = zeros(size(freqs)); pval_fin = zeros(size(freqs)); 
-r_squared_fob = zeros(size(freqs)); r_squared_fin = zeros(size(freqs));
-
-% Loop through frequencies
-for ifreq = 1:length(freqs)
-    
-    %Find index of ith frequency 
-    idx_f = n.f_ob == freqs(ifreq);
-
-    % Compute correlation and coefficient of determination before mapping
-    [r_fob(ifreq),pval_fob(ifreq)]  = corr(n.mD',n.sat_spectrogram_omni_f_ob(idx_f,:)');
-    r_squared_fob(ifreq) = coef_det(n.mD,n.sat_spectrogram_omni_f_ob(idx_f,:));
-
-    % Compute correlation and coefficient of determination after mapping
-    [r_fin(ifreq),pval_fin(ifreq)]  = corr(n.mD',n.inst_speed.spectrogram_omni_f_in(idx_f,:)');
-    r_squared_fin(ifreq) = coef_det(n.mD,n.inst_speed.spectrogram_omni_f_in(idx_f,:));
-
-    % Display results 
-    disp(' ')
-    disp(['Frequency: ' num2str(freqs(ifreq)) ])
-    disp(['Correlation: before ' num2str(r_fob(ifreq)) ' and after ' num2str(r_fin(ifreq))])
-    disp(['Significance of correlation at 95% CL: before ' num2str(pval_fob(ifreq) < alpha) ' and after ' num2str(pval_fin(ifreq) < alpha) ' mapping'])
-    disp(['Coefficient of determination: before ' num2str(r_squared_fob(ifreq)) ' and after '  num2str(r_squared_fin(ifreq))])
-     
-end
-
-%% Plot Observed and Intrinsic Frequency Saturation Spectra 
-clc, close all; 
-
-% Set plotting variables
-first = datetime(2021, 10, 29,0,0,0);
-last = datetime(2021, 11, 04,0,0,0);
-t_ticks = datenum(first:days(1):last);
-fontsize = 18; 
-
-% Set frequency low cutoff and latitude for small box cutoff
-Ifreq = find(n.f_ob > 0.02);  %Frequency low cutoff 
-
-% Create Figure and axes
-figure('units','normalized','outerposition',[0 0 1 1])
-
-%------------------- Observed Frequency Saturation Spectrogram -------------------%
-ax1 = subplot(2,1,1);
-
-% Plot Spectrogram
-pc = pcolor(n.time_legs, n.f_ob(Ifreq), n.sat_spectrogram_omni_f_ob(Ifreq,:));
-
-% Set figure attributes
-pc.EdgeColor = 'none';
-ylabel('$f_{ob} \;(Hz)$', 'Interpreter', 'latex')
-xlim([datenum(first), n.time_legs(end)])
-datetick('x', 'mm/dd', 'keeplimits')
-%xlim([datenum(2021,11,1,0,0,0), datenum(2021,11,2,0,0,0)])
-%datetick('x', 'HH:MM', 'keeplimits')
-set(gca,'Yscale','log')
-set(gca,'TickDir','out');
-set(gca,'FontSize',fontsize-2)
-set(gca,'TickLabelInterpreter','latex')
-
-% Set colorbar attributes
-cb = colorbar;
-colormap(flipud(cbrewer2('RdYlBu')))
-set(gca,'ColorScale','log')
-cb.Label.Interpreter = 'Latex';
-cb.Label.String = '$f_{ob}^{5} \cdot S(f_{ob}) \;(m^2 Hz^{4})$';
-caxis([10^-7, 2*10^-3]);
-cb.Ticks = [10^-7; 10^-6; 10^-5; 10^-4; 10^-3];
-cb.TickLabels = {'$10^{-7}$'; '$10^{-6}$'; '$10^{-5}$'; '$10^{-4}$'; '$10^{-3}$'}; 
-cb.TickLabelInterpreter = 'latex';
-cb.TickDirection = 'out';
-cb.TickLength = 0.02;
-cb.FontSize = 18;
-
-%------------------- Intrinsic Frequency Saturation Spectrogram -------------------%
-ax2 = subplot(2,1,2);
-
-% Plot Spectrogram
-pc1 = pcolor(n.time_legs, n.f_ob(Ifreq), n.inst_speed.sat_spectrogram_omni_f_in(Ifreq,:));
-
-hold on 
-pc2 = plot(n.time_legs,nanmin(squeeze(n.inst_speed.fb(:,2,:)),[],1), '-k', 'LineWidth', 1);
-% pc3 = plot(n.time_legs,n.fst, '-', 'color', 'w', 'LineWidth', 1);
-hold off
-
-% Set figure attributes
-pc1.EdgeColor = 'none';
-xlabel('UTC time from Oct. $29^{\textrm{th}}$, $2021$', 'Interpreter', 'latex')
-ylabel('$f_{in} \;(Hz)$', 'Interpreter', 'latex')
-xlim([datenum(first), datenum(last)])
-datetick('x', 'mm/dd', 'keeplimits')
-%xlim([datenum(2021,11,1,0,0,0), datenum(2021,11,2,0,0,0)])
-datetick('x', 'mmm dd', 'keepticks')
-set(gca,'Yscale','log')
-set(gca,'TickDir','out');
-set(gca,'FontSize',fontsize-2)
-set(gca,'TickLabelInterpreter','latex')
-
-% Set colorbar attributes
-cb = colorbar;
-colormap(flipud(cbrewer2('RdYlBu')))
-set(gca,'ColorScale','log')
-cb.Label.Interpreter = 'Latex';
-cb.Label.String = '$f_{in}^{5} \cdot S(f_{in})\cdot \frac{df_{ob}}{df_{in}} \;(m^2 Hz^{4})$';
-caxis([10^-7, 2*10^-3]);
-cb.Ticks = [10^-7; 10^-6; 10^-5; 10^-4; 10^-3];
-cb.TickLabels = {'$10^{-7}$'; '$10^{-6}$'; '$10^{-5}$'; '$10^{-4}$'; '$10^{-3}$'}; 
-cb.TickLabelInterpreter = 'latex';
-cb.TickDirection = 'out';
-cb.TickLength = 0.02;
-cb.FontSize = 18;
-
-% Save Figure
-saveas(gcf, [fig_path 'whoi_wg_smode_pilot_map_sat_specgram_heave_velocity_filter.png'])
-
-%% Plot heading and wave glider speed
-close all
-
-% Set plotting variables
-red = [0.6350 0.0780 0.1840]; 
-blue = [0 0.4470 0.7410];  
-t_ticks = datetime(date_i):days(1):datetime(date_f);
-
-% Create Figure and axes
-fig = figure('units','normalized','outerposition',[0 0 0.7 1]);
-
-%------------- Subplot 1 -------------%
-ax1 = subplot(2,1,1);
-
-% Plot the Wind direction
-pc1 = plot(n.time_legs,n.mD, '^-', 'Color', blue, 'MarkerSize', 4, 'MarkerFaceColor',blue, 'LineWidth', 0.5); 
-
-% Set figure attributes
-ylabel('$\textrm{Direction} (\textrm{Going Towards}\; ^{\circ})$', 'Interpreter', 'latex')
-xlim([n.time_legs(1), n.time_legs(end)])
-ylim([0,360])
-xticks(datenum(t_ticks))
-yticks([0,90,180,270,360])
-datetick('x', 'mmm dd', 'keepticks')
-set(gca,'FontSize',12)
-set(gca,'TickLabelInterpreter','latex')
-title('$\bf{(a)}$', 'FontSize', 15)
-
-%------------- Subplot 2 -------------%
-ax2 = subplot(2,1,2);
-
-% Plot Temporally computed Significant Wave Height 
-plot(n.time_legs, n.mspeed, '-', 'Color', [0.6350 0.0780 0.1840], 'LineWidth', 1.5)
- 
-% Set figure attributes
-xlabel('UTC time from Oct. $29^{\textrm{th}}$, $2021$', 'Interpreter', 'latex')
-ylabel('$| \vec{u} | \;(ms^{-1})$', 'Interpreter', 'latex')
-xlim([n.time_legs(1), n.time_legs(end)])
-ylim([0, 1.5])
-xticks(datenum(t_ticks))
-datetick('x', 'mmm dd', 'keepticks')
-set(gca,'FontSize',12)
-set(gca,'TickLabelInterpreter','latex')
-set(ax2, 'box', 'on', 'Visible', 'on')
-title('$\bf{(b)}$', 'FontSize', 15)
-
-% Save Figure
-saveas(fig, [fig_path 'smode_pilot_platform_motion.png'])
-
-%% 
-close all 
-figure('units','normalized','outerposition',[0 0 1 1])
-
-for iplot = 500:520
-hold on 
-loglog(n.f_ob(Ifreq), n.inst_speed.sat_spectrogram_omni_f_in(Ifreq,iplot), '-b', 'LineWidth', 2)
-hold off
-xlabel('$f_{obs} \;\textrm{or}\; f_{int} $')
-ylabel('$S(f_{int})$')
-set(gca, 'XScale', 'log')
-set(gca, 'YScale', 'log')
-title()
-
-% Display center interval 
-disp(datestr(n.time_legs(iplot)))
-
-pause 
-
-end
-
-%% Plot frequency band integrated and averaged power spectral density as a scatter plot before and after mapping 
-close all
-
-idx_sbox = find(n.time_legs > datenum(2021,11,01) & n.time_legs < datenum(2021,11,02)); % Indices for small box
-
-%------------------- Average -------------------%
-
-% Create Figure and axes
-figure('units','normalized','outerposition',[0 0 1 0.6])
-
-%------------------- f_ob Saturation Spectrogram -------------------%
-plot(n.time_legs, av_sat_spec_fob, 'LineWidth', 1, 'Color', [0.6350 0.0780 0.1840]);
-
-%------------------- f_in_1d Saturation Spectrogram -------------------%
-hold on 
-plot(n.time_legs, av_sat_spec_fin, 'LineWidth', 1, 'Color', [0 0.4470 0.7410]);
-hold off
-
-% Set figure attributes
-ylabel('$I(t) \;(m^2 Hz^{4})$', 'Interpreter', 'latex')
-xlim([n.time_legs(1), n.time_legs(end)])
-ylim([0, 3*10^-3])  %ylim([3*10^-5, 5*10^-3])
-xticks(datenum(t_ticks(2:end)))
-datetick('x', 'mm/dd', 'keepticks')
-%set(gca,'Yscale','log')
-set(gca,'TickDir','out');
-set(gca,'FontSize',fontsize-2)
-set(gca,'TickLabelInterpreter','latex')
-legend({'Observed Frequency', 'Intrinsic frequency'})
-
-% Save Figure
-saveas(gcf, [fig_path 'freq_average_saturation_spectrogram_heave_velocity_filter.png'])
-
-%------------------- Integral -------------------%
-
-% Create Figure and axes
-figure('units','normalized','outerposition',[0 0 1 0.6])
-
-%------------------- f_ob Spectrogram -------------------%
-plot(n.time_legs, int_spec_fob, 'LineWidth', 1, 'Color', [0.6350 0.0780 0.1840]);
-
-%------------------- f_in_2d Spectrogram -------------------%
-hold on 
-plot(n.time_legs, int_spec_fin, 'LineWidth', 1, 'Color', [0 0.4470 0.7410]);
-hold off
-
-% Set figure attributes
-ylabel('$I(t) \;(m^2)$', 'Interpreter', 'latex')
-xlim([n.time_legs(1), n.time_legs(end)])
-%ylim([0.01, 0.07])
-xticks(datenum(t_ticks(2:end)))
-datetick('x', 'mm/dd', 'keepticks')
-set(gca,'TickDir','out');
-set(gca,'FontSize',fontsize-2)
-set(gca,'TickLabelInterpreter','latex')
-legend({'Observed Frequency', 'Intrinsic frequency'})
-
-% Save Figure
-saveas(gcf, [fig_path 'freq_integral_spectrogram_heave_velocity_filter.png'])
-
-%--- Scatter plot ---%
-% Create figure axes 
-fig = figure('units','normalized','outerposition',[0 0 1 1]);
-
-% Plot scatter plot before and after mapping
-hold on 
-scatter(av_sat_spec_fob,n.mD,15,'r', 'filled')
-scatter(av_sat_spec_fin,n.mD,15,'b', 'filled')
-hold off
-
-% Set figure attributes
-xlabel('$I(t) \;(m^2 Hz^{4})$', 'Interpreter', 'latex')
-ylabel('$\overline{\theta} \;(degrees)$', 'Interpreter', 'latex')
-%xlim([-1 1])
-%ylim([-1 1])
-grid on
-set(gca,'TickDir','out');
-set(gca,'FontSize',14)
-set(gca,'TickLabelInterpreter','latex')
-
-% Save Figure
-%saveas(fig, [fig_path 'figure_5.png'])
-
-% figure(5);
-% subplot(2,1,1)
-% plot(n.time_legs, av_sat_spec_fob, '-b')
-% subplot(2,1,2)
-% plot(n.time_legs, n.mD, 'r')
-
-%% Developmental Code 
-% %% Plot transition frequencies 
-% close all 
-% 
-% % Set variables for plotting 
-% POS = [100 100 900 900];
-% 
-% %  Create Figure 
-% figure('Name', 'Bin Averaging check')
-% set(gcf,'color',[1 1 1])
-% set(gcf,'position',POS)
-% 
-% % Plot
-% semilogy(n.time_legs, n.feq, '.-r', 'Markersize', 8)
-% hold on 
-% semilogy(n.time_legs, n.fst, '.-b', 'Markersize', 8)
-% semilogy(n.time_legs, squeeze(n.inst_speed.fb(1,2,:)), '.-g', 'Markersize', 8)
-% yline(f_noise, '--k', 'LineWidth', 1.5, 'Label', '$f_{noise}$', 'Interpreter','latex', 'LabelHorizontalAlignment','left', 'FontSize',18)
-% hold off
-% 
-% % Set figure attributes 
-% xlabel('UTC time')
-% ylabel('$f_{eq} \; \textrm{or} \; f_{sat}$ (Hz)', 'Interpreter','latex')
-% datetick('x','mm/dd','keeplimits')
-% set(gca,'FontSize',18)
-
-% fe = 20;  % Sampling rate (Hz) of the Wave Glider (non-weather)
-% fe_w = 1;  % Sampling rate (Hz) of the Wave Glider (weather)
-% dt = 1/fe;  % Time interval between measurements (s) (non-weather)
-% dt_w = 1/fe_w;  % Time interval between measurements (s) (weather)
-
-% Debugging time interval
-% % Create figure
-% figure('units','normalized','outerposition',[0 0 0.6 0.6])
-
-% % Plot
-% hold on 
-%     plot(fast.high_pass.time, is*ones(1,length(fast.high_pass.time)), '.-', 'LineWidth', 1.5, 'Markersize', 8)
-%     plot(fast.time, is*ones(1,length(fast.time))-0.5, '.-', 'LineWidth', 1.5, 'Markersize', 8)
-% hold off 
-% xlabel('Time')
-% ylabel('Loop Variable')
-% if is == 10
-% xticks(datenum(datetime('29-Oct-2021 00:00:00'):minutes(10):datetime('29-Oct-2021 02:00:00')));
-% end
-% datetick('x', 'HH:MM:SS', 'keepticks')
-% grid on
-% 
-% % Display length of record
-% disp(['Duration of time interval: ', num2str(round((fast.high_pass.time(end) - fast.high_pass.time(1))*24*60)), ' minutes'])
-    
+%% Compute the mean platform speed and minimum blocking frequency 
+
+% Set the time period to average over
+idx_i = n.time_legs >= datenum(2021, 11, 1);
+idx_f = n.time_legs <= datenum(2021, 11, 2);
+Itime = logical(idx_i.*idx_f);
+
+% Compute mean platform speed
+mean_plat_speed = mean(n.mspeed_proj(Itime));
+std_plat_speed = std(n.mspeed_proj(Itime)); 
+stde_plat_speed = std_plat_speed/sqrt(length(n.mspeed_proj(Itime)));
+max_plat_speed = max(n.mspeed_proj(Itime));
+
+% Compute minimum blocking frequency
+min_fb_ts = nanmin(squeeze(n.fb(:,2,:)),[],1);
+min_fb = min(min_fb_ts(Itime));

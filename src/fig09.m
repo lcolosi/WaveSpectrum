@@ -9,29 +9,6 @@
 % the correlation coefficient $r$ is computed. 
 %-------------------------------------------------------------------------% 
 
-%--------------------------------- Notes ---------------------------------%
-% (1) Explanation for what's going wrong with attaching a spectral tail:
-% The spectral tail fitting works descently well when the blocking
-% frequency is within the saturation range and I fit a line in log10 space
-% from the equilibrium to saturation range transition frequency to
-% the highest accurately resolved frequency, the spectral tail is pretty
-% good. But when I try to fit the spectral tail in the equilibrium range,
-% the spectral tail is really bad! There are two reasons for this: 
-%
-%   (a) The transition frequency from the spectral peak to the equilibrium
-%   range is pretty low and close to the spectral peak. This transition
-%   frequency's function form was used in Lenain et al. 2017 (references
-%   Phillips 1985). I need to understand exactly where this comes from. 
-% 
-%   (b) As a result of (a), the linear fit includes a large band of the
-%   wave spectrum. For the delmar experiment, there exist multiple wave
-%   systems in the wave field (swell and developing wind seas). This biases
-%   the linear fit and makes it least squares approach unaffective. 
-% 
-% To resolve this problem, reduce the range of frequencies that we preform 
-% the least squares fit for the equilibrium range case. 
-%-------------------------------------------------------------------------% 
-
 clc, clear, close all;
 
 % Set text interpreter 
@@ -87,6 +64,7 @@ scaling = false;                                                            % Va
                                         [dt_n, dt_w]);
 
 %% Compute Wave Spectra
+clc, close all 
 
 % Loop through legs
 for n = 1:nlegs_s
@@ -109,9 +87,13 @@ for n = 1:nlegs_s
     % Compute mean direction of platform and wind
     eval(['[nov_s.mD_legs(n), ~] = direction_stats(nov_s.L' num2str(n) '.true_course, dt_n, 0);']) % Convention: CW, going towards, ref north
     eval(['[w_s.mTWD_legs(n), ~] = direction_stats(w_s.L' num2str(n) '.TWD, dt_w, 0);'])           % Convention: CW, going towards, ref north
-    
+
     % Compute mean speed using instantaneous speed
     eval(['nov_s.mspeed_legs(n) = mean(nov_s.L' num2str(n) '.ground_speed_ms);'])
+
+    % Compute mean speed using projected speed 
+    eval(['nov_s.ground_speed_ms_proj = nov_s.L' num2str(n) '.ground_speed_ms .* cosd(nov_s.L' num2str(n) '.true_course - nov_s.mD_legs(n));'])
+    nov_s.mspeed_proj(n) = mean(nov_s.ground_speed_ms_proj);
     
     % Compute relative angle between platform and wave direction
     nov_s.rel_theta_wind_legs(n) = mod(w_s.mTWD_legs(n) - nov_s.mD_legs(n), 360);  % 1D-method (Convention: CW, going towards, ref north)
@@ -148,10 +130,10 @@ tail = [zeros(size(nov_s.fst)); nov_s.feq; nov_s.fst];
 for ileg = 1:nlegs_s
     
     % Map Omni-Directional Spectra
-    [nov_s.spectrogram_omni_f_in_1d(:,ileg), nov_s.f_in_1d(:,ileg), nov_s.spectrogram_omni_f_ob(:,ileg), ~, nov_s.fb_1d(:,ileg), ~, ~, ~] = map_omni_dir_spectrum(nov_s.spectrogram_omni_f_ob(:,ileg), nov_s.f_ob, f_noise, df, nov_s.mspeed_legs(ileg), nov_s.rel_theta_wind_legs(ileg), tail(:,ileg));
+    [nov_s.spectrogram_omni_f_in_1d(:,ileg), nov_s.f_in_1d(:,ileg), nov_s.spectrogram_omni_f_ob(:,ileg), ~, nov_s.fb_1d(:,ileg), ~, ~, ~] = map_omni_dir_spectrum(nov_s.spectrogram_omni_f_ob(:,ileg), nov_s.f_ob, f_noise, df, nov_s.mspeed_proj(ileg), nov_s.rel_theta_wind_legs(ileg), tail(:,ileg));
     
     % Map Directional Spectra 
-    [nov_s.dir_spectrogram_f_in(:,:,ileg), nov_s.f_in_2d(:,:,ileg), nov_s.dir_spectrogram_f_ob(:,:,ileg), ~, nov_s.fb_2d(:,:,ileg), ~, ~, ~]  = map_dir_spectrum(nov_s.Sd_f_ob(:,:,ileg)', nov_s.f_ob, f_noise, df, dtheta, nov_s.mspeed_legs(ileg), nov_s.rel_theta_legs(:,ileg), tail(:,ileg));
+    [nov_s.dir_spectrogram_f_in(:,:,ileg), nov_s.f_in_2d(:,:,ileg), nov_s.dir_spectrogram_f_ob(:,:,ileg), ~, nov_s.fb_2d(:,:,ileg), ~, ~, ~]  = map_dir_spectrum(nov_s.Sd_f_ob(:,:,ileg)', nov_s.f_ob, f_noise, df, dtheta, nov_s.mspeed_proj(ileg), nov_s.rel_theta_legs(:,ileg));
     
     % Compute Omni-directional Spectra from directional spectra 
     spectrogram_omni_f_in_2d_nt = sum(nov_s.dir_spectrogram_f_in(:,:,ileg) * dtheta, 2);
@@ -169,27 +151,6 @@ for ileg = 1:nlegs_s
         nov_s.spectrogram_omni_f_in_2d(:,ileg) = spectrogram_omni_f_in_2d_nt;
     end
 
-%     % Plot omni-directional spectra with and without tails
-%     figure('units','normalized','outerposition',[0.6 0.5 0.4 0.6]);
-%     loglog(nov_s.f_ob, spectrogram_omni_f_in_2d_nt, '-b', 'LineWidth', 2)
-% 
-%     % Set figure attributes
-%     xlabel('f (Hz)')
-%     ylabel('S(f) ($m^2 Hz^{-1}$)')
-%     xlim([10^-2 10^0])
-%     ylim([10^-10 10^-4])
-%     set(gca, 'FontSize', 15)
-% 
-%     % Save Figure
-%     saveas(gcf, '../../WaveGlider/figs/SMODE_P2021/omnidir_spec_tail_1.png')
-% 
-%     % Plot the least-square fit and the omni-directional spectrum with
-%     % spectral tail 
-%     hold on 
-%     loglog(nov_s.f_ob, nov_s.spectrogram_omni_f_in_2d(:,ileg), ':r', 'LineWidth', 2)
-%     loglog(f_fit, fit, '.-k', 'LineWidth', 2)
-%     hold off
-
 end
 
 % Compute equivalent saturation spectrum for intrinsic frequency spectrum
@@ -197,7 +158,6 @@ nov_s.sat_spectrogram_omni_f_in_1d = nov_s.spectrogram_omni_f_in_1d .* (nov_s.f_
 nov_s.sat_spectrogram_omni_f_in_2d = nov_s.spectrogram_omni_f_in_2d .* (nov_s.f_ob').^(5); 
 
 %% Plot Observed and Intrinsic Saturation Spectrograms
-clc
 
 % Set frequency low cutoff and latitude for small box cutoff
 Ifreq_l = find(nov_s.f_ob > 0.03);                                          % Frequency low cutoff 
@@ -206,7 +166,7 @@ Ilat_s = find(nov_s.mlat_legs < 32.93);                                     % In
 
 % Set plotting variables
 [T,F] = meshgrid(nov_s.time_legs(Ilat_s), nov_s.f_ob(Ifreq_h));
-contour_mod = [6*10^(-10), 6*10^(-10)];
+contour_mod = 6*[1*10^(-10), 1*10^(-10)];
 first = datetime(2020, 09, 10,23,0,0);
 last = datetime(2020, 09, 11,13,0,0);
 t_ticks = datenum(first:hours(1):last);
@@ -349,53 +309,31 @@ set(ax3,'Position',pos3)
 % Save Figure
 saveas(gcf, [fig_path 'figure_9.png'])
 
-%% Compute correlation coefficient to quantify skill of the technique
-clc
+%% Compute correlation coefficient to quantify skill of the methods
 
-% Set significance level
+% Set significance level and mean wave direction of high frequency waves (0.2 <= f_ob <= 0.5 Hz)
 alpha = 0.05;
+mwd = mod(180 + 303, 360);                                                  % Convert to directional convention CW, going towards, and reference north (see figure 7 code for calculation of mean wave direction 303). 
 
-% Clean contour data
+% Compute projected velocity for high frequency waves (0.2 <= f_ob <= 0.5 Hz)
+nov_s.proj_speed_legs = nov_s.mspeed_legs.*cosd(mod(mwd - nov_s.mD_legs, 360));
+ 
+% Set the frequency band to integrate/average over
+idx_low = nov_s.f_ob >= 1*10^(-1);
+idx_high = nov_s.f_ob <= 10*10^(-1);
+Ifreq_band = logical(idx_low.*idx_high);
 
-%----------- Observed Saturation Spectrogram -----------% 
+% Average over a frequency band in the saturation spectrum
+av_sat_spec_fob = mean(nov_s.sat_spectrogram_omni_f_ob(Ifreq_band,Ilat_s),1,'omitnan');
+av_sat_spec_fin_1d = mean(nov_s.sat_spectrogram_omni_f_in_1d(Ifreq_band,Ilat_s),1,'omitnan');
+av_sat_spec_fin_2d = mean(nov_s.sat_spectrogram_omni_f_in_2d(Ifreq_band,Ilat_s),1,'omitnan');
 
-% Remove outlier contour values 
-idx_time_ct1 = ct1(1,:) >= nov_s.time_legs(Ilat_s(1)); 
-idx_freq_ct1 = ct1(2,:) <= 0.22; 
-idx_ct1 = logical(idx_time_ct1 .* idx_freq_ct1); 
-ct1_clean = ct1(:,idx_ct1); 
-
-% Interpolate onto time interval of time_legs
-ct1_interp = interp1(ct1_clean(1,:),ct1_clean(2,:),nov_s.time_legs(Ilat_s),'linear','extrap');
-
-%----------- 1D-Method Saturation Spectrogram -----------% 
-
-% Remove outlier contour values 
-idx_time_ct2 = ct2(1,:) >= nov_s.time_legs(Ilat_s(1)); 
-idx_freq_ct2 = ct2(2,:) <= 0.22; 
-idx_ct2 = logical(idx_time_ct2 .* idx_freq_ct2); 
-ct2_clean = ct2(:,idx_ct2); 
-
-% Interpolate onto time interval of time_legs
-ct2_interp = interp1(ct2_clean(1,:),ct2_clean(2,:),nov_s.time_legs(Ilat_s),'linear','extrap');
-
-%----------- 2D-Method Saturation Spectrogram -----------% 
-
-% Remove outlier contour values 
-idx_time_ct3 = ct3(1,:) >= nov_s.time_legs(Ilat_s(1)); 
-idx_freq_ct3 = ct3(2,:) <= 0.22; 
-idx_ct3 = logical(idx_time_ct3 .* idx_freq_ct3); 
-ct3_clean = ct3(:,idx_ct3); 
-
-% Interpolate onto time interval of time_legs
-ct3_interp = interp1(ct3_clean(1,:),ct3_clean(2,:),nov_s.time_legs(Ilat_s),'linear','extrap');
-
-% Compute the correlation between the heading and integrated/averaged unmapped and mapped wave spectrogram
-[r_ct_fob, pval_ct_fob] = corr(nov_s.mD_legs(Ilat_s)',ct1_interp'); 
-[r_ct_fin_1d, pval_ct_fin_1d] = corr(nov_s.mD_legs(Ilat_s)',ct2_interp');  
-[r_ct_fin_2d, pval_ct_fin_2d] = corr(nov_s.mD_legs(Ilat_s)',ct3_interp');
+% Compute the correlation between the projected velocity for high frequency waves and averaged unmapped and mapped saturation wave spectrogram
+[r_av_sat_fob, pval_av_sat_fob] = corr(nov_s.proj_speed_legs(Ilat_s)',av_sat_spec_fob'); 
+[r_av_sat_fin_1d, pval_av_sat_fin_1d] = corr(nov_s.proj_speed_legs(Ilat_s)',av_sat_spec_fin_1d');  
+[r_av_sat_fin_2d, pval_av_sat_fin_2d] = corr(nov_s.proj_speed_legs(Ilat_s)',av_sat_spec_fin_2d');
 
 % Display results 
-disp('Power Spectral density Contour Saturation Spectrum')
-disp(['Correlation: Observed ' num2str(r_ct_fob) ', 1d method ' num2str(r_ct_fin_1d) ', and 2d method ' num2str(r_ct_fin_2d)])
-disp(['Significance of correlation at 95% CL: Observed ' num2str(pval_ct_fob < alpha) ', 1d method ' num2str(pval_ct_fin_1d < alpha) ', and 2d method ' num2str(pval_ct_fin_2d < alpha)])
+disp('Mean Saturation Spectrum correlation with projected speed')
+disp(['Correlation: Observed ' num2str(r_av_sat_fob) ', 1d method ' num2str(r_av_sat_fin_1d) ', and 2d method ' num2str(r_av_sat_fin_2d)])
+disp(['Significance of correlation at 95% CL: Observed ' num2str(pval_av_sat_fob < alpha) ', 1d method ' num2str(pval_av_sat_fin_1d < alpha) ', and 2d method ' num2str(pval_av_sat_fin_2d < alpha)])
