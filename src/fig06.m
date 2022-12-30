@@ -108,7 +108,7 @@ clc, close all;
 red = [0.6350 0.0780 0.1840]; 
 blue = [0 0.4470 0.7410];
 fontsize = 24;
-itime = 20; 
+itime = 18; 
 
 % Set variables 
 fi = nov_s.fst(itime);                                                     
@@ -177,6 +177,6 @@ saveas(gcf, [fig_path 'figure_6.png'])
 
 % Display pertinent variables
 disp(['Friction velocity: ' num2str(w_s.mfv(itime))])
-disp(['Equilibrium to saturation range frequency transition' num2str(nov_s.fst(itime))])
-disp(['Relative angle between mean wave direction for high frequency waves and platform heading: 'num2str(nov_s.rel_theta_wave_legs(itime))])
+disp(['Equilibrium to saturation range frequency transition ' num2str(nov_s.fst(itime))])
+disp(['Relative angle between mean wave direction for high frequency waves and platform heading: ' num2str(nov_s.rel_theta_wave_legs(itime))])
 
