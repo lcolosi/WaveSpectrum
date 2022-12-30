@@ -29,7 +29,7 @@ The second was conducted as part of the NASA Submesocale Ocean Dynamics Experime
 Instrumented Boeing Liquid Robotics SV3 wave gliders are used to collect ocean and atmospheric observations at the air-sea interface (Grare et al. 2021). Atmospheric measurements include wind speed and direction from the Vaisala WXT (model 530) mounted $\sim 1$ meter above the ocean surface.The wind speed 10 meters above the ocean surface is computed assuming a logarithmic wind speed profile and a neutrally stable atmosphere (Charnock 1955). Ocean wave measurements are derived from the motion of the platform (Lenain and Melville 2014, Thomson et al. 2018, Grare et al, 2021) which is collected by Novatel's Synchronous Position, Altitude, and Navigational (SPAN) technology providing a combined solution from a Novatel OEM7720 global positioning system (GPS) receiver and a Epson EG320N inertial motion unit (IMU) for DELMAR2020 and a VectorNav VN-300 GPS/IMU for SMODE2021.
 
 # Funding
-This work was supported by the NASA  (award [put ID# here]) and the Office of Naval Research (award [put ID# here]).
+This work was supported by the Office of Naval Research (Grant [put ID# here]) and NASA (Grant [put ID# here]).
 
 # How to use this repository
 
