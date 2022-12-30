@@ -569,4 +569,4 @@ legend([pc1, pc2], 'Planck', 'Stokes', 'Interpreter', 'Latex', 'Location', 'nort
 set(gca, 'YGrid', 'off', 'XGrid', 'on') 
 
 % Save Figure
-saveas(fig, [fig_path 'figure_1.png'])
+saveas(fig, [fig_path 'fig01.png'])

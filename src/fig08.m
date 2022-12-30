@@ -1,28 +1,6 @@
 %% Figure 8:  Observations of Wave Spectra power spectral density modulation 
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2022
 
-%--------------- Notes ---------------%
-% 
-% (1) With and against waves separation
-%
-%     (i) Coming from directional convention: If mwd = 0 degrees (waves
-%         coming from due north), then: 
-%
-%         (a) With waves regime = 270 < phi and phi < 90 
-%         (b) Against waves regime = 90 < phi < 270 
-%
-%         where phi is the direction of propagation of the wave glider. 
-%     
-%     (ii) Going towards convention: If mwd = 0 degrees (waves
-%         going towards due north), then:
-% 
-%         (a) With waves regime = 270 < phi and phi < 90  
-%         (b) Against waves regime = 90 < phi < 270
-%
-%     Note that phi uses the same direction convention as the mean wave
-%     direction. 
-%-------------------------------------%
-
 %-------------------------------- Caption --------------------------------%
 % (a)  Stokes Wave Glider heading (using the coming from directional
 % convention) for small box legs. Red triangles denote the legs where the
@@ -298,4 +276,4 @@ pos1(3) = pos2(3);
 set(ax1,'Position',pos1)
 
 % Save Figure
-saveas(gcf, [fig_path 'figure_8.png'])
+saveas(gcf, [fig_path 'fig08.png'])

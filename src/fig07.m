@@ -282,4 +282,4 @@ cb.TickLength = 0.03;
 cb.FontSize = fontsize;
 
 % Save Figure
-saveas(gcf, [fig_path 'figure_7.png'])
+saveas(gcf, [fig_path 'fig07.png'])

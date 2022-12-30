@@ -173,7 +173,7 @@ t_final = eval(['datestr(nov_s.L' num2str(itime) '.time_20hz(end))']);
 disp(['Time Frame: ' t_initial ' to ' t_final])
 
 % Save Figure
-saveas(gcf, [fig_path 'figure_6.png'])
+saveas(gcf, [fig_path 'fig06.png'])
 
 % Display pertinent variables
 disp(['Friction velocity: ' num2str(w_s.mfv(itime))])

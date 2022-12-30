@@ -253,4 +253,4 @@ set(ax3,'Position',pos3)
 set(ax4,'Position',pos4)
 
 % Save Figure
-saveas(gcf, [fig_path 'figure_10.png'])
+saveas(gcf, [fig_path 'fig10.png'])

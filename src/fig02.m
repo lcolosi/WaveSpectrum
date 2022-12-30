@@ -568,4 +568,4 @@ set(gca,'TickLabelInterpreter','latex')
 set(gca, 'YGrid', 'off', 'XGrid', 'on') 
 
 % Save Figure
-saveas(fig, [fig_path 'figure_2.png'])
+saveas(fig, [fig_path 'fig02.png'])

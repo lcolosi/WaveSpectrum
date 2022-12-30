@@ -250,4 +250,4 @@ annotation('textbox',dim,'String',str,'FitBoxToText','on', ...
            'Fontsize', fontsize, 'Rotation',90);
 
 % Save Figure
-saveas(gcf, [fig_path 'figure_4.png'])
+saveas(gcf, [fig_path 'fig04.png'])

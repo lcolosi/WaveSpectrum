@@ -307,7 +307,7 @@ set(ax2,'Position',pos2)
 set(ax3,'Position',pos3)
 
 % Save Figure
-saveas(gcf, [fig_path 'figure_9.png'])
+saveas(gcf, [fig_path 'fig09.png'])
 
 %% Compute correlation coefficient to quantify skill of the methods
 

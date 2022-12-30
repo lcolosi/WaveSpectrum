@@ -311,4 +311,4 @@ pos3(4) = pos1(4);
 set(ax3,'Position',pos3)
 
 % Save Figure
-saveas(fig, strcat(fig_path, 'figure_3.png'))
+saveas(fig, strcat(fig_path, 'fig03.png'))

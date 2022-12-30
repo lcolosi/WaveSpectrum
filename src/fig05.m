@@ -135,4 +135,4 @@ t_final = eval(['datestr(nov_s.L' num2str(itime) '.time_20hz(end))']);
 disp(['Time Frame: ' t_initial ' to ' t_final])
 
 % Save Figure
-saveas(gcf, [fig_path 'figure_5.png'])
+saveas(gcf, [fig_path 'fig05.png'])
