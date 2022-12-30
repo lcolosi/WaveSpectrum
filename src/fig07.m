@@ -170,8 +170,8 @@ nov_s.sat_spectrogram_omni_f_ob(idx_zero) = NaN;
 
 % Find the time steps closest to the intital and final time of the leg
 % trajectory from figures 5 and 6. 
-time_i = datenum('10-Sep-2020 07:57:22'); 
-time_f = datenum('10-Sep-2020 08:42:02'); 
+time_i = datenum('9-Sep-2020 23:57:06');                                   % Old initial date: datenum('10-Sep-2020 07:57:22'); 
+time_f = datenum('10-Sep-2020 00:25:18');                                   % Old final date: datenum('10-Sep-2020 08:42:02'); 
 idx_int = find(T0 >= time_i); 
 idx_fin = find(T1 <= time_f); 
 

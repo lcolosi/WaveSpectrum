@@ -96,7 +96,7 @@ LineWidth = 0.5;
 LineColor = 'k';
 LineStyle = '-';
 TextColor = 'w';
-itime = 30; 
+itime = 18; 
 
 % Smooth out directional spectra
 Sd_smooth = movmean(nov_s.Sd_f_ob(:,:,itime),3,2);
