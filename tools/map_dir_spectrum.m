@@ -1,8 +1,8 @@
-function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectrum(S_fob, f_obs, f_cut, df_obs, dtheta, U, theta_r, tail)
+function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectrum(S_fob, f_obs, f_cut, df_obs, dtheta, U, theta_r)
     
     %%%%
     %
-    % [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectrum(S_fob, f_obs, f_cut, df_obs, dtheta, U, theta_r, tail)
+    % [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectrum(S_fob, f_obs, f_cut, df_obs, dtheta, U, theta_r)
     %
     % Function for mapping observed frequency (frequency measured in the 
     % moving reference frame of the platform) to intrinsic frequency 
@@ -78,7 +78,7 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
     %       do not include this information. Therefore, the functional form
     %       must be either updated to include directional dependence or the
     %       spectral tail attachment must be preformed on the
-    %       omni-directional spectrum. I choose the later. 
+    %       omni-directional spectrum. I choose the latter. 
     %
     %%%%
     
