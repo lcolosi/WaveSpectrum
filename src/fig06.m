@@ -63,6 +63,9 @@ scaling = false;                                                            % Va
 
 %% Compute Wave Spectra
 
+% Set mean wave direction of high frequency waves (0.2 Hz <= f_ob <= 0.5 Hz)
+mwd = mod(180 + 303, 360);
+
 % Loop through legs
 for n = 1:nlegs_s
     
@@ -78,6 +81,12 @@ for n = 1:nlegs_s
 
     % Compute transition frequencies
     nov_s.fst(n) = ((g*sqrt(r))/(2*pi*w_s.mfv(n)));                         % Equilibrium to saturation range frequency transition
+
+    % Compute mean direction of platform 
+    eval(['[nov_s.mD_legs(n), ~] = direction_stats(nov_s.L' num2str(n) '.true_course, dt_n, 0);']) % Convention: CW, going towards, ref north
+    
+    % Compute relative angle between platform and high wave direction
+    nov_s.rel_theta_wave_legs(n) = mod(mwd - nov_s.mD_legs(n), 360);  % 1D-method (Convention: CW, going towards, ref north)
 
 end
 
@@ -99,11 +108,12 @@ clc, close all;
 red = [0.6350 0.0780 0.1840]; 
 blue = [0 0.4470 0.7410];
 fontsize = 24;
-itime = 15; 
+itime = 20; 
 
 % Set variables 
-fi = 4*10^-1;                                                               % nov_s.fst(itime);
-Si = 2*10^-7;
+fi = nov_s.fst(itime);                                                     
+idx_f = find(nov_s.f_ob >= fi); 
+Si = nov_s.spectrogram_omni_f_ob(idx_f(1),itime);                          
 
 % Compute f^-5 slope lines
 slope4 = Si*((nov_s.f_ob/fi).^(-4));
@@ -165,6 +175,8 @@ disp(['Time Frame: ' t_initial ' to ' t_final])
 % Save Figure
 saveas(gcf, [fig_path 'figure_6.png'])
 
-disp(num2str(w_s.mfv(itime)))
-disp(num2str(nov_s.fst(itime)))
+% Display pertinent variables
+disp(['Friction velocity: ' num2str(w_s.mfv(itime))])
+disp(['Equilibrium to saturation range frequency transition' num2str(nov_s.fst(itime))])
+disp(['Relative angle between mean wave direction for high frequency waves and platform heading: 'num2str(nov_s.rel_theta_wave_legs(itime))])
 
