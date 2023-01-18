@@ -501,10 +501,10 @@ subplot(5,1,4)
 
 % Plot the Wind direction
 yyaxis left
-plot(EC.time(1:1:end),EC.mTWD_p(1:1:end), '^', 'Color', blue, 'MarkerSize', 4, 'MarkerFaceColor',blue)
+pc1 = plot(EC.time(1:1:end),EC.mTWD_p(1:1:end), '^', 'Color', blue, 'MarkerSize', 4, 'MarkerFaceColor',blue);
 
 hold on 
-plot(EC.time(1:1:end),EC.mTWD_s(1:1:end), '^', 'Color', red, 'MarkerSize', 4, 'MarkerFaceColor',red)
+plot(EC.time(1:1:end),EC.mTWD_s(1:1:end), '^', 'Color', red, 'MarkerSize', 4, 'MarkerFaceColor',red);
 hold off 
 
 % Set axis attributes
@@ -516,7 +516,7 @@ set(gca,'TickLabelInterpreter','latex')
 
 % Plot the Wind speeds
 yyaxis right
-plot(EC.time,EC.mTWS_10_p, '-', 'Color', blue, 'LineWidth', 1.5);
+pc2 = plot(EC.time,EC.mTWS_10_p, '-', 'Color', blue, 'LineWidth', 1.5);
 
 hold on 
 plot(EC.time,EC.mTWS_10_s, '-', 'Color', red, 'LineWidth', 1.5);
@@ -537,6 +537,7 @@ labels = string(ax.XAxis.TickLabels);
 labels(2:2:end) = ' ';
 ax.XAxis.TickLabels = labels;
 xlim([EC.time(1), EC.time(end)])
+legend([pc1, pc2], 'Direction', 'Speed', 'Interpreter', 'Latex', 'Orientation', 'Horizontal', 'Position',[0.676671373653917 0.404282160345735 0.227801122783143 0.0213440858548687]);
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
 set(gca, 'YGrid', 'off', 'XGrid', 'on') 
