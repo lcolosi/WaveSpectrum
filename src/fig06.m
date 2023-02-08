@@ -102,7 +102,6 @@ nov_s.Sd_f_ob = nov_s.Sd(:,Inoise_s,:);
 nov_s.sat_spectrogram_omni_f_ob = nov_s.spectrogram_omni_f_ob .* (nov_s.f_ob').^(5);
 
 %% Plot omni-directional and saturation wave spectra
-clc, close all; 
 
 % Set plotting parameters
 red = [0.6350 0.0780 0.1840]; 

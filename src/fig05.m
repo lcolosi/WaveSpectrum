@@ -79,7 +79,6 @@ nov_s.f_ob = nov_s.f(Inoise_s);
 nov_s.Sd_f_ob = nov_s.Sd(:,Inoise_s,:);
 
 %% Plot directional wave spectrum 
-clc, close all; 
 
 % Set plotting parameters
 Nspokes = 13;                                                               % Number of radial lines
