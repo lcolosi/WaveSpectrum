@@ -1,11 +1,11 @@
-%% Figure 6: Examples of omni-directional and saturation spectra 
+%% Figure 7: Examples of omni-directional and saturation spectra 
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2022
 
 %-------------------------------- Caption --------------------------------%
-% Observed omni-directional (a) and saturation (b) wave spectra computed
-% from the directional wave spectrum in Figure~\ref{f5}. The dashed and
-% dot-dashed lines a have $f_{ob}^{-4}$ and $f_{ob}^{-5}$ spectral slopes
-% respectively.
+% Observed (a) omnidirectional and (b) saturation wave spectra 
+% computed from the directional wave spectrum in Figure~\ref{f6}. 
+% The dashed and dot-dashed lines a have $f_{ob}^{-4}$ and $f_{ob}^{-5}$ 
+% spectral slopes respectively.
 %-------------------------------------------------------------------------%
 
 clc, clear, close all;
@@ -114,10 +114,12 @@ itime = 18;
 fi = nov_s.fst(itime);                                                     
 idx_f = find(nov_s.f_ob >= fi); 
 Si = nov_s.spectrogram_omni_f_ob(idx_f(1),itime);                          
+Si_4 = 5*10^(-8); 
+Si_5 = 2.5*10^(-8); 
 
 % Compute f^-5 slope lines
-slope4 = Si*((nov_s.f_ob/fi).^(-4));
-slope5 = Si*((nov_s.f_ob/fi).^(-5));
+slope4 = Si_4*((nov_s.f_ob/fi).^(-4));
+slope5 = Si_5*((nov_s.f_ob/fi).^(-5));
 
 % Create figure
 figure('units','normalized','outerposition',[0 0 1 1])
@@ -131,6 +133,7 @@ loglog(nov_s.f_ob, nov_s.spectrogram_omni_f_ob(:,itime), '-', 'LineWidth', 2, 'C
 hold on 
     pc1 = loglog(nov_s.f_ob,slope4, '--', 'LineWidth', 1.5, 'Color', [0.5 0.5 0.5]);
     pc2 = loglog(nov_s.f_ob,slope5, '-.', 'LineWidth', 1.5, 'Color', [0.5 0.5 0.5]);
+    xline(nov_s.fst(itime), '-k', ['$f_n = $', num2str(round(nov_s.fst(itime),2)), ' Hz'], 'LineWidth', 2, 'Interpreter', 'Latex', 'Fontsize', fontsize, 'LabelVerticalAlignment','bottom', 'LabelHorizontalAlignment', 'left')
 hold off
 
 % Set figure Attributes
@@ -146,7 +149,7 @@ axis square
 grid on 
 set(gca,'Box','on') 
 set(gca, 'color', 'w')
-legend([pc1, pc2], {'$f_{ob}^{-4}$', '$f_{ob}^{-5}$'}, 'Location', 'NorthEast', 'Fontsize', fontsize)
+legend([pc1, pc2], {'$f_{ob}^{-4}$', '$f_{ob}^{-5}$'}, 'Location', 'NorthWest', 'Fontsize', fontsize)
 
 %------------- Subplot 2 -------------%
 subplot(1,2,2);
@@ -173,7 +176,7 @@ t_final = eval(['datestr(nov_s.L' num2str(itime) '.time_20hz(end))']);
 disp(['Time Frame: ' t_initial ' to ' t_final])
 
 % Save Figure
-saveas(gcf, [fig_path 'fig06.png'])
+saveas(gcf, [fig_path 'fig07.png'])
 
 % Display pertinent variables
 disp(['Friction velocity: ' num2str(w_s.mfv(itime))])
