@@ -1,4 +1,4 @@
-%% Figure 5: Example of a directional spectrum 
+%% Figure 6: Example of a directional spectrum 
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2022
 
 %-------------------------------- Caption --------------------------------%
@@ -135,4 +135,4 @@ t_final = eval(['datestr(nov_s.L' num2str(itime) '.time_20hz(end))']);
 disp(['Time Frame: ' t_initial ' to ' t_final])
 
 % Save Figure
-saveas(gcf, [fig_path 'fig05.png'])
+saveas(gcf, [fig_path 'fig06.png'])
