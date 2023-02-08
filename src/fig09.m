@@ -1,12 +1,12 @@
-%% Figure 9: Map Observed frequency wave spectrogram to Intrinsic frequency space
+%% Figure 10: Map Observed frequency wave spectrogram to Intrinsic frequency space
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2022
 
 %-------------------------------- Caption --------------------------------%
-% Saturation wave spectrogram for the Stokes Wave Glider small box
-% trajectory in (a) observed frequency space and intrinsic frequency space
-% using the (b) 1D- and (c) 2D-methods. The black curve is the
-% $6\times10^{-10}$ m$^2$Hz$^4$ saturation spectral level contour where
-% the correlation coefficient $r$ is computed. 
+% Saturation wave spectrogram for Wave Glider Stokes' repeated small
+% 500 m box trajectory in (a) observed frequency space and intrinsic 
+% frequency space using the (b) 1D and (c) 2D methods. The black curve is
+% the $6\times10^{-10}$ m$^2$Hz$^4$ saturation spectral level contour to
+% emphasize fluctuation. 
 %-------------------------------------------------------------------------% 
 
 clc, clear, close all;
@@ -64,7 +64,6 @@ scaling = false;                                                            % Va
                                         [dt_n, dt_w]);
 
 %% Compute Wave Spectra
-clc, close all 
 
 % Loop through legs
 for n = 1:nlegs_s
@@ -119,7 +118,6 @@ nov_s.Sd_f_ob = nov_s.Sd(:,Inoise_s,:);
 nov_s.sat_spectrogram_omni_f_ob = nov_s.spectrogram_omni_f_ob .* (nov_s.f_ob').^(5);
 
 %% Account for Doppler shifts by mapping observed frequency to intrinsic frequency
-clc, close all; 
 
 % Set variables for mapping
 tail = [zeros(size(nov_s.fst)); nov_s.feq; nov_s.fst]; 
@@ -130,11 +128,11 @@ tail = [zeros(size(nov_s.fst)); nov_s.feq; nov_s.fst];
 for ileg = 1:nlegs_s
     
     % Map Omni-Directional Spectra
-    [nov_s.spectrogram_omni_f_in_1d(:,ileg), nov_s.f_in_1d(:,ileg), nov_s.spectrogram_omni_f_ob(:,ileg), ~, nov_s.fb_1d(:,ileg), ~, ~, ~] = map_omni_dir_spectrum(nov_s.spectrogram_omni_f_ob(:,ileg), nov_s.f_ob, f_noise, df, nov_s.mspeed_proj(ileg), nov_s.rel_theta_wind_legs(ileg), tail(:,ileg));
-    
+    [nov_s.spectrogram_omni_f_in_1d(:,ileg), nov_s.f_in_1d(:,ileg), nov_s.fb_1d(:,ileg), ~] = map_omni_dir_spectrum(nov_s.spectrogram_omni_f_ob(:,ileg), nov_s.f_ob, f_noise, nov_s.mspeed_proj(ileg), nov_s.rel_theta_wind_legs(ileg), tail(:,ileg));
+
     % Map Directional Spectra 
-    [nov_s.dir_spectrogram_f_in(:,:,ileg), nov_s.f_in_2d(:,:,ileg), nov_s.dir_spectrogram_f_ob(:,:,ileg), ~, nov_s.fb_2d(:,:,ileg), ~, ~, ~]  = map_dir_spectrum(nov_s.Sd_f_ob(:,:,ileg)', nov_s.f_ob, f_noise, df, dtheta, nov_s.mspeed_proj(ileg), nov_s.rel_theta_legs(:,ileg));
-    
+    [nov_s.dir_spectrogram_f_in(:,:,ileg), nov_s.f_in_2d(:,:,ileg), nov_s.fb_2d(:,:,ileg)]  = map_dir_spectrum(nov_s.Sd_f_ob(:,:,ileg)', nov_s.f_ob, f_noise, nov_s.mspeed_proj(ileg), nov_s.rel_theta_legs(:,ileg));
+
     % Compute Omni-directional Spectra from directional spectra 
     spectrogram_omni_f_in_2d_nt = sum(nov_s.dir_spectrogram_f_in(:,:,ileg) * dtheta, 2);
 
@@ -264,7 +262,7 @@ hold off
 % Set figure attributes
 title('(c)')
 pc.EdgeColor = 'none';
-xlabel('UTC time from Sep 11$^{\textrm{th}}$, 2020 (hrs)')
+xlabel('UTC time from 11 Sep 2020 (hrs)')
 ylabel('$f_{in}$ (Hz)', 'Interpreter', 'latex')
 xlim([nov_s.time_legs(Ilat_s(1)), nov_s.time_legs(end)])
 xticks(datenum(t_ticks(2:end)))
@@ -307,7 +305,7 @@ set(ax2,'Position',pos2)
 set(ax3,'Position',pos3)
 
 % Save Figure
-saveas(gcf, [fig_path 'fig09.png'])
+saveas(gcf, [fig_path 'fig10.png'])
 
 %% Compute correlation coefficient to quantify skill of the methods
 
