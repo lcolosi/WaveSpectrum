@@ -2,13 +2,13 @@
 % Luke Colosi | lcolosi@ucsd.edu | August 31st, 2022
 
 %-------------------------------- Caption --------------------------------%
-% (a) Trajectories of WHOI43 (blue) Wave Gliders during the SMODE2021
-% experiment for the time period of October 29th at 0:00:00 UTC to 
-% November 3rd at 23:00:00 UTC. (b) The geographic region with the 
-% location of experiment site (white box). (c) Mean platform direction,
-% (d) wind speed at 10 meters above the ocean surface and direction at 
-% 1 meter above the ocean surface , and (e) significant wave height for
-% WHOI43 (blue).
+% (a) Trajectory of Wave Glider WHOI43 (blue) during the SMODE2021 
+% experiment for the time period of 29 October at 0:00 UTC to 3 
+% November at 23:00 UTC. (b) The geographic region with the location of
+% the experiment site (white box). (c) Mean platform heading, (d) wind
+% speed at 10 meters above the ocean surface (solid line) and wind 
+% direction at 1 meter above the ocean surface (triangular markers), and
+% (e) significant wave height measured by WHOI43 (blue).
 %-------------------------------------------------------------------------%
 
 clc, clearvars -except N W bathy_g bathy_sc bathy_nc, close all;
