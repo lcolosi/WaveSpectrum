@@ -2,17 +2,17 @@
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2021
 
 %-------------------------------- Caption --------------------------------%
-% Mapping from observed to intrinsic frequency for a platform moving at 
-% 0.5 ms$^{-1}$ (a), 1 ms$^{-1}$ (b), and 2 ms$^{-1}$ (c) with line color
-% corresponding to the platform's direction relative to the waves. The
-% platform is moving with the waves when $\theta_r$ ranges from 
-% $0^\circ \leq \theta_r < 90^\circ$ (red curves) and is moving against 
+% Mapping from observed to intrinsic frequency for a platform moving at
+% (a) 0.5 ms$^{-1}$, (b) 1 ms$^{-1}$, and (c) 2 ms$^{-1}$ with line color
+% corresponding to the platform's direction relative to the waves. The 
+% platform moves with the waves when $\theta_r$ ranges from
+% $0^\circ \leq \theta_r < 90^\circ$ (red curves) and moves against
 % the waves when $\theta_r$ ranges from 
-% $90^\circ < \theta_r \leq 180^\circ$ (blue curves). The platform is
-% moving perpendicular to the waves when $\theta_r = 90^\circ$. The gray
-% dashed line is the cutoff frequency $f_c$ with gray circles being $f_c$
-% for a given directions. The black dashed line is the one-to-one line
-% occurring when the projected speed vanishes. 
+% $90^\circ < \theta_r \leq 180^\circ$ (blue curves). The platform moves
+% perpendicular to the waves when $\theta_r = 90^\circ$. The gray dashed 
+% line is the cutoff frequency $f_c$ with intersecting gray circles being 
+% $f_c$ for a given direction. The black dashed line is the one-to-one 
+% line occurring when the projected speed vanishes ($\theta_r = 90^\circ$).
 %-------------------------------------------------------------------------%
 
 clc, clear, close all;
@@ -205,7 +205,7 @@ clc, close all
 fig = figure( 'Name', 'Observed vs Intrinsic Frequency');
 
 % Set figure attributes
-POS = [100 100 500 2000];                                                   %[100 100 2000 300];
+POS = [100 100 550 2000];                                                   %[100 100 2000 300];
 set(gcf,'color',[1 1 1])
 set(gcf,'position',POS) 
 fontsize = 13;
@@ -242,7 +242,7 @@ for isubplot = 1:length(U)
             %Plot f_in as a function of f_ob in linear space
             plot(F.f_ob(:,isubplot,iangle), F.f_in(:,isubplot,iangle), '-', 'LineWidth', 2, 'Color', cmap(idx_c,:))
 
-            % Plot Ucos(theta_r) = 0 and Ucos(theta_r) = -c_g 
+            % Plot Ucos(theta_r) = 0 and Ucos(theta_r) = c_g 
             pc1 = plot(f_ob, f_ob, '--k', 'LineWidth', 2);
             pc2 = plot(f_ob, (2)*f_ob, 'LineStyle', '--', 'Color', [0.5 0.5 0.5], 'LineWidth', 2);
 
@@ -267,7 +267,7 @@ for isubplot = 1:length(U)
         ax3 = gca; 
         label = '(c)';
         xlabel('$f_{ob}$ (Hz)','Interpreter','Latex')
-        leg = legend([pc1, pc2, pc3], 'U$\cos(\theta_r) = 0$', 'U$\cos(\theta_r) = -c_g$', '$f_c(f_{ob})$','location', 'northwest', 'fontsize', fontsize);
+        leg = legend([pc1, pc2, pc3], 'U$\cos(\theta_r) = 0$', 'U$\cos(\theta_r) = c_g$', '$f_c(f_{ob})$','location', 'northwest', 'fontsize', fontsize);
     end
     title([label ' U $= \;$', num2str(U(isubplot)), ' ms$^{-1}$'])
     ylabel('$f_{in}$ (Hz)','Interpreter','Latex')
@@ -298,7 +298,7 @@ annotation('textbox',[0.8130 0.6348 0.1080 0.0359],...
            'FontSize',fontsize,'EdgeColor','none');
 
 %-------- Set poition of legend --------%
-set(leg,'Position',[0.303 0.87889 0.2689 0.0042])
+set(leg, 'Position',[0.7494 0.81 0.2351 0.01])
 
 %-------- Set the position of the subplots --------%
 % find current position [x,y,width,height]
