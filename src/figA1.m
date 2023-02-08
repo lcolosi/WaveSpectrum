@@ -114,13 +114,13 @@ title('(a)', 'Position', [13.907391675107192,2.577847801991084,49.07440416366648
 shading flat
 alpha(0.5)
 sc1.FaceColor = blue; sc2.FaceColor = red; sc3.FaceColor = green;
-xlabel('k (rad m$^{-1}$)', 'Position', [13.57557284106133,-27.52171618968987,-50.8773940577874])
-ylabel('l (rad m$^{-1}$)', 'Position', [-34.02161915211582,14.058365548812617,-50.99054550473954])
+xlabel('$k_1$ (rad m$^{-1}$)', 'Position', [13.57557284106133,-27.52171618968987,-50.8773940577874])
+ylabel('$k_2$ (rad m$^{-1}$)', 'Position', [-34.02161915211582,14.058365548812617,-50.99054550473954])
 zlabel('m (rad s$^{-1}$)')
 xlim([-50 50]); ylim([-50 50]); zlim([-40 40])
 xticks(-50:25:50); yticks(-50:25:50); zticks(-40:10:40)
 view([-36.8410110594965 9.62376237623763]);
-legend([sc1 sc2, sc3], {'$\sigma(\textbf{k})$'; '-$\sigma(\textbf{k})$';'$\omega + \textbf{k}\cdot\textbf{U}$'}, 'Position', [0.390457885867418,0.448655914170768,0.054062316152785,0.050268817012028]) 
+legend([sc1 sc2, sc3], {'$\sigma(k)$'; '-$\sigma(k)$';'$\omega + \textbf{k}\cdot\textbf{U}$'}, 'Position', [0.390457885867418,0.448655914170768,0.054062316152785,0.050268817012028]) 
 set(gca,'FontSize',fontsize)
 
 % Set for direction of platform propagation
@@ -138,15 +138,15 @@ sc1 = plot(k_m(ind_parallel),sigma_pos(ind_parallel), 'color', blue, 'LineWidth'
 hold on 
     sc2 = plot(k_m(ind_parallel),sigma_neg(ind_parallel), 'color', red, 'LineWidth',1.5);
     sc3 = plot(k_m(ind_parallel),m(ind_parallel), 'color', green, 'LineWidth',1.5);
-    xline(K_lt, '-k', '$\kappa_{lt}$', 'LineWidth', 1, 'Interpreter','latex','LabelOrientation','aligned', 'LabelHorizontalAlignment','right', 'LabelVerticalAlignment', 'top', 'FontSize',fontsize, 'Color', black)
-    xline(K_st, '-k', '$\kappa_{st}$', 'LineWidth', 1, 'Interpreter','latex','LabelOrientation','aligned', 'LabelHorizontalAlignment','right', 'LabelVerticalAlignment', 'top', 'FontSize',fontsize, 'Color', black)    
-    xline(K_a, '-k', '$\kappa_a$', 'LineWidth', 1, 'Interpreter','latex','LabelOrientation','aligned', 'LabelHorizontalAlignment','left', 'LabelVerticalAlignment', 'top', 'FontSize',fontsize, 'Color', black)
-    xline(K_r, '-k', '$\kappa_r$', 'LineWidth', 1, 'Interpreter','latex','LabelOrientation','aligned', 'LabelHorizontalAlignment','left', 'LabelVerticalAlignment', 'top', 'FontSize',fontsize, 'Color', black)
+    xline(K_lt, '-k', '$k_{lt}$', 'LineWidth', 1, 'Interpreter','latex','LabelOrientation','aligned', 'LabelHorizontalAlignment','right', 'LabelVerticalAlignment', 'top', 'FontSize',fontsize, 'Color', black)
+    xline(K_st, '-k', '$k_{st}$', 'LineWidth', 1, 'Interpreter','latex','LabelOrientation','aligned', 'LabelHorizontalAlignment','right', 'LabelVerticalAlignment', 'top', 'FontSize',fontsize, 'Color', black)    
+    xline(K_a, '-k', '$k_a$', 'LineWidth', 1, 'Interpreter','latex','LabelOrientation','aligned', 'LabelHorizontalAlignment','left', 'LabelVerticalAlignment', 'top', 'FontSize',fontsize, 'Color', black)
+    xline(K_r, '-k', '$k_r$', 'LineWidth', 1, 'Interpreter','latex','LabelOrientation','aligned', 'LabelHorizontalAlignment','left', 'LabelVerticalAlignment', 'top', 'FontSize',fontsize, 'Color', black)
 hold off
 
 % Set figure attributes
 title('(b) $\theta_r = 0^\circ, 180^\circ$')
-xlabel('k (rad m$^{-1}$)')
+xlabel(['$k_1$ (rad m$^{-1}$)'])
 ylabel('m (rad s$^{-1}$)')
 xlim([-50 50]); ylim([-40 40])
 xticks(-50:25:50); yticks(-40:20:40);
@@ -163,14 +163,14 @@ sc1 = plot(k_m(ind_parallel),sigma_pos(ind_parallel), 'color', blue, 'LineWidth'
 hold on 
     sc2 = plot(k_m(ind_parallel),sigma_neg(ind_parallel), 'color', red, 'LineWidth',1.5);
     sc3 = plot(l_m(ind_normal),m(ind_normal), 'color', green, 'LineWidth',1.5);
-    xline(Kn_p, '-k', '$\kappa_p^{-}$', 'LineWidth', 1, 'Interpreter','latex','LabelOrientation','aligned', 'LabelHorizontalAlignment','left', 'FontSize',fontsize, 'Color', black)
-    xline(Kp_p, '-k', '$\kappa_p^{+}$', 'LineWidth', 1, 'Interpreter','latex','LabelOrientation','aligned', 'LabelHorizontalAlignment','right', 'FontSize',fontsize, 'Color', black)    
+    xline(Kn_p, '-k', '$k_p^{-}$', 'LineWidth', 1, 'Interpreter','latex','LabelOrientation','aligned', 'LabelHorizontalAlignment','left', 'FontSize',fontsize, 'Color', black)
+    xline(Kp_p, '-k', '$k_p^{+}$', 'LineWidth', 1, 'Interpreter','latex','LabelOrientation','aligned', 'LabelHorizontalAlignment','right', 'FontSize',fontsize, 'Color', black)    
     
 hold off
 
 % Set figure attributes
 title('(c) $\theta_r = 90^\circ, 270^\circ$')
-xlabel('l (rad m$^{-1}$)')
+xlabel('$k_2$ (rad m$^{-1}$)')
 ylabel('m (rad s$^{-1}$)')
 xlim([-50 50]); ylim([-40 40])
 xticks(-50:25:50); yticks(-40:20:40);
