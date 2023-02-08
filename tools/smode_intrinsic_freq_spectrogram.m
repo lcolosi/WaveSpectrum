@@ -308,7 +308,7 @@ tail = [zeros(size(n.fst)); n.feq; n.fst];
 for i = 1:(length(T0)-1 ) 
       
     % Correct Directional Spectra 
-    [n.dir_spectrogram_f_in(:,:,i), n.f_in_2d(:,:,i), n.dir_spectrogram_f_ob(:,:,i), ~, n.fb(:,:,i), ~, n.J(:,:,i), n.var_2d(:,i)]  = map_dir_spectrum(n.Sd_f_ob(:,:,i)', n.f_ob, f_noise, df, dtheta, n.mspeed_proj(i), n.rel_theta(:,i)); 
+    [n.dir_spectrogram_f_in(:,:,i), n.f_in_2d(:,:,i), n.fb(:,:,i)]  = map_dir_spectrum(n.Sd_f_ob(:,:,i)', n.f_ob, f_noise, n.mspeed_proj(i), n.rel_theta(:,i)); 
     
     % Compute Omni-directional Spectra from directional spectra 
     spectrogram_omni_f_in_nt = sum(n.dir_spectrogram_f_in(:,:,i) * dtheta, 2);
