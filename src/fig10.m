@@ -1,10 +1,11 @@
-%% Figure 10: Full time series saturation spectrograms for Stokes DELMAR2020 and WHOI43 SMODE2021 Experiments
+%% Figure 11: Full time series saturation spectrograms for Stokes DELMAR2020 and WHOI43 SMODE2021 Experiments
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2022
 
 %-------------------------------- Caption --------------------------------%
-% Saturation wave spectrograms during the DELMAR2020 ((a) Observed and (b)
-% intrinsic frequency space) and SMODE2021 ((c) Observed and (d) intrinsic
-% frequency space) experiments. 
+% (a,c) Observed and (b,d) intrinsic saturation wave spectrograms during
+% the (a,b) DELMAR2020 and (c,d) SMODE2021 experiments for Wave Gliders
+% Stokes (a,b) and WHOI43 (c,d). Spectrograms were computed over 10 minute
+% intervals independent of the Wave Glider heading.
 %-------------------------------------------------------------------------% 
 
 clc, clearvars -except DM SM, close all;
@@ -43,8 +44,7 @@ if isempty(whos('SM'))
 end
 
 
-%% Plot saturation wave spectrogram before and after mapping 
-clc, close all; 
+%% Plot saturation wave spectrogram before and after mapping  
 
 % Set power spectral densities equal to zero to NaN
 %------- DM -------%
@@ -253,4 +253,4 @@ set(ax3,'Position',pos3)
 set(ax4,'Position',pos4)
 
 % Save Figure
-saveas(gcf, [fig_path 'fig10.png'])
+saveas(gcf, [fig_path 'fig11.png'])
