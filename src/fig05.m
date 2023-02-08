@@ -2,10 +2,10 @@
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2022
 
 %-------------------------------- Caption --------------------------------%
-% An observed directional wave spectrum computed from measurement collected
-% aboard the Stokes Wave Glider during a single leg of the large box 
-% trajectory in the DELMAR2020 experiment 
-% (07:57:22 to 08:42:02 September 10, 2020). 
+% An observed directional wave spectrum computed from measurements 
+% collected onboard Wave Glider Stokes during a single fixed heading leg 
+% of the large 1000 m box trajectory in the DELMAR2020 experiment 
+% (9 September 2020 at 23:57:06 to 10 September 2020 at 00:25:18).
 %-------------------------------------------------------------------------%
 
 clc, clear, close all;
@@ -50,7 +50,7 @@ nfft = fe_n/df;                                                             % Wi
 f = (0:df:fn);                                                              % Observed frequency (Hz)
 dtheta = 5;                                                                 % Angular resolution (degrees)
 ntheta = 360/dtheta+1;                                                      % Number of angles
-lambda_c = 1.5613;                                                          % % Wavelength cutoff (meters)
+lambda_c = 1.5613;                                                          % Wavelength cutoff (meters)
 f_noise = sqrt(g/(2*pi*lambda_c));                                          % Noise frequency cutoff 
 toolbox = 'WAFO';                                                           % Method used to compute directional spectrum 
 variables = 'heave_velocity';                                               % Heave and horizontal velocity are used to compute the direction spectrum
