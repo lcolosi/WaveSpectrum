@@ -3,8 +3,8 @@ function [m_theta,std_theta, stdm_theta] = direction_stats(theta, dt, task)
     %%%%
     % [m_theta,std_theta, stdm_theta] = direction_stats(theta, dt, task)
     %
-    % Function for computing the mean and standard deviation of an array of
-    % direction measurements. 
+    % Function for computing the mean, standard deviation, and standard 
+    % error of the mean for an array of direction measurements. 
     %
     %   Parameters
     %   ----------
@@ -42,20 +42,23 @@ function [m_theta,std_theta, stdm_theta] = direction_stats(theta, dt, task)
     % Compute standard deviation of direction 
     std_theta = asind(mtheta_eps) * (1+(2/sqrt(3)-1)*mtheta_eps.^3);
     
-    % Case 1: Compute uncertainty of the mean estimate 
+    % Case 1: Serial correlation
     if task
         
         % Compute N effective (number of independent observations)
         [N_eff,~] = decor_scale(theta, dt);
 
-        % Compute standard error of the mean (assume no serial correlation)
+        % Compute standard error of the mean 
         stdm_theta = std_theta/sqrt(N_eff);
         
-    % Case 2: Do not compute uncertainty of the mean. 
+    % Case 2: No serial correlation
     else 
         
-        % Set uncertainty to a flag
-        stdm_theta = 'not computed';
+        % Compute N (number of observations assuming each are independent)
+        N = length(theta);
+
+        % Compute standard error of the mean 
+        stdm_theta = std_theta/sqrt(N);
         
     end
 
