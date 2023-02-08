@@ -2,13 +2,14 @@
 % Luke Colosi | lcolosi@ucsd.edu | August 31st, 2022
 
 %-------------------------------- Caption --------------------------------%
-% (a) Trajectories of Planck (blue) and Stokes (red) Wave Gliders during
-% the Delmar2020 experiment for the time period of September 9th at 
-% 2:30:00 UTC to September 11th at 16:10:00 UTC. (b) The geographic region
-% with the location of experiment site (white box). (c) Mean platform 
-% direction, (d) wind speed at 10 meters above the ocean surface and 
-% direction at 1 meter above the ocean surface , and (e) significant wave
-% height for for Planck (blue) and Stokes (red).  
+% (a) Trajectories of Wave Gliders Planck (blue) and Stokes (red) during 
+% the DELMAR2020 experiment for the time period of 9 September at 2:30 UTC
+% to 11 September at 16:10 UTC. (b) The geographic region with the 
+% location of the experiment site (white box). (c) Mean platform heading, 
+% (d) wind speed at 10 meters above the ocean surface (solid line) and
+% wind direction at 1 meter above the ocean surface (triangular markers),
+% and (e) significant wave height measured by Planck (blue) and 
+% Stokes (red).  
 %-------------------------------------------------------------------------%
 
 clc, clearvars -except Np Ns Wp Ws bathy, close all;
@@ -55,7 +56,7 @@ nfft = fe_n/df;                                                             % Wi
 f = (0:df:fn);                                                              % Observed frequency 
 lambda_c = 1.5613;                                                          % Wavelength cutoff (meters)
 f_noise = sqrt(g/(2*pi*lambda_c));                                          % noise frequency cutoff 
-freq_band = find(f >= 0.02 & f <= f_noise);                                 %Frequency band (for computing significant wave height)
+freq_band = find(f >= 0.02 & f <= f_noise);                                 % Frequency band (for computing significant wave height)
 
 %% Call Data
 
@@ -284,6 +285,7 @@ for is = 1:length(T0)
 end 
 
 %% Plot platform trajectory and environmental conditions
+close all 
 
 % Set plotting parameters
 cb_l = -1000; cb_h = 1000;
@@ -322,7 +324,7 @@ title('(a)')
 axis equal
 xlim([lon_exp_l, lon_exp_h])
 ylim([lat_exp_l, lat_exp_h])
-legend([pc2, pc3, pc4, pc5], 'Planck', 'Stokes', 'Initial Position', 'Final Position', 'Location', 'northeast', 'Fontsize', fontsize)
+legend([pc2, pc3, pc4, pc5], 'Planck', 'Stokes', 'Initial Position', 'Final Position', 'Location', 'northeast', 'Fontsize', fontsize-3)
 grid on
 set(gca,'FontSize',fontsize)
 set(gca,'TickDir','out','TickLength', [0.015,0.75]);
@@ -369,7 +371,7 @@ p_ax2 = [p_ax1(1)+0.165 p_ax1(2)+0.035 p_ax1(3)-.5 p_ax1(4)-.2];
 % Apply empirical corrections to x and y end points for annotate function in
 % order to account for the modulation due to the axis square command and
 % colorbar
-x_i = p_ax2(1) +0.01;                                                      
+x_i = p_ax2(1) + 0.01;                                                      
 x_f = p_ax2(1) + p_ax2(3) - 0.078;                                         
 y_i = p_ax2(2) + 0.001;                                                     
 y_f = p_ax2(2) + p_ax2(4);                                                  
@@ -467,6 +469,57 @@ annotation('textarrow',xa,ya,'String','9 Rev ', 'TextRotation', 0, 'Color', ...
            'HorizontalAlignment','left', 'VerticalAlignment','top',...
            'HeadWidth',9, 'HeadLength',6)
 
+% Set the distance for 
+L = 1;                                                                      % Edge length of small box track (units: kilometers)
+phi = 33;                                                                   % Rounded Latitude of experiment site 
+lon_L = (1/(111.32*cosd(phi)))*L;                                           % Degrees of longitude for 500 meters at latitude phi
+
+% Reset the position vector to account for the modulation due to the axis square command and
+% colorbar
+p_ax3 = [p_ax1(1)+0.127 p_ax1(2) p_ax1(3)-0.2575 p_ax1(4)];                 % Note: position vector: [left bottom width height]
+
+% Set the x and y for ax3
+x_ax1 = linspace(p_ax3(1), p_ax3(1) + p_ax3(3), length(lon_exp));
+y_ax1 = linspace(p_ax3(2), p_ax3(2) + p_ax3(4), length(lat_exp));
+
+% Find the end point in degree longitude of the 500 m distance from the
+% right left corner of the map
+lon_f = lon_exp(1) + lon_L; 
+
+% Find the index of the closest longitude grid point to the lon_f value
+[~,idx_lon]=min(abs(lon_exp - lon_f));
+
+% Find the positions on the ax1 figure axis for the length scale 
+px_i = x_ax1(1); 
+px_f = x_ax1(idx_lon); 
+py_i = y_ax1(1)+0.281; 
+py_f = y_ax1(1)+0.281; 
+
+% Create scale bar
+annotation('textbox',...
+    [px_i py_i px_f - px_i  0.0161290322580648],...
+    'String',{'1$\:$km'},'Interpreter','latex', ...
+    'HorizontalAlignment','center','FontSize',7,'FitBoxToText','off',...
+    'FaceAlpha',0.7,'EdgeColor','none','BackgroundColor',[0.8 0.8 0.8]);
+
+%----- Left Vertical Bar -----%
+annotation('line',[0.6 0.6],...
+    [0.828 0.838],'Color',[1 1 1],'LineWidth',1);
+
+%----- Right Vertical Bar -----%
+annotation('line',[0.6+(px_f-px_i) 0.6+(px_f-px_i)],...
+    [0.828 0.839],'Color',[1 1 1],'LineWidth',1);
+
+%----- Horizontal Bar -----%
+annotation('line',[0.6  0.6+(px_f-px_i)],...
+    [0.833 0.833],'Color',[1 1 1],'LineWidth',1);
+
+%----- Text Box -----%
+annotation('textbox',...
+    [0.627543209876543 0.829301075268817 0.0591851851851851 0.013440860215054],...
+    'Color',[1 1 1],'String',{'1$\:$km'},'Interpreter','latex',...
+    'FontSize',8,'FitBoxToText','off','EdgeColor','none');
+
 %--------------- Subplot 2 ---------------%
 subplot(5,1,3)
 
@@ -480,7 +533,7 @@ hold off
 % Set axis attributes
 yticks([0,90,180,270,360])
 ylim([0,360])
-ylabel('Wave Glider Heading ($^{\circ}$)', 'Interpreter', 'latex')
+ylabel({'Wave Glider' ; 'Heading ($^{\circ}$)'}, 'Interpreter', 'latex')
 set(gca,'YColor','k')
 
 % Set figure attributes
@@ -537,7 +590,7 @@ labels = string(ax.XAxis.TickLabels);
 labels(2:2:end) = ' ';
 ax.XAxis.TickLabels = labels;
 xlim([EC.time(1), EC.time(end)])
-legend([pc1, pc2], 'Direction', 'Speed', 'Interpreter', 'Latex', 'Orientation', 'Horizontal', 'Position',[0.676671373653917 0.404282160345735 0.227801122783143 0.0213440858548687]);
+legend([pc1, pc2], 'Direction', 'Speed', 'Interpreter', 'Latex', 'Orientation', 'vertical', 'Position',[0.180116631982771 0.334677419354839 0.113093244560438 0.031771456763704], 'Fontsize', fontsize-3);
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
 set(gca, 'YGrid', 'off', 'XGrid', 'on') 
@@ -554,7 +607,7 @@ hold off
  
 % Set figure attributes
 title('(e)')
-xlabel('UTC time from Sep 9$^{\textrm{th}}$, 2020', 'Interpreter', 'latex')
+xlabel('UTC time from 9 Sep 2020', 'Interpreter', 'latex')
 ylabel('H$_s$ (m)')
 ylim([0.8, 1.4])
 xticks(datenum(t_ticks))
