@@ -1,77 +1,54 @@
-function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectrum(S_fob, f_obs, f_cut, df_obs, dtheta, U, theta_r)
+function [S_fin, f_int, f_b] = map_dir_spectrum(S_fob, f_obs, f_cut, U, theta_r)
     
     %%%%
     %
-    % [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectrum(S_fob, f_obs, f_cut, df_obs, dtheta, U, theta_r)
+    % [S_fin, f_int, f_b] = map_dir_spectrum(S_fob, f_obs, f_cut, U, theta_r)
     %
     % Function for mapping observed frequency (frequency measured in the 
     % moving reference frame of the platform) to intrinsic frequency 
     % (frequency measured in the absence of platform motion) for deep water
-    % surface gravity waves. The function also transforms the directional 
-    % wave power spectrum, which is a function of observed frequency
-    % and direction S(f_obs, theta), to a power spectrum as a function of 
-    % intrinsic frequency and direction S(f_int, theta). 
+    % surface gravity waves. The function also maps the observed 2D 
+    % spectrum S_ob(f_ob, theta) (i.e., the directional-frequency spectrum)
+    % into intrinsic frequency space as the intrinsic 2D spectrum 
+    % S_in(f_in, theta). The observed 2D spectrum may be computed from 
+    % vertical displacement of a platform and horizontal cartesian 
+    % components of velocity using a maximum extropy or maximum likelyhood
+    % method.
     %
     %   Parameters
     %   ----------
-    %   S_fob : Wave power spectrum as function of observed frequency and 
-    %          direction S(f_obs, theta). Defined nomially as the 
-    %          directional-frequency power spectrum computed from vertical
-    %          displacement or heave of a platform and horizontal cartesian 
-    %          components of velocity. Units: m^2 (Hz deg)^(-1).
-    %   f_obs : Observed frequency (i.e. frequency measured in the 
-    %           moving reference frame of the platform). Units: Hz. 
+    %   S_fob : Observed 2D spectrum. Units: m^2 (Hz deg)^(-1).
+    %   f_obs : Observed frequency.  Units: Hz. 
     %   f_cut : Noise cutoff frequency for the platform. For the SV3 wave
     %           gliders, f_cut is nominally ~1 Hz (corresponds to waves 
     %           with a wavelength half the length of the waveglider).
     %           Units Hz. 
-    %   df_obs : Observed frequency resolution of input spectrum. Units: Hz. 
-    %   dtheta : Direction resolution of spectrum. Units: Degrees. 
-    %   U : Propagation speed of the observer.  Units: ms^(-1). 
+    %   U : Propagation speed of the observer. Computed by time averaging 
+    %       the speed of the platform projected onto the mean platform
+    %       heading. Units: ms^(-1). 
     %   theta_r : Angle between the propagation velocity of the platform 
     %             and the direction of propagation of waves. This quantity 
-    %             is a evaluated at all directions of wave propagation.
+    %             is a evaluated for all wave directions.
     %             Units: Degrees, CW, going towards, reference north.
     % 
     %   Returns
     %   -------
-    %   S_fin : Wave power spectrum as a function of intrinsic frequency and 
-    %           theta. This quantity is multiplied by the jacobian. 
-    %           Units: m^2 (Hz deg)^(-1).
+    %   S_fin : Intrinsic 2D spectrum. Units: m^2 (Hz deg)^(-1).
     %   f_int : Intrinsic frequency (computed for each direction). 
     %           Units: Hz.
-    %   S_fob : Wave power spectrum as a function of observed frequency and
-    %           theta. This quantity is the same as the input.
-    %           Units: m^2 (Hz deg)^(-1).
-    %   f_obs : Observed Frequency. Units: Hz.
     %   f_b : Bifurcation frequency and last frequency not an NaN (blocking 
     %         frequency). The bifircation frequency exists for branches 3-5
     %         (platform moving in direction of wave propagation) and is NaN
-    %         for branches 1-2. The bocking frequency is set by the 
-    %         interpolation and the bifurcation freq. Bifurcation frequency
-    %         is saved in first column f_bif = f_b(:,1) and blocking 
-    %         frequency is saved in second column f_block = f_b(:,2). 
+    %         for branches 1-2. The bocking frequency is set by the
+    %         jacobian, the linear interpolation and the bifurcation
+    %         frequency. The Bifurcation frequency is saved in first column
+    %         f_bifurcation = f_b(:,1) and blocking frequency is saved in
+    %         second column f_block = f_b(:,2). Units: Hz.
     %         Units: Hz. 
-    %   df_int : Differential for intrinsic frequency. Units: Hz. 
-    %   J : Jacobian. Units: unitless. 
-    %   variance : Matrix containing four values for the variance computed
-    %              over a given frequency band using rectangular (Riemann) 
-    %             integration method: 
-    %                   variance = [f_ob_0.01, f_in_0.01, f_ob_0.1, f_in_0.1]
-    %             where: 
-    %
-    %             (1) f_ob_0.01 : Variance computed from integrating 
-    %                             S(f_obs)*df_obs from 0.01 to 1 Hz
-    %             (2) f_in_0.01 : Total variance computed from integrating
-    %                             S(f_int)*df_obs/df_int*df_int from 0.01 to 1 Hz
-    %             (3) f_ob_0.1 : Variance computed from integrating 
-    %                            S(f_obs)*df_obs from 0.1 to 1 Hz
-    %             (4) f_in_0.1 : Variance computed from integrating
-    %                            S(f_int)*df_obs/df_int*df_int from 0.1 to 1 Hz
     % 
     %   Notes
     %   -----
-    %   (1) Add a spectral tail to the directional spectrum requires
+    %   (1) Adding a spectral tail to the directional spectrum requires
     %       information about the deirectional dependence of the spectral
     %       slope in the equilibirum and saturation ranges. The
     %       conventional spectral forms of the spectra (i.e., f^-4 and f^-5)
@@ -80,18 +57,42 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
     %       spectral tail attachment must be preformed on the
     %       omni-directional spectrum. I choose the latter. 
     %
+    %   (2) Comparing the total variance in the intrinsic and observed
+    %       reference frames requires integrating the observed and
+    %       intrinsic 2D spectrum over equivalent frequency bands given
+    %       that the integrands S_ob and S_in = S_ob*df_ob/df_in are 
+    %       equivalent (see equation 14 in main text). We use the mapping
+    %       function (see equation 7 in main text) to obtain the limits of 
+    %       integration after the change of variable to intrinsic 
+    %       frequency.  In the head-sea and perpendicular-to-wave cases, 
+    %       the mapping is bijective such that the limits of integration
+    %       are well defined and the total variance before and after may be
+    %       compared. However, in the following seas case, the mapping is
+    %       no longer bijective. This is problematic because we loss 
+    %       information about the high frequency wave above the bifurcation 
+    %       frequency and the variance associated with these waves. 
+    %       Therefore, the total variance is intrinsically not conserved
+    %       for the following-seas mapping. We could constrain our
+    %       integral to a low frequency band where the mapping is
+    %       bijective, however, this bijective mapping region is dependent
+    %       on the speed and relative direction of the platform. Therefore,
+    %       I choose to not compute the total variance. In the future, I
+    %       could implement code that works backwards from the integral of
+    %       the intrinsic 2D spectrum setting the limits of intergation to
+    %       the bijective region and mapping these limits back into
+    %       observed frequency. 
+    %
     %%%%
     
     % Set constants
-    g = 9.81;  % Gravitational Acceleration (units: ms^(-2))
+    g = 9.81;                                                               % Gravitational Acceleration (units: ms^(-2))
+    df_obs = unique(round(diff(f_obs),4));                                  % Observed frequency resolution of input spectrum (units: Hz)
     
     % Initialize variables 
     S_fin = NaN(size(S_fob));
     f_int = zeros(size(S_fob)); 
     J = NaN(length(f_obs)-1,length(theta_r));
     f_b = NaN(length(theta_r),2);
-    int_S_fob_l = NaN(length(theta_r),1); int_S_fin_l = NaN(length(theta_r),1);
-    int_S_fob_h = NaN(length(theta_r),1); int_S_fin_h = NaN(length(theta_r),1);
 
     %------- Map from observed to intrinsic frequency -------%
     
@@ -100,6 +101,10 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
         
         % Call ith relative angle
         itheta_r = theta_r(iangle);
+
+        % Compute the Doppler shift speed projected onto the ith wave
+        % direction
+        c_p = U*cosd(itheta_r); 
     
         %------- Branch Conditional statements -------%
 
@@ -108,7 +113,7 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
             %disp('Branch 1 : Moving against waves');
 
             % Compute intrinsic frequency 
-            f_int(:,iangle) = f_obs + (g - 4*pi*f_obs*U*cosd(itheta_r) - sqrt(g^2 - 8*pi*f_obs*g*U*cosd(itheta_r)))/(4*pi* U * cosd(itheta_r));
+            f_int(:,iangle) = (g - sqrt(g^2 - 8*pi*f_obs*g*c_p))/(4*pi*c_p);
             
         %---------- Branch 2 : Moving noraml to waves ----------%
         elseif cosd(itheta_r) == 0 || U == 0
@@ -122,28 +127,28 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
             %disp('Branch 3-5 : Moving with wave');
 
             % Compute f_obs where df_in(f_obs)/df_ob tends towards infinity  
-            f_ob_max = (g)/(8*pi*U*cosd(itheta_r));
+            f_ob_max = (g)/(8*pi*c_p);
 
             % Compute f_int at the f_obs value where df_in(f_obs)/df_ob
             % tends towards infinity and save in f_b array
-            f_in_max = (g)/(4*pi*U*cosd(itheta_r));
+            f_in_max = (g)/(4*pi*c_p);
             f_b(iangle,1) = f_in_max; 
 
             % Compute f_int when f_obs = 0
-            f_in_zero = (g)/(2*pi*U*cosd(itheta_r));
+            f_in_zero = (g)/(2*pi*c_p);
 
             %---------- Platform moving slower than energy and crests ----------%
             if f_in_max > f_cut
                 % disp('moving slower than energy and crests');
 
                 % Compute the f_ob value where f_int = f_cut for branch 3
-                f_ob_cut = -((2*pi*U*cosd(itheta_r)*f_cut^2)/(g)) + f_cut;
+                f_ob_cut = -((2*pi*c_p*f_cut^2)/(g)) + f_cut;
 
                 % Obtain f_obs values that map to f_int less than or equal to f_ob_cut
                 f_obs_map = f_obs(f_obs <= f_ob_cut);
 
                 % Compute intrinsic frequency 
-                f_int_s = f_obs_map + (g - 4*pi*f_obs_map*U*cosd(itheta_r) - sqrt(g^2 - 8*pi*f_obs_map*g*U*cosd(itheta_r)))/(4*pi* U * cosd(itheta_r));
+                f_int_s = (g - sqrt(g^2 - 8*pi*f_obs_map*g*c_p))/(4*pi*c_p);
                 
                 % Insert NaNs to extend the length of f_int_s to the length of
                 % f_obs
@@ -158,7 +163,7 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
                 f_obs_map = f_obs(f_obs <= f_ob_max);
 
                 % Compute intrinsic frequency for branch 3
-                f_int_s = f_obs_map + (g - 4*pi*f_obs_map*U*cosd(itheta_r) - sqrt(g^2 - 8*pi*f_obs_map*g*U*cosd(itheta_r)))/(4*pi* U * cosd(itheta_r));
+                f_int_s = (g - sqrt(g^2 - 8*pi*f_obs_map*g*c_p))/(4*pi*c_p);
 
                 % Insert NaNs to extend the length of f_int to the length of
                 % f_in
@@ -173,9 +178,9 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
                 f_obs_map = f_obs(f_obs <= f_ob_max);
 
                 % Compute intrinsic frequency for branch 3
-                f_int_s = f_obs_map + (g - 4*pi*f_obs_map*U*cosd(itheta_r) - sqrt(g^2 - 8*pi*f_obs_map*g*U*cosd(itheta_r)))/(4*pi* U * cosd(itheta_r));
+                f_int_s = (g - sqrt(g^2 - 8*pi*f_obs_map*g*c_p))/(4*pi*c_p);
 
-                % Insert NaNs to extend the length of f_tot to the length of
+                % Insert NaNs to extend the length of f_in to the length of
                 % f_in
                 nNaNs = length(f_obs) - length(f_int_s); 
                 f_int(:,iangle) = [f_int_s, nan(nNaNs, 1)'];
@@ -207,25 +212,7 @@ function [S_fin, f_int, S_fob, f_obs, f_b, df_int, J, variance] = map_dir_spectr
 
         % Set blocking frequency
         f_b(iangle,2) = f_truc(end);
-        
-        % Obtain indices for integration (non-NaN values at frequencies higher the 0.01 and 0.1 Hz)
-        idx_fob_l = ~isnan(S_fob(:,iangle)) & (f_obs >= 0.01)'; idx_fin_l = ~isnan(S_fin(:,iangle)) & (f_int(:,iangle) >= 0.01);
-        idx_fob_h = ~isnan(S_fob(:,iangle)) & (f_obs >= 0.1)'; idx_fin_h = ~isnan(S_fin(:,iangle)) & (f_int(:,iangle) >= 0.1);
-
-        % Compute frequency integral for the ith angle excluding NaNs
-        % and specified frequency bands from integral
-
-        %----- Frequency band: 0.01 to 1 Hz -----% 
-        int_S_fob_l(iangle,1) = sum(S_fob(idx_fob_l,iangle)*df_obs); 
-        int_S_fin_l(iangle,1) = sum(S_fin(idx_fin_l,iangle)*df_obs);
-
-        %----- Frequency band: 0.1 to 1 Hz -----% 
-        int_S_fob_h(iangle,1) = sum(S_fob(idx_fob_h,iangle)*df_obs); 
-        int_S_fin_h(iangle,1) = sum(S_fin(idx_fin_h,iangle)*df_obs);
              
     end  
 
-    % Compute azimuthal integral for variance before and after mapping
-    variance = [sum(int_S_fob_l*dtheta), sum(int_S_fin_l*dtheta),sum(int_S_fob_h*dtheta), sum(int_S_fin_h*dtheta)];  
-    
 end
