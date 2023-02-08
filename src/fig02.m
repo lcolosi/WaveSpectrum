@@ -16,7 +16,7 @@ clc, clearvars -except N W bathy_g bathy_sc bathy_nc, close all;
 % Set text interpreter 
 set(groot, 'DefaultTextInterpreter', 'latex')
 set(groot, 'DefaultLegendInterpreter', 'latex')
-set(groot, 'defaultAxesTickLabelInterpreter','latex'); 
+set(groot, 'defaultAxesTickLabelInterpreter','latex')
 
 % Set path to data
 %%%% Vehicle %%%%.
@@ -395,7 +395,7 @@ xlim([lon_exp_l, lon_exp_h])
 ylim([lat_exp_l, lat_exp_h])
 xticks(-124.2:0.2:-123.4)
 yticks(36.8:0.2:37.4)
-legend([pc2, pc3, pc4], 'WHOI43', 'Initial Position', 'Final Position', 'Location', 'east', 'Fontsize', fontsize)
+legend([pc2, pc3, pc4], 'WHOI43', 'Initial Position', 'Final Position', 'Location', 'East', 'Fontsize', fontsize-3)
 grid on
 set(gca,'FontSize',fontsize)
 set(gca,'TickDir','out','TickLength', [0.015,0.75]);
@@ -495,6 +495,57 @@ cb.Ticks = linspace(cb_l,cb_h,9);
 cb.TickLabels = num2cell(linspace(cb_l,cb_h,9)); 
 cb.TickLabelInterpreter = 'latex';
 
+% Set the distance for 
+L = 5;                                                                      % Edge length of small box track (units: kilometers)
+phi = 33;                                                                   % Rounded Latitude of experiment site 
+lon_L = (1/(111.32*cosd(phi)))*L;                                           % Degrees of longitude for 500 meters at latitude phi
+
+% Reset the position vector to account for the modulation due to the axis square command and
+% colorbar
+p_ax3 = [p_ax1(1)+0.115 p_ax1(2) p_ax1(3)-0.23 p_ax1(4)];                 % Note: position vector: [left bottom width height]
+
+% Set the x and y for ax3
+x_ax1 = linspace(p_ax3(1), p_ax3(1) + p_ax3(3), length(lon_exp));
+y_ax1 = linspace(p_ax3(2), p_ax3(2) + p_ax3(4), length(lat_exp));
+
+% Find the end point in degree longitude of the 500 m distance from the
+% right left corner of the map
+lon_f = lon_exp(1) + lon_L; 
+
+% Find the index of the closest longitude grid point to the lon_f value
+[~,idx_lon]=min(abs(lon_exp - lon_f));
+
+% Find the positions on the ax1 figure axis for the length scale 
+px_i = x_ax1(1); 
+px_f = x_ax1(idx_lon); 
+py_i = y_ax1(1)+0.281; 
+py_f = y_ax1(1)+0.281; 
+
+% Create scale bar
+annotation('textbox',...
+    [px_i py_i px_f - px_i  0.0161290322580648],...
+    'String',{'5$\:$km'},'Interpreter','latex', ...
+    'HorizontalAlignment','center','FontSize',7,'FitBoxToText','off',...
+    'FaceAlpha',0.7,'EdgeColor','none','BackgroundColor',[0.8 0.8 0.8]);
+
+%----- Left Vertical Bar -----%
+annotation('line',[0.6 0.6],...
+    [0.828-0.1 0.838-0.1],'Color',[1 1 1],'LineWidth',1);
+
+%----- Right Vertical Bar -----%
+annotation('line',[0.6+(px_f-px_i) 0.6+(px_f-px_i)],...
+    [0.828-0.1 0.839-0.1],'Color',[1 1 1],'LineWidth',1);
+
+%----- Horizontal Bar -----%
+annotation('line',[0.6  0.6+(px_f-px_i)],...
+    [0.833-0.1 0.833-0.1],'Color',[1 1 1],'LineWidth',1);
+
+%----- Text Box -----%
+annotation('textbox',...
+    [0.627543209876543 0.829301075268817-0.1 0.0591851851851851 0.013440860215054],...
+    'Color',[1 1 1],'String',{'5$\:$km'},'Interpreter','latex',...
+    'FontSize',8,'FitBoxToText','off','EdgeColor','none');
+
 %--------------- Subplot 2 ---------------%
 subplot(5,1,3)
 
@@ -504,7 +555,7 @@ plot(EC.time,EC.mD, '^-', 'Color', blue, 'MarkerSize', 4, 'MarkerFaceColor',blue
 % Set axis attributes
 yticks([0,90,180,270,360])
 ylim([0,360])
-ylabel('Wave Glider Heading ($^{\circ}$)', 'Interpreter', 'latex')
+ylabel({'Wave Glider'; 'Heading ($^{\circ}$)'}, 'Interpreter', 'latex')
 set(gca,'YColor','k')
 
 % Set figure attributes
@@ -521,7 +572,7 @@ subplot(5,1,4)
 
 % Plot the Wind direction
 yyaxis left
-plot(EC.time(1:1:end),EC.mTWD(1:1:end), '^', 'Color', blue, 'MarkerSize', 4, 'MarkerFaceColor',blue)
+pc1 = plot(EC.time(1:1:end),EC.mTWD(1:1:end), '^', 'Color', blue, 'MarkerSize', 4, 'MarkerFaceColor',blue);
 
 % Set axis attributes
 yticks([0,90,180,270,360])
@@ -532,7 +583,7 @@ set(gca,'TickLabelInterpreter','latex')
 
 % Plot the Wind speeds
 yyaxis right
-plot(EC.time,EC.mTWS_10, '-', 'Color', blue, 'LineWidth', 1.5);
+pc2 = plot(EC.time,EC.mTWS_10, '-', 'Color', 'k', 'LineWidth', 1.5);
 
 % Set axis attributes
 yticks(0:2:12)
@@ -545,6 +596,7 @@ title('(d)')
 xlim([EC.time(1), EC.time(end)])
 xticks(datenum(t_ticks))
 datetick('x', 'mmm dd', 'keepticks')
+legend([pc1, pc2], 'Direction', 'Speed', 'Interpreter', 'Latex', 'Orientation', 'vertical', 'Position',[0.140500922813826 0.291315668179691 0.113203113461718 0.0318548390942235], 'Fontsize', fontsize-3);
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
 set(gca, 'YGrid', 'off', 'XGrid', 'on') 
@@ -557,7 +609,7 @@ pc1 = plot(EC.time, EC.Hs_spec, '-', 'Color', blue, 'LineWidth', 1.5);
  
 % Set figure attributes
 title('(e)')
-xlabel('UTC time from Oct 29$^{\textrm{th}}$, 2021', 'Interpreter', 'latex')
+xlabel('UTC time from 29 Oct 2021', 'Interpreter', 'latex')
 ylabel('H$_s$ (m)')
 xlim([EC.time(1), EC.time(end)])
 ylim([1, 5])
