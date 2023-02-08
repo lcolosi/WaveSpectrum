@@ -1,13 +1,14 @@
-%% Figure 7: Omni-directional and saturation spectrograms for Stokes DELMAR2020 Experiment 
+%% Figure 8: Omni-directional and saturation spectrograms for Stokes DELMAR2020 Experiment 
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2022
 
 %-------------------------------- Caption --------------------------------%
 % Observed (a) omnidirectional and (b) saturation wave spectrograms 
-% computed from measurement collected aboard the Stokes Wave Glider during
-% the DELMAR2020 experiment.The dot-dashed vertical lines outline the time
-% period  spectral quantities in Figure~\ref{f5} and ~\ref{f6} are derived
-% from. The dashed rectangle outlines the time period when the Stokes Wave
-% Glider moved in the small square formation (Figure~\ref{f1}).  
+% computed from measurements collected onboard the Wave Glider Stokes 
+% during the DELMAR2020 experiment. The dot-dashed vertical lines outline 
+% the time period which spectral quantities in Figure~\ref{f6} 
+% and ~\ref{f7} are derived from. The dashed rectangle outlines the time 
+% period when the Wave Glider Stokes traversed in its small 500 m box 
+% formation (Figure~\ref{f1}). 
 %-------------------------------------------------------------------------%
 
 clc, clearvars -except Ns, close all;
@@ -30,11 +31,11 @@ fig_path = '../figs/';
 %%%%%%%%%% Initial global variables %%%%%%%%%%
 
 % Physical parameters
-g = 9.81;                                                                   % gravitational acceleration (m/s) 
+g = 9.81;                                                                   % Gravitational acceleration (m/s^2) 
 dir_con = {'CW', 'cf', 'rn'};                                               % Directional conventions
 
 % Temporal parameters
-period = 10;                                                                 % Time duration for computing wave spectra
+period = 10;                                                                % Time duration for computing wave spectra
 date_i = '09-Sep-2020 02:30:00';                                            % Start date 
 date_f = '11-Sep-2020 16:10:00';                                            % End date
 date_o = {date_i, date_f}; 
@@ -53,7 +54,7 @@ f_noise = sqrt(g/(2*pi*lambda_c));                                          % No
 toolbox = 'WAFO';                                                           % Method used to compute directional spectrum 
 variables = 'heave_velocity';                                               % Heave and horizontal velocity are used to compute the direction spectrum
 scaling = false;                                                            % Variance of directional spectrum is not scaled to match variance of heave spectrum 
-freq_band = find(f > 0.02 & f < f_noise);                                   %Frequency band (for computing significant wave height)
+freq_band = find(f > 0.02 & f < f_noise);                                   % Frequency band (for computing significant wave height)
 
 %% Call Data
 
@@ -161,7 +162,6 @@ nov_s.mwd_f_ob = nov_s.mwd(Inoise_s,:);
 nov_s.sat_spectrogram_omni_f_ob = nov_s.spectrogram_omni_f_ob .* (nov_s.f_ob').^(5);
 
 %% Plot omni-directional and saturation wave spectrogram
-clc, close all; 
 
 % Set power spectral densities equal to zero to NaN
 idx_zero = nov_s.spectrogram_omni_f_ob == 0; 
@@ -218,7 +218,7 @@ set(gca,'TickDir','out');
 set(gca, 'TickLength', [0.007, 0.007]) 
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
-annotation('rectangle',[0.677777777777778 0.599063962558502 0.196527777777778 0.316692667706708],...
+annotation('rectangle',[0.677777777777778 0.589703588143526 0.196527777777778 0.324492979719189],...
            'LineWidth',2.5,'LineStyle','--');
 
 % Set colorbar attributes
@@ -249,7 +249,7 @@ hold on
 % Set figure attributes
 title('(b)')
 pc.EdgeColor = 'none';
-xlabel('UTC time from Sep 9$^{\textrm{th}}$, 2020', 'Interpreter', 'latex')
+xlabel('UTC time from 9 Sep 2020', 'Interpreter', 'latex')
 ylabel('$f_{ob}$ (Hz)', 'Interpreter', 'latex')
 xticks(datenum(t_ticks))
 datetick('x', 'mmm dd', 'keepticks')
@@ -264,7 +264,7 @@ set(gca,'TickDir','out');
 set(gca, 'TickLength', [0.007, 0.007]) 
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
-annotation('rectangle',[0.677777777777778 0.123244929797192 0.196527777777778 0.3198127925117],...
+annotation('rectangle',[0.677777777777778 0.117004680187207 0.196527777777778 0.324492979719189],...
            'LineWidth',2.5,'LineStyle','--');
 
 % Set colorbar attributes
@@ -282,4 +282,4 @@ cb.TickLength = 0.03;
 cb.FontSize = fontsize;
 
 % Save Figure
-saveas(gcf, [fig_path 'fig07.png'])
+saveas(gcf, [fig_path 'fig08.png'])
