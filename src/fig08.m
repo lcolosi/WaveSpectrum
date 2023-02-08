@@ -1,20 +1,22 @@
-%% Figure 8:  Observations of Wave Spectra power spectral density modulation 
+%% Figure 9:  Observations of Wave Spectra power spectral density modulation 
 % Luke Colosi | lcolosi@ucsd.edu | August 20th, 2022
 
 %-------------------------------- Caption --------------------------------%
-% (a)  Stokes Wave Glider heading (using the coming from directional
-% convention) for small box legs. Red triangles denote the legs where the
-% platform is moving in the direction of wave propagation for high
-% frequency waves ($f_{ob} > 10^{-1}$). Blue triangles denote the legs
-% where the platform is moving against the direction of wave propagation
-% for high frequency waves. These high frequency waves have a mean wave
-% direction coming from $\sim 300^\circ$. (b) Saturation spectrogram
-% for the Stokes Wave Glider small box formation with red and blue colored
-% ovals along the top axis specifying the high-frequency wave relative 
-% angle using same color code as in Figure~\ref{f8}a. The red and blue 
-% highlighted saturation spectra correspond to the averaged spectra in 
-% Figure~\ref{f8}c. (c) Two averaged saturation spectra for against 
-% (red curve) and with (blue curve) wave cases.
+% (a)  Wave Glider Stokes' heading (using the coming from directional
+% convention) for the small 500 m box legs. Red triangles denote the legs
+% where the platform is moving in the direction of wave propagation for
+% high-frequency waves ($f_{ob} > 10^{-1}$ Hz). Blue triangles denote the
+% legs where the platform is moving against the direction of wave
+% propagation for high-frequency waves. These high-frequency waves have
+% a mean wave direction coming from the Northwest (approximately
+% $300^\circ$). (b) Saturation spectrogram for Wave Glider Stokes'
+% repeated small 500 m box formation with red and blue colored ovals
+% along the top axis specifying the relative angle between platform
+% heading and mean wave direction for high-frequency wave using the
+% same color code as in Figure~\ref{f9}a. Saturation spectra within the
+% two time periods outlined by dot-dashed vertical lines correspond to
+% the averaged spectra in Figure~\ref{f9}c. (c) Two averaged saturation
+% spectra showing against (red curve) and with (blue curve) wave cases.
 %-------------------------------------------------------------------------% 
 
 clc, clear, close all;
@@ -139,7 +141,6 @@ av_sat_spec_with = mean(sat_spec_small(:,8:9),2);
 av_sat_spec_against = mean(sat_spec_small(:,6:7),2);
 
 %% Plot mean platform direction saturation wave spectrogram, and case study of two saturation spectrum 
-clc, close all; 
 
 % Set plotting variables
 a = 1:2:length(Ilat_s); 
@@ -164,8 +165,8 @@ ax1 = subplot(2,2,1);
 plot(nov_s.time_legs(Ilat_s), nov_s.mD_legs(Ilat_s), '-k', 'LineWidth', 2);
 
 hold on 
-pc1 = plot(time_against, mD_against, '^', 'MarkerSize', 10, 'MarkerFaceColor', blue, 'MarkerEdgeColor', 'k'); 
-pc2 = plot(time_with, mD_with, '^', 'MarkerSize', 10, 'MarkerFaceColor', red, 'MarkerEdgeColor', 'k');
+    pc1 = plot(time_against, mD_against, '^', 'MarkerSize', 10, 'MarkerFaceColor', blue, 'MarkerEdgeColor', 'k'); 
+    pc2 = plot(time_with, mD_with, '^', 'MarkerSize', 10, 'MarkerFaceColor', red, 'MarkerEdgeColor', 'k');
 hold off
 
 % Set figure attributes
@@ -212,7 +213,7 @@ hold off
 
 % Set figure attributes
 title('(b)')
-xlabel('UTC time from Sep 11$^{\textrm{th}}$, 2020 (hrs)')
+xlabel('UTC time from 11 Sep 2020 (hrs)')
 ylabel('$f_{ob}$ (Hz)')
 xlim([nov_s.time_legs(Ilat_s(1)), nov_s.time_legs(end)])
 ylim([3*10^-2 10^0])
@@ -224,10 +225,10 @@ set(gca,'TickDir','out');
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
 pc.EdgeColor = 'none';
-annotation('rectangle',[0.172916666666667 0.116152450090744 0.015277777777778 0.334509240835089],...
-           'LineStyle','none','FaceColor',blue,'FaceAlpha',0.3);
-annotation('rectangle',[0.189657407407406 0.114337568058076 0.011037037037039 0.336800316814746],...
-           'LineStyle','none','FaceColor',red,'FaceAlpha',0.3);
+%annotation('rectangle',[0.172916666666667 0.116152450090744 0.015277777777778 0.334509240835089],...
+%           'LineStyle','none','FaceColor',blue,'FaceAlpha',0.3);
+%annotation('rectangle',[0.189657407407406 0.114337568058076 0.011037037037039 0.336800316814746],...
+%           'LineStyle','none','FaceColor',red,'FaceAlpha',0.3);
 
 % Set colorbar attributes
 cb = colorbar;
@@ -276,4 +277,4 @@ pos1(3) = pos2(3);
 set(ax1,'Position',pos1)
 
 % Save Figure
-saveas(gcf, [fig_path 'fig08.png'])
+saveas(gcf, [fig_path 'fig09.png'])
