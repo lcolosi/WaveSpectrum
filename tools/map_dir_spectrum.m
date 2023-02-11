@@ -91,7 +91,6 @@ function [S_fin, f_int, f_b] = map_dir_spectrum(S_fob, f_obs, f_cut, U, theta_r)
     % Initialize variables 
     S_fin = NaN(size(S_fob));
     f_int = zeros(size(S_fob)); 
-    J = NaN(length(f_obs)-1,length(theta_r));
     f_b = NaN(length(theta_r),2);
 
     %------- Map from observed to intrinsic frequency -------%
@@ -194,10 +193,10 @@ function [S_fin, f_int, f_b] = map_dir_spectrum(S_fob, f_obs, f_cut, U, theta_r)
         df_int = diff(f_int(:,iangle));
 
         % Compute Jacobian 
-        J(:,iangle) = df_obs./df_int;
+        J = df_obs./df_int;
 
         % Compute S_fin by multiplying S_fob by Jacobian
-        S_fin(1:length(J),iangle) = S_fob(1:length(J),iangle) .* J(:,iangle);
+        S_fin(1:length(J),iangle) = S_fob(1:length(J),iangle) .* J;
 
         % Map S_fin back onto the f_in regular grid (linear interpolation is not extrapolating to values where f_obs > f_int(end))
         idx_nan = ~isnan(S_fin(:,iangle)); 
