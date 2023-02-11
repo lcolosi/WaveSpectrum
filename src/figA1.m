@@ -114,13 +114,13 @@ title('(a)', 'Position', [13.907391675107192,2.577847801991084,49.07440416366648
 shading flat
 alpha(0.5)
 sc1.FaceColor = blue; sc2.FaceColor = red; sc3.FaceColor = green;
-xlabel('$k_1$ (rad m$^{-1}$)', 'Position', [13.57557284106133,-27.52171618968987,-50.8773940577874])
-ylabel('$k_2$ (rad m$^{-1}$)', 'Position', [-34.02161915211582,14.058365548812617,-50.99054550473954])
+xlabel('$k$ (rad m$^{-1}$)', 'Position', [13.57557284106133,-27.52171618968987,-50.8773940577874])
+ylabel('$l$ (rad m$^{-1}$)', 'Position', [-34.02161915211582,14.058365548812617,-50.99054550473954])
 zlabel('m (rad s$^{-1}$)')
 xlim([-50 50]); ylim([-50 50]); zlim([-40 40])
 xticks(-50:25:50); yticks(-50:25:50); zticks(-40:10:40)
 view([-36.8410110594965 9.62376237623763]);
-legend([sc1 sc2, sc3], {'$\sigma(k)$'; '-$\sigma(k)$';'$\omega + \textbf{k}\cdot\textbf{U}$'}, 'Position', [0.390457885867418,0.448655914170768,0.054062316152785,0.050268817012028]) 
+legend([sc1 sc2, sc3], {'$\sigma(\textbf{k})$'; '-$\sigma(\textbf{k})$';'$\omega + \textbf{k}\cdot\textbf{U}$'}, 'Position', [0.390457885867418,0.448655914170768,0.054062316152785,0.050268817012028], 'FontSize', fontsize-4) 
 set(gca,'FontSize',fontsize)
 
 % Set for direction of platform propagation
@@ -146,11 +146,11 @@ hold off
 
 % Set figure attributes
 title('(b) $\theta_r = 0^\circ, 180^\circ$')
-xlabel(['$k_1$ (rad m$^{-1}$)'])
+xlabel('$k$ (rad m$^{-1}$)')
 ylabel('m (rad s$^{-1}$)')
 xlim([-50 50]); ylim([-40 40])
 xticks(-50:25:50); yticks(-40:20:40);
-legend([sc1 sc2, sc3], {'$\sigma(\textbf{k})$'; '-$\sigma(\textbf{k})$';'$\omega + \textbf{k}\cdot\textbf{U}$'}, 'Position', [0.662377002938179 0.605141248535899 0.0626229970618208 0.0633333331795148]) 
+legend([sc1 sc2, sc3], {'$\sigma(\textbf{k})$'; '-$\sigma(\textbf{k})$';'$\omega + \textbf{k}\cdot\textbf{U}$'}, 'Position', [0.662377002938179 0.605141248535899 0.0626229970618208 0.0633333331795148], 'FontSize', fontsize-4) 
 grid on
 set(gca,'FontSize',fontsize)
 
@@ -170,7 +170,7 @@ hold off
 
 % Set figure attributes
 title('(c) $\theta_r = 90^\circ, 270^\circ$')
-xlabel('$k_2$ (rad m$^{-1}$)')
+xlabel('$l$ (rad m$^{-1}$)')
 ylabel('m (rad s$^{-1}$)')
 xlim([-50 50]); ylim([-40 40])
 xticks(-50:25:50); yticks(-40:20:40);
