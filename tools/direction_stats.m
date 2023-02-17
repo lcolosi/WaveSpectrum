@@ -19,10 +19,16 @@ function [m_theta,std_theta, stdm_theta] = direction_stats(theta, dt, task)
     % 
     %   Returns
     %   -------
-    %   m_theta : Mean direction.
-    %   std_theta : Standard deviation of direction. 
+    %   m_theta : Mean direction (Yamartino Method).
+    %   std_theta : Standard deviation of direction (Yamartino Method).
     %   stdm_theta : Standard error of the mean direction. 
-    %   
+    % 
+    %   Notes
+    %   -----
+    %   (1) The mean and standard deviation are computed using the 
+    %       Yamartino Method. For more information, see:
+    %           (a) Wiki page - https://en.wikipedia.org/wiki/Yamartino_method
+    %           (b) Publication - https://urldefense.com/v3/__https://journals.ametsoc.org/view/journals/apme/23/9/1520-0450_1984_023_1362_acospe_2_0_co_2.xml?tab_body=pdf__;!!Mih3wA!AMtkrURmRZGuK8lwOc1Zx2ixE7Zqo3CSEC3tVgpEC2X6gC9HD4UJu49dcrL_QgeyJutdnXi-DAqbcNE$
     %%%%
     
     % Compute the cosine and sine components of the angle: 
