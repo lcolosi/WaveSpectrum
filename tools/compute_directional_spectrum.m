@@ -204,19 +204,19 @@ function [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_no
         S = wafo.S;                                                         % Units: m^2/(Hz deg)
 
         % Set directional convention for 
+        %---- Reference North/East ----%
+        if strcmp(dir_con(3), 'rn')
+            theta = theta - 90;
+        end
+        
         %---- Clockwise/Counter-Clockwise ----%
         if strcmp(dir_con(1), 'CW')
             theta = -theta;
         end
-    
+        
         %---- Going-to/Coming-from ----%
         if strcmp(dir_con(2), 'cf')
             theta = theta + 180; 
-        end
-
-        %---- Reference North/East ----%
-        if strcmp(dir_con(3), 'rn')
-            theta = theta + 90;
         end
         
         % Make theta range from 0 to 360 
