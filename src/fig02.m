@@ -360,9 +360,10 @@ for is = 1:(length(T0) - 1)
 end
 
 %% Plot platform trajectory and environmental conditions
+clc, close all
 
 % Set plotting parameters
-cb_l = -4000; cb_h = 4000;
+cb_l = -4000; cb_h = -1; cb_land = 0;
 t_ticks = datetime('29-Oct-2021 00:00:00'):days(1):datetime('04-Nov-2021 00:00:00');
 red = [0.6350 0.0780 0.1840]; 
 blue = [0 0.4470 0.7410]; 
@@ -391,10 +392,15 @@ hold off
 % Set figure attributes
 title('(a)')
 axis equal
+xlabel('Longitude')
+ylabel('Latitude')
 xlim([lon_exp_l, lon_exp_h])
 ylim([lat_exp_l, lat_exp_h])
 xticks(-124.2:0.2:-123.4)
 yticks(36.8:0.2:37.4)
+xl = xticks; yl = yticks;
+xticklabels({[num2str(xl(1)) '$^\circ$']; [num2str(xl(2)) '$^\circ$']; [num2str(xl(3)) '$^\circ$']; [num2str(xl(4)) '$^\circ$']; [num2str(xl(5)) '$^\circ$']})
+yticklabels({[num2str(yl(1)) '$^\circ$']; [num2str(yl(2)) '$^\circ$']; [num2str(yl(3)) '$^\circ$']; [num2str(yl(4)) '$^\circ$']})
 legend([pc2, pc3, pc4], 'WHOI43', 'Initial Position', 'Final Position', 'Location', 'northeast', 'Fontsize', fontsize-3)
 grid on
 set(gca,'FontSize',fontsize)
@@ -404,11 +410,11 @@ set(gcf, 'Color', 'w')
 shading flat
 
 %------- set the colormap of the zoomed in region -------%
-% Set the topographic colormap
-cmap = colormap(cmocean('topo'));
+% Set the bathymetric colormap
+cmap = colormap([flipud(cmocean('deep')); [0.5, 0.5, 0.5]]);                % flipud(cmocean('deep'))
 
 % Create a depth vector corresponding to the levels of the colormap
-cmap_z = linspace(cb_l,cb_h, length(cmap)); 
+cmap_z = [linspace(cb_l,cb_h, length(cmap)-1), cb_land]; 
 
 % Find the max and min values of the bathymetry in the experiment site
 z_max = max(z_exp,[],'All'); z_min = min(z_exp,[],'All'); 
@@ -428,13 +434,20 @@ cb = colorbar;
 caxis([cb_l, -1000]);
 cb.Label.Interpreter = 'Latex';
 cb.FontSize = fontsize;
-cb.Label.String = 'Elevation (m)';
+cb.Label.String = 'Depth (m)';
 cb.TickDirection = 'out'; 
 cb.TickLabelInterpreter = 'latex';
 
-% Find the position of the current axes and create a new position vector 
-% for the new axis using that position data.
+% Find the position of the current axes
 p_ax1 = get(gca, 'Position');                                               % Note: position vector: [left bottom width height]
+
+% Shift axis up and get new position
+y_shift = 0.02;
+set(gca, 'Position', [p_ax1(1) p_ax1(2)+y_shift p_ax1(3) p_ax1(4)])         % x-offset to align axes labels and titles
+p_ax1 = get(gca, 'Position');
+
+% Create a new position vector for the inset axis using that position data 
+% from the larger axis.                                             % Note: position vector: [left bottom width height]
 p_ax2 = [p_ax1(1)+0.15 p_ax1(2)+0.03 p_ax1(3)-.5 p_ax1(4)-.2];
 
 % Apply empirical corrections to x and y end points for annotate function in
@@ -473,6 +486,9 @@ contour(lon_reg,lat_reg,z_reg',[0,0], 'LineWidth', 1, 'LineColor', 'k', 'LineSty
 % Set figure attributes
 title('(b)', 'color', 'w')
 axis square
+xl = xticks; yl = yticks;
+xticklabels({[num2str(xl(1)) '$^\circ$']; [num2str(xl(2)) '$^\circ$']})
+yticklabels({[num2str(yl(1)) '$^\circ$']; [num2str(yl(2)) '$^\circ$']; [num2str(yl(3)) '$^\circ$']; [num2str(yl(4)) '$^\circ$']})
 set(gca, 'FontSize', 8)
 set(gca,'TickDir','out','TickLength', [0.025,0.75]);
 set(gca,'XColor','w')
@@ -481,18 +497,18 @@ set(gcf, 'InvertHardcopy', 'off')
 set(gca, 'color', 'w')
 set(gca,'TickLabelInterpreter','latex')
 shading flat
-cmap = colormap(h, cmocean('topo'));
+cmap = colormap(h, cmap);
 
 %Display Colorbar
 cb = colorbar; 
-caxis([cb_l, cb_h]);
+caxis([cb_l, cb_land]);
 cb.Label.Interpreter = 'Latex';
 cb.FontSize = 8;
-cb.Label.String = 'Elevation (m)';
+cb.Label.String = 'Depth (m)';
 cb.TickDirection = 'out';
 cb.Color = 'w';
-cb.Ticks = linspace(cb_l,cb_h,9);
-cb.TickLabels = num2cell(linspace(cb_l,cb_h,9)); 
+cb.Ticks = linspace(cb_l,cb_land,5);
+cb.TickLabels = num2cell(linspace(cb_l,cb_land,5)); 
 cb.TickLabelInterpreter = 'latex';
 
 % Set the distance for 
@@ -530,19 +546,19 @@ py_f = y_ax1(1)+0.281;
 
 %----- Left Vertical Bar -----%
 annotation('line',[0.6 0.6],...
-    [0.828+0.02 0.838+0.02],'Color',[1 1 1],'LineWidth',1);
+    [0.828+0.02 0.838+0.02]+y_shift,'Color',[1 1 1],'LineWidth',1);
 
 %----- Right Vertical Bar -----%
 annotation('line',[0.6+(px_f-px_i) 0.6+(px_f-px_i)],...
-    [0.828+0.02 0.839+0.02],'Color',[1 1 1],'LineWidth',1);
+    [0.828+0.02 0.839+0.02]+y_shift,'Color',[1 1 1],'LineWidth',1);
 
 %----- Horizontal Bar -----%
 annotation('line',[0.6  0.6+(px_f-px_i)],...
-    [0.833+0.02 0.833+0.02],'Color',[1 1 1],'LineWidth',1);
+    [0.833+0.02 0.833+0.02]+y_shift,'Color',[1 1 1],'LineWidth',1);
 
 %----- Text Box -----%
 annotation('textbox',...
-    [0.627543209876543 0.829301075268817+0.02 0.0591851851851851 0.013440860215054],...
+    [0.627543209876543 0.829301075268817+0.02+y_shift 0.0591851851851851 0.013440860215054],...
     'Color',[1 1 1],'String',{'5$\:$km'},'Interpreter','latex',...
     'FontSize',8,'FitBoxToText','off','EdgeColor','none');
 

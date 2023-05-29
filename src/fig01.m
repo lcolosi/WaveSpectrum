@@ -285,10 +285,10 @@ for is = 1:length(T0)
 end 
 
 %% Plot platform trajectory and environmental conditions
-close all 
+clc, close all 
 
 % Set plotting parameters
-cb_l = -1000; cb_h = 1000;
+cb_l = -1000; cb_h = -1; cb_land = 0;
 t_ticks = datetime('09-Sep-2020 00:00:00'):hours(12):datetime('12-Sep-2020 00:00:00');
 red = [0.6350 0.0780 0.1840]; 
 blue = [0 0.4470 0.7410]; 
@@ -322,8 +322,13 @@ hold off
 % Set figure attributes
 title('(a)')
 axis equal
+xlabel('Longitude')
+ylabel('Latitude')
 xlim([lon_exp_l, lon_exp_h])
 ylim([lat_exp_l, lat_exp_h])
+xl = xticks; yl = yticks;
+xticklabels({[num2str(xl(1)) '$^\circ$']; [num2str(xl(2)) '$^\circ$']; [num2str(xl(3)) '$^\circ$']; [num2str(xl(4)) '$^\circ$']})
+yticklabels({[num2str(yl(1)) '$^\circ$']; [num2str(yl(2)) '$^\circ$']; [num2str(yl(3)) '$^\circ$']; [num2str(yl(4)) '$^\circ$']; [num2str(yl(5)) '$^\circ$']; [num2str(yl(6)) '$^\circ$']; [num2str(yl(7)) '$^\circ$']})
 legend([pc2, pc3, pc4, pc5], 'Planck', 'Stokes', 'Initial Position', 'Final Position', 'Location', 'northeast', 'Fontsize', fontsize-3)
 grid on
 set(gca,'FontSize',fontsize)
@@ -333,11 +338,11 @@ set(gcf, 'Color', 'w')
 shading flat
 
 %------- set the colormap of the zoomed in region -------%
-% Set the topographic colormap
-cmap = colormap(cmocean('topo'));
+% Set the bathymetric colormap
+cmap = colormap([flipud(cmocean('deep')); [0.5, 0.5, 0.5]]);                % flipud(cmocean('deep'))
 
 % Create a depth vector corresponding to the levels of the colormap
-cmap_z = linspace(cb_l,cb_h, length(cmap)); 
+cmap_z = [linspace(cb_l,cb_h, length(cmap)-1), cb_land]; 
 
 % Find the max and min values of the bathymetry in the experiment site
 z_max = max(z_exp,[],'All'); z_min = min(z_exp,[],'All'); 
@@ -357,15 +362,22 @@ cb = colorbar;
 caxis([cb_l, -700]);
 cb.Label.Interpreter = 'Latex';
 cb.FontSize = fontsize;
-cb.Label.String = 'Elevation (m)';
+cb.Label.String = 'Depth (m)';
 cb.TickDirection = 'out';
 cb.Ticks = linspace(cb_l,-700,6);
 cb.TickLabels = num2cell(linspace(cb_l,-700,6)); 
 cb.TickLabelInterpreter = 'latex';
 
-% Find the position of the current axes and create a new position vector 
-% for the new axis using that position data.
+% Find the position of the current axes
 p_ax1 = get(gca, 'Position');                                               % Note: position vector: [left bottom width height]
+
+% Shift axis up and get new position
+y_shift = 0.02;
+set(gca, 'Position', [p_ax1(1) p_ax1(2)+y_shift p_ax1(3) p_ax1(4)])         % x-offset to align axes labels and titles
+p_ax1 = get(gca, 'Position');
+
+% Create a new position vector for the inset axis using that position data 
+% from the larger axis.
 p_ax2 = [p_ax1(1)+0.165 p_ax1(2)+0.035 p_ax1(3)-.5 p_ax1(4)-.2];           
 
 % Apply empirical corrections to x and y end points for annotate function in
@@ -403,8 +415,12 @@ contour(lon,lat,z',[0,0], 'LineWidth', 1, 'LineColor', 'k', 'LineStyle', '-')
 
 % Set figure attributes
 title('(b)', 'color', 'w')
+shading flat
 axis square
 xticks(-117.7:0.2:-117.1)
+xl = xticks; yl = yticks;
+xticklabels({[num2str(xl(1)) '$^\circ$']; [num2str(xl(2)) '$^\circ$']; [num2str(xl(3)) '$^\circ$']; [num2str(xl(4)) '$^\circ$']})
+yticklabels({[num2str(yl(1)) '$^\circ$']; [num2str(yl(2)) '$^\circ$']; [num2str(yl(3)) '$^\circ$']})
 set(gca, 'FontSize', 8)
 set(gca,'TickDir','out','TickLength', [0.025,0.75]);
 set(gca,'XColor','w')
@@ -412,58 +428,57 @@ set(gca,'YColor','w')
 set(gcf, 'InvertHardcopy', 'off')
 set(gca, 'color', 'w')
 set(gca,'TickLabelInterpreter','latex')
-shading flat
-cmap = colormap(h, cmocean('topo'));
+cmap = colormap(h, cmap);
 
 %Display Colorbar
 cb = colorbar; 
-caxis([cb_l, cb_h]);
+caxis([cb_l, cb_land]);
 cb.Label.Interpreter = 'Latex';
 cb.FontSize = 8;
-cb.Label.String = 'Elevation (m)';
+cb.Label.String = 'Depth (m)';
 cb.TickDirection = 'out';
 cb.Color = 'w';
-cb.Ticks = linspace(cb_l,cb_h,9);
-cb.TickLabels = num2cell(linspace(cb_l,cb_h,9)); 
+cb.Ticks = linspace(cb_l,cb_land,5);
+cb.TickLabels = num2cell(linspace(cb_l,cb_land,5)); 
 cb.TickLabelInterpreter = 'latex';
 
 % Create winding number arrows annotations
 %----- Planck Large Box -----%
 xa = [0.373456790123456 0.337962962962963];
-ya = [0.874163319946452 0.874163319946452];
+ya = [0.874163319946452 0.874163319946452]+y_shift;
 annotation('line',xa,ya,'Color','w', 'LineWidth', 1.5)
 xa = [0.33891975308642 0.33891975308642];
-ya = [0.875163319946452 0.845373493975903];
+ya = [0.875163319946452 0.845373493975903]+y_shift;
 annotation('textarrow',xa,ya,'String','10 Rev ','Color','w', 'LineWidth', ...
            1.5, 'Interpreter', 'latex', 'FontSize', 8,'HeadWidth',9,...
            'HeadLength',6)
 
 %----- Planck Small Box -----%
 xa = [0.632716049382716 0.612654320987653];
-ya = [0.661311914323962 0.661311914323961];
+ya = [0.661311914323962 0.661311914323961]+y_shift;
 annotation('line',xa-0.001,ya,'Color','w', 'LineWidth', 1.5)
 xa = [0.611111111111109 0.611111111111109];
-ya = [0.660311914323962 0.681392235609102];
+ya = [0.660311914323962 0.681392235609102]+y_shift;
 annotation('textarrow',xa,ya,'String','9 Rev ','Color','w', 'LineWidth', ...
            1.5, 'Interpreter', 'latex', 'FontSize', 8,'HeadWidth',9,...
            'HeadLength',6)
 
 %----- Stokes Large Box -----%
 xa = [0.449074074074072 0.413580246913579];
-ya = [0.875502008032128 0.875502008032128];
+ya = [0.875502008032128 0.875502008032128]+y_shift;
 annotation('line',xa,ya,'Color','w', 'LineWidth', 1.5)
 xa = [0.412993827160493 0.412993827160493];
-ya = [0.876502008032128 0.846712182061579];
+ya = [0.876502008032128 0.846712182061579]+y_shift;
 annotation('textarrow',xa,ya,'String','11 Rev ','Color','w', 'LineWidth', ...
             1.5, 'Interpreter', 'latex', 'FontSize', 8,'HeadWidth',9,...
             'HeadLength',6)
 
 %----- Stokes Small Box -----%
 xa = [0.666666666666666 0.666666666666667];
-ya = [0.659973226238286 0.682730923694779];
+ya = [0.659973226238286 0.682730923694779]+y_shift;
 annotation('line',xa,ya+0.001,'Color','w', 'LineWidth', 1.5)
 xa = [0.666666666666666 0.645061728395059];
-ya = [0.661311914323962 0.661311914323961];
+ya = [0.661311914323962 0.661311914323961]+y_shift;
 annotation('textarrow',xa,ya,'String','9 Rev ', 'TextRotation', 0, 'Color', ...
            'w', 'LineWidth', 1.5, 'Interpreter', 'latex', 'FontSize', 8,...
            'HorizontalAlignment','left', 'VerticalAlignment','top',...
@@ -504,19 +519,19 @@ py_f = y_ax1(1)+0.281;
 
 %----- Left Vertical Bar -----%
 annotation('line',[0.6 0.6],...
-    [0.828+0.009 0.838+0.009],'Color',[1 1 1],'LineWidth',1);
+    [0.828+0.009 0.838+0.009]+y_shift,'Color',[1 1 1],'LineWidth',1);
 
 %----- Right Vertical Bar -----%
 annotation('line',[0.6+(px_f-px_i) 0.6+(px_f-px_i)],...
-    [0.828+0.009 0.839+0.009],'Color',[1 1 1],'LineWidth',1);
+    [0.828+0.009 0.839+0.009]+y_shift,'Color',[1 1 1],'LineWidth',1);
 
 %----- Horizontal Bar -----%
 annotation('line',[0.6  0.6+(px_f-px_i)],...
-    [0.833+0.009 0.833+0.009],'Color',[1 1 1],'LineWidth',1);
+    [0.833+0.009 0.833+0.009]+y_shift,'Color',[1 1 1],'LineWidth',1);
 
 %----- Text Box -----%
 annotation('textbox',...
-    [0.627543209876543 0.829301075268817+0.009 0.0591851851851851 0.013440860215054],...
+    [0.627543209876543 0.829301075268817+0.009+y_shift 0.0591851851851851 0.013440860215054],...
     'Color',[1 1 1],'String',{'1$\:$km'},'Interpreter','latex',...
     'FontSize',8,'FitBoxToText','off','EdgeColor','none');
 
