@@ -36,7 +36,7 @@ fig_path = '../figs/';
 % Physical parameters
 z_station = 1;                                                              % Height of weather station (meters)
 g = 9.81;                                                                   % gravitational acceleration (m/s) 
-dir_con = {'CW', 'cf', 'rn'};                                               % Directional conventions for wave glider trajectory (wind direction is CW, coming from, reference north)
+dir_con = {'CW', 'gt', 'rn'};                                               % Directional conventions for wave glider trajectory (wind direction is CW, coming from, reference north)
 
 % Temporal parameters
 period = 20;                                                                % Time duration for computing wave spectra
