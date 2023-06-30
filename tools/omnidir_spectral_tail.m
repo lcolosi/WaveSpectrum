@@ -61,8 +61,8 @@ function [S_n, f_n, fit, f_fit] = omnidir_spectral_tail(S, f, f_tail, f_eq, f_sa
     %       at a power spectral density level set by least-squares fitting
     %       a line through a range of frequencies and grabbing value of the
     %       fit corresponding to the attachment frequency. This helps to
-    %       impact the noise in the power spectrum at high frequency has on
-    %       the spectral tail.     
+    %       lessen the impact the noise in the power spectrum at high 
+    %       frequency has on the spectral tail.     
     %   
     %%%%
             
