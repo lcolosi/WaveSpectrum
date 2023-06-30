@@ -507,9 +507,7 @@ caxis([cb_l, cb_land]);
 cb.Label.Interpreter = 'Latex';
 cb.FontSize = 8;
 cb.Label.String = 'Depth (m)';
-cb.TickDirection = 'out';
-%cb.Ticks = linspace(cb_l,cb_land,5);
-%cb.TickLabels = num2cell(linspace(cb_l,cb_land,5)); 
+cb.TickDirection = 'out'; 
 cb.TickLabelInterpreter = 'latex';
 
 % Set the distance for 
