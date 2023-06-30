@@ -85,7 +85,7 @@ function [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_no
     %        
     %           https://www.maths.lth.se/matstat/wafo/download/index.html
     % 
-    %       Further inforation may be found on thier github page: 
+    %       Further information may be found on thier github page: 
     % 
     %           https://github.com/wafo-project/wafo
     %       
