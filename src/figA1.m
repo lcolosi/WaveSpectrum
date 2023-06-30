@@ -57,6 +57,9 @@ sigma_neg = -(g*K.*tanh(K*H)).^(1/2);
 % Compute dispersion relation in R' reference frame (observed frequency)
 m = omega + K.*U.*cosd(theta_r);
 
+% Compute the l = 0 surface
+%l_zero = 
+
 % Compute analytic K solutions for intersection point along k = 0 and l = 0
 % planes (pick the k = 0 and l = 0 relative angles from theta_r). 
 theta_r_kp = [0, 180]; 
@@ -123,13 +126,13 @@ zlabel('m (rad s$^{-1}$)')
 xlim([-50 50]); ylim([-50 50]); zlim([-40 40])
 xticks(-50:25:50); yticks(-50:25:50); zticks(-40:10:40)
 view([-36.8410110594965 9.62376237623763]);
-legend([sc1 sc2, sc3], {'$\sigma(\textbf{k})$'; '-$\sigma(\textbf{k})$';'$\omega + \textbf{k}\cdot\textbf{U}$'}, 'Position', [0.390457885867418,0.448655914170768,0.054062316152785,0.050268817012028], 'FontSize', fontsize-4) 
+legend([sc1 sc2, sc3], {'$\sigma(\textbf{k})$'; '-$\sigma(\textbf{k})$';'$\omega + \textbf{k}\cdot\textbf{u}$'}, 'Position', [0.390457885867418,0.448655914170768,0.054062316152785,0.050268817012028], 'FontSize', fontsize-4) 
 set(gca,'FontSize',fontsize)
 
 % Set for direction of platform propagation
 annotation('arrow',[0.296527777777778 0.338888888888889],[0.188516129032258 0.204301075268817]);
 annotation('textbox',[0.304472222222222 0.201612903225807 0.018875365787082 0.029569892473118],...
-    'String',{'$\textbf{U}$'},'Interpreter','latex', ...
+    'String',{'$\textbf{u}$'},'Interpreter','latex', ...
     'HorizontalAlignment','center','EdgeColor','none', 'FontSize', fontsize);
 
 %------------------- Dispersion Relation curves: theta_r = 0, 180 or l = 0 plane -------------------%
@@ -153,7 +156,7 @@ xlabel('$k$ (rad m$^{-1}$)')
 ylabel('m (rad s$^{-1}$)')
 xlim([-50 50]); ylim([-40 40])
 xticks(-50:25:50); yticks(-40:20:40);
-legend([sc1 sc2, sc3], {'$\sigma(\textbf{k})$'; '-$\sigma(\textbf{k})$';'$\omega + \textbf{k}\cdot\textbf{U}$'}, 'Position', [0.662377002938179 0.605141248535899 0.0626229970618208 0.0633333331795148], 'FontSize', fontsize-4) 
+legend([sc1 sc2, sc3], {'$\sigma(\textbf{k})$'; '-$\sigma(\textbf{k})$';'$\omega + \textbf{k}\cdot\textbf{u}$'}, 'Position', [0.662377002938179 0.605141248535899 0.0626229970618208 0.0633333331795148], 'FontSize', fontsize-4) 
 grid on
 set(gca,'FontSize',fontsize)
 
