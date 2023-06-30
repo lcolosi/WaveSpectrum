@@ -213,7 +213,7 @@ fontsize = 13;
 % Obtain RGB triplet for colormap
 cmap = colormap(cbrewer2('RdYlBu'));
 
-% Bin average colorbar to match number of relative angle cases
+% % Bin average colorbar to match number of relative angle cases
 ntriplet = floor(length(cmap)/length(theta_r))*length(theta_r);             % number of RGB triplets that divide evenly into number of angle bins
 ncolor = floor(length(cmap)/length(theta_r));                               % number of triplet to be bin averaged
 cmap_bin = sepblockfun(cmap(1:ntriplet,:), [ncolor,1], @mean);
@@ -222,8 +222,12 @@ cmap_bin = sepblockfun(cmap(1:ntriplet,:), [ncolor,1], @mean);
 z_m = linspace(0,180,7);
 z = 0:12.8571:180;
 
+% Set an additional colormap for replacing the yellow in the RdYlBu
+% colormap
+cmap_set1 = cbrewer2('RdYlGn',7);
+
 % Obtain RGB triplet of colormap
-cmap = colormap(cmap_bin);
+cmap = colormap([cmap_bin(1:3,:); cmap_set1(6,:); cmap_bin(5:7,:)]);
 
 % Plot intrinsic frequency as a function of observed frequency
 for isubplot = 1:length(U)
@@ -245,6 +249,7 @@ for isubplot = 1:length(U)
             % Plot Ucos(theta_r) = 0 and Ucos(theta_r) = c_g 
             pc1 = plot(f_ob, f_ob, '--k', 'LineWidth', 2);
             pc2 = plot(f_ob, (2)*f_ob, 'LineStyle', '--', 'Color', [0.5 0.5 0.5], 'LineWidth', 2);
+            %xline(0.1, '-', 'Color', [0.5 0.5 0.5], 'LineWidth', 2)
 
             % Plot f_in at bifuraction frequencies
             if F.f_in_max(isubplot,iangle) < 1 && F.f_in_max(isubplot,iangle) > 0
@@ -282,7 +287,7 @@ for isubplot = 1:length(U)
 end
 
 %-------- Set Colorbar --------%
-colormap(cmap_bin);
+colormap(cmap);
 cb = colorbar;
 cb.Position = [0.8201 0.3949 0.0279 0.2415]; 
 cb.Ticks = z(2:2:end)/max(z);
