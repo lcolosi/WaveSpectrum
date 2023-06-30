@@ -4,7 +4,7 @@ function [m_theta,std_theta, stdm_theta] = direction_stats(theta, dt, task)
     % [m_theta,std_theta, stdm_theta] = direction_stats(theta, dt, task)
     %
     % Function for computing the mean, standard deviation, and standard 
-    % error of the mean for an array of direction measurements. 
+    % error of the mean for a time series of direction measurements. 
     %
     %   Parameters
     %   ----------
@@ -13,9 +13,10 @@ function [m_theta,std_theta, stdm_theta] = direction_stats(theta, dt, task)
     %           convention.
     %   dt : Temporal or spatial separation between theta observations.
     %        Scalar quantity.
-    %   task : Specifies whether the uncertainty of the mean should be
-    %          computed. If true, uncertainty is computed. If false, then
-    %          uncertainty is not computed. 
+    %   task : Specifies How the standard error of the mean is computed. If
+    %          true, standard error is computed assuming data has 
+    %          serial correlation. If false, then standard error is
+    %          computed assuming all data points are independent. 
     % 
     %   Returns
     %   -------
