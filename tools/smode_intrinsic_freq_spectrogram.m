@@ -15,9 +15,6 @@ vehicle = 'WHOI43';
 %%%% Root %%%%
 ROOT = '../data/SMODE2021/';
 
-% Set path for figures
-fig_path = '../figs/SMODE2021/';
-
 %%%%%%%%%% Initial global variables %%%%%%%%%%
 
 % Physical parameters

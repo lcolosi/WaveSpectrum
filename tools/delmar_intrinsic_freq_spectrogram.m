@@ -15,9 +15,6 @@ vehicle = 'STOKES';
 %%%% Root %%%%
 ROOT = '../data/DELMAR2020/';
 
-% Set path for figures
-fig_path = '../figs/paper/';
-
 %%%%%%%%%% Initial global variables %%%%%%%%%%
 
 % Physical parameters
