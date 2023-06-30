@@ -189,7 +189,7 @@ blue = [0 0.4470 0.7410];
 fontsize = 24;
 
 % Create figure
-figure('units','normalized','outerposition',[0 0 0.6 0.8]) % [0 0 1 0.8]
+figure('units','normalized','outerposition',[0 0 1 0.8])
 
 %------------ Subplot 1 ------------% 
 ax1 = subplot(2,1,1); 
@@ -197,10 +197,10 @@ ax1 = subplot(2,1,1);
 % Plot omni-directional spectrogram
 pc = pcolor(T0, nov_s.f_ob, nov_s.spectrogram_omni_f_ob);
 
-% hold on 
-% xline(T0(idx_int(1)),'-.', 'LineWidth', 2.5, 'color', [0 0 0])
-% xline(T1(idx_fin(end)),'-.', 'LineWidth', 2.5, 'color', [0 0 0])
-% hold on 
+hold on 
+xline(T0(idx_int(1)),'-.', 'LineWidth', 2.5, 'color', [0 0 0])
+xline(T1(idx_fin(end)),'-.', 'LineWidth', 2.5, 'color', [0 0 0])
+hold on 
 
 % Set figure attributes
 title('(a)')
@@ -219,8 +219,8 @@ set(gca,'TickDir','out');
 set(gca, 'TickLength', [0.007, 0.007]) 
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
-% annotation('rectangle',[0.677777777777778 0.589703588143526 0.196527777777778 0.324492979719189],...
-%            'LineWidth',2.5,'LineStyle','--');
+annotation('rectangle',[0.677777777777778 0.589703588143526 0.196527777777778 0.324492979719189],...
+           'LineWidth',2.5,'LineStyle','--');
 
 % Set colorbar attributes
 cb = colorbar;
@@ -242,10 +242,10 @@ ax2 = subplot(2,1,2);
 % Plot saturation spectrogram
 pc = pcolor(T0, nov_s.f_ob, nov_s.sat_spectrogram_omni_f_ob);
 
-% hold on 
-% xline(T0(idx_int(1)),'-.', 'LineWidth', 2.5, 'color', [0 0 0])
-% xline(T1(idx_fin(end)),'-.', 'LineWidth', 2.5, 'color', [0 0 0])
-% hold on
+hold on 
+xline(T0(idx_int(1)),'-.', 'LineWidth', 2.5, 'color', [0 0 0])
+xline(T1(idx_fin(end)),'-.', 'LineWidth', 2.5, 'color', [0 0 0])
+hold on
 
 % Set figure attributes
 title('(b)')
@@ -265,8 +265,8 @@ set(gca,'TickDir','out');
 set(gca, 'TickLength', [0.007, 0.007]) 
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
-% annotation('rectangle',[0.677777777777778 0.117004680187207 0.196527777777778 0.324492979719189],...
-%            'LineWidth',2.5,'LineStyle','--');
+annotation('rectangle',[0.677777777777778 0.117004680187207 0.196527777777778 0.324492979719189],...
+           'LineWidth',2.5,'LineStyle','--');
 
 % Set colorbar attributes
 cb = colorbar;
