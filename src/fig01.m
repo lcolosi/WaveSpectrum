@@ -289,7 +289,7 @@ end
 clc, close all 
 
 % Set plotting parameters
-cb_l = -1000; cb_h = -1; cb_land = 0;
+cb_l = -1000; cb_h = -1; cb_land = 3.9;
 t_ticks = datetime('09-Sep-2020 00:00:00'):hours(12):datetime('12-Sep-2020 00:00:00');
 red = [0.6350 0.0780 0.1840]; 
 blue = [0 0.4470 0.7410]; 
@@ -302,7 +302,7 @@ fig = figure('units','normalized','outerposition',[0 0 0.45 1], 'Name', 'Experim
 subplot(5,1,[1 2]) 
 
 % Plot bathymetry 
-pcolor(lon_exp,lat_exp,z_exp');
+pc = pcolor(lon_exp,lat_exp,z_exp');
 
 hold on 
 
@@ -337,6 +337,7 @@ set(gca,'TickDir','out','TickLength', [0.015,0.75]);
 set(gca,'TickLabelInterpreter','latex')
 set(gcf, 'Color', 'w')
 shading flat
+pc.FaceColor = 'interp';
 
 %------- set the colormap of the zoomed in region -------%
 % Set the bathymetric colormap
@@ -407,7 +408,7 @@ annotation('rectangle',p_box,'Color','w', 'LineWidth', 1.5)
 h = axes('Parent', gcf, 'Position', p_ax2);
 
 % Plot bathymetry 
-pcolor(lon,lat,z')
+pc = pcolor(lon,lat,z');
 
 hold on 
 
@@ -417,6 +418,7 @@ contour(lon,lat,z',[0,0], 'LineWidth', 1, 'LineColor', 'k', 'LineStyle', '-')
 % Set figure attributes
 title('(b)', 'color', 'w')
 shading flat
+pc.FaceColor = 'interp';
 axis square
 xticks(-117.7:0.2:-117.1)
 xl = xticks; yl = yticks;
@@ -426,9 +428,6 @@ set(gca, 'FontSize', 8)
 set(gca,'TickDir','out','TickLength', [0.025,0.75]);
 set(gca,'XColor','w')
 set(gca,'YColor','w')
-set(gcf, 'InvertHardcopy', 'off')
-set(gca, 'color', 'w')
-set(gca,'TickLabelInterpreter','latex')
 cmap = colormap(h, cmap);
 
 %Display Colorbar
@@ -439,8 +438,8 @@ cb.FontSize = 8;
 cb.Label.String = 'Depth (m)';
 cb.TickDirection = 'out';
 cb.Color = 'w';
-cb.Ticks = linspace(cb_l,cb_land,5);
-cb.TickLabels = num2cell(linspace(cb_l,cb_land,5)); 
+%cb.Ticks = linspace(cb_l,cb_land,5);
+%cb.TickLabels = num2cell(linspace(cb_l,cb_land,5)); 
 cb.TickLabelInterpreter = 'latex';
 
 % Create winding number arrows annotations

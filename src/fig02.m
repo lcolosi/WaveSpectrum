@@ -60,6 +60,7 @@ freq_band = find(f >= 0.02 & f <= f_noise);                                 % Fr
 toolbox = 'WAFO';                                                           % Method used to compute directional spectrum 
 variables = 'heave_velocity';                                               % Heave and horizontal velocity are used to compute the direction spectrum
 scaling = false;                                                            % Variance of directional spectrum is not scaled to match variance of heave spectrum 
+method = 'MEM';                                                             % Method used to compute directional spectrum 
 
 %% Call Data
 
@@ -323,7 +324,7 @@ for is = 1:(length(T0) - 1)
     kr = kr + 1;
     
     %Compute Directional Spectrum 
-    [Sd, f, ~] = compute_directional_spectrum(fast.high_pass.alt, fast.high_pass.ve, fast.high_pass.vn, fast.high_pass.vu, fast.high_pass.ttime_n, f, df, dtheta, nfft, fe_n, toolbox, variables, scaling, dir_con); 
+    [Sd, f, ~] = compute_directional_spectrum(fast.high_pass.alt, fast.high_pass.ve, fast.high_pass.vn, fast.high_pass.vu, fast.high_pass.ttime_n, f, df, dtheta, nfft, fe_n, toolbox, variables, scaling, dir_con, method); 
 
     % Compute the Omni-directional Spectra from directional wave spectra 
     omni_spectrum = sum(Sd * dtheta, 1);
@@ -364,7 +365,7 @@ end
 clc, close all
 
 % Set plotting parameters
-cb_l = -4000; cb_h = -1; cb_land = 0;
+cb_l = -4000; cb_h = -1; cb_land = 15;
 t_ticks = datetime('29-Oct-2021 00:00:00'):days(1):datetime('04-Nov-2021 00:00:00');
 red = [0.6350 0.0780 0.1840]; 
 blue = [0 0.4470 0.7410]; 
@@ -377,7 +378,7 @@ fig = figure('units','normalized','outerposition',[0 0 0.45 1], 'Name', 'Experim
 subplot(5,1,[1 2])
 
 % Plot bathymetry 
-pcolor(lon_exp,lat_exp,z_exp');
+pc = pcolor(lon_exp,lat_exp,z_exp');
 
 hold on 
 
@@ -391,6 +392,7 @@ pc4 = scatter(N.longitude_n(end),  N.latitude_n(end), 30, 'w','d', 'filled', 'Ma
 hold off
 
 % Set figure attributes
+pc.FaceColor = 'interp';
 title('(a)')
 axis equal
 xlabel('Longitude')
@@ -477,7 +479,7 @@ annotation('rectangle',p_box,'Color','w', 'LineWidth', 1.5)
 h = axes('Parent', gcf, 'Position', p_ax2);
 
 % Plot bathymetry 
-pcolor(lon_reg,lat_reg,z_reg')
+pc = pcolor(lon_reg,lat_reg,z_reg');
 
 hold on 
 
@@ -485,6 +487,8 @@ hold on
 contour(lon_reg,lat_reg,z_reg',[0,0], 'LineWidth', 1, 'LineColor', 'k', 'LineStyle', '-')
 
 % Set figure attributes
+shading flat
+pc.FaceColor = 'interp';
 title('(b)', 'color', 'w')
 axis square
 xl = xticks; yl = yticks;
@@ -494,22 +498,18 @@ set(gca, 'FontSize', 8)
 set(gca,'TickDir','out','TickLength', [0.025,0.75]);
 set(gca,'XColor','w')
 set(gca,'YColor','w')
-set(gcf, 'InvertHardcopy', 'off')
-set(gca, 'color', 'w')
-set(gca,'TickLabelInterpreter','latex')
-shading flat
 cmap = colormap(h, cmap);
 
 %Display Colorbar
 cb = colorbar; 
+cb.Color = 'w';
 caxis([cb_l, cb_land]);
 cb.Label.Interpreter = 'Latex';
 cb.FontSize = 8;
 cb.Label.String = 'Depth (m)';
 cb.TickDirection = 'out';
-cb.Color = 'w';
-cb.Ticks = linspace(cb_l,cb_land,5);
-cb.TickLabels = num2cell(linspace(cb_l,cb_land,5)); 
+%cb.Ticks = linspace(cb_l,cb_land,5);
+%cb.TickLabels = num2cell(linspace(cb_l,cb_land,5)); 
 cb.TickLabelInterpreter = 'latex';
 
 % Set the distance for 
