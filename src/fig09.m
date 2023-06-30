@@ -192,7 +192,7 @@ set(gca,'TickDir','out');
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
 l = legend([pc1, pc2], {'Against Waves', 'With Waves'}, 'Interpreter', 'latex', 'Location', 'best', 'fontsize', 14);
-rect = [0.334161689302536,0.849899970974651,0.091234673394097,0.069147004406162];
+rect = [0.435550578191425 0.721473022494874 0.091234673394097 0.075547180857549];
 set(l, 'Position', rect)
 
 %------------- Subplot 2 -------------%
