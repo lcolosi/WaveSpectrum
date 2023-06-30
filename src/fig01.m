@@ -9,7 +9,8 @@
 % (d) wind speed at 10 meters above the ocean surface (solid line) and
 % wind direction at 1 meter above the ocean surface (triangular markers),
 % and (e) significant wave height measured by Planck (blue) and 
-% Stokes (red).  
+% Stokes (red).  Here, the directional convention is clockwise, 
+% reference north, and going towards. 
 %-------------------------------------------------------------------------%
 
 clc, clearvars -except Np Ns Wp Ws bathy, close all;

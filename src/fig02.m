@@ -8,7 +8,8 @@
 % the experiment site (white box). (c) Mean platform heading, (d) wind
 % speed at 10 meters above the ocean surface (solid line) and wind 
 % direction at 1 meter above the ocean surface (triangular markers), and
-% (e) significant wave height measured by WHOI43 (blue).
+% (e) significant wave height measured by WHOI43 (blue). Here, the 
+% directional convention is clockwise, reference north, and going towards.
 %-------------------------------------------------------------------------%
 
 clc, clearvars -except N W bathy_g bathy_sc bathy_nc, close all;
