@@ -54,6 +54,7 @@ f_noise = sqrt(g/(2*pi*lambda_c));                                          % No
 toolbox = 'WAFO';                                                           % Method used to compute directional spectrum 
 variables = 'heave_velocity';                                               % Heave and horizontal velocity are used to compute the direction spectrum
 scaling = false;                                                            % Variance of directional spectrum is not scaled to match variance of heave spectrum 
+method = 'MEM';                                                             % Method used to compute directional spectrum 
 freq_band = find(f > 0.02 & f < f_noise);                                   % Frequency band (for computing significant wave height)
 
 %% Call Data
@@ -137,7 +138,7 @@ for is = 1:length(T0)
     kr = kr + 1;
     
     % Compute directional spectrum  
-    [nov_s.Sd(:,:,kr), nov_s.f, nov_s.theta] = compute_directional_spectrum(nov_s.heave, nov_s.VEL_east, nov_s.VEL_north, nov_s.VEL_up, nov_s.time_20hz, f, df, dtheta, nfft, fe, toolbox, variables, scaling, dir_con);
+    [nov_s.Sd(:,:,kr), nov_s.f, nov_s.theta] = compute_directional_spectrum(nov_s.heave, nov_s.VEL_east, nov_s.VEL_north, nov_s.VEL_up, nov_s.time_20hz, f, df, dtheta, nfft, fe, toolbox, variables, scaling, dir_con, method);
 
     % Compute mean wave direction 
     [nov_s.mwd(:,kr), ~, ~, ~] = dir_spec_parameters(nov_s.VEL_east, nov_s.VEL_north, nov_s.VEL_up, nfft, fe, dir_con); 
@@ -188,7 +189,7 @@ blue = [0 0.4470 0.7410];
 fontsize = 24;
 
 % Create figure
-figure('units','normalized','outerposition',[0 0 1 0.8])
+figure('units','normalized','outerposition',[0 0 0.6 0.8]) % [0 0 1 0.8]
 
 %------------ Subplot 1 ------------% 
 ax1 = subplot(2,1,1); 
@@ -196,10 +197,10 @@ ax1 = subplot(2,1,1);
 % Plot omni-directional spectrogram
 pc = pcolor(T0, nov_s.f_ob, nov_s.spectrogram_omni_f_ob);
 
-hold on 
-xline(T0(idx_int(1)),'-.', 'LineWidth', 2.5, 'color', [0 0 0])
-xline(T1(idx_fin(end)),'-.', 'LineWidth', 2.5, 'color', [0 0 0])
-hold on 
+% hold on 
+% xline(T0(idx_int(1)),'-.', 'LineWidth', 2.5, 'color', [0 0 0])
+% xline(T1(idx_fin(end)),'-.', 'LineWidth', 2.5, 'color', [0 0 0])
+% hold on 
 
 % Set figure attributes
 title('(a)')
@@ -218,8 +219,8 @@ set(gca,'TickDir','out');
 set(gca, 'TickLength', [0.007, 0.007]) 
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
-annotation('rectangle',[0.677777777777778 0.589703588143526 0.196527777777778 0.324492979719189],...
-           'LineWidth',2.5,'LineStyle','--');
+% annotation('rectangle',[0.677777777777778 0.589703588143526 0.196527777777778 0.324492979719189],...
+%            'LineWidth',2.5,'LineStyle','--');
 
 % Set colorbar attributes
 cb = colorbar;
@@ -241,10 +242,10 @@ ax2 = subplot(2,1,2);
 % Plot saturation spectrogram
 pc = pcolor(T0, nov_s.f_ob, nov_s.sat_spectrogram_omni_f_ob);
 
-hold on 
-xline(T0(idx_int(1)),'-.', 'LineWidth', 2.5, 'color', [0 0 0])
-xline(T1(idx_fin(end)),'-.', 'LineWidth', 2.5, 'color', [0 0 0])
-hold on
+% hold on 
+% xline(T0(idx_int(1)),'-.', 'LineWidth', 2.5, 'color', [0 0 0])
+% xline(T1(idx_fin(end)),'-.', 'LineWidth', 2.5, 'color', [0 0 0])
+% hold on
 
 % Set figure attributes
 title('(b)')
@@ -264,8 +265,8 @@ set(gca,'TickDir','out');
 set(gca, 'TickLength', [0.007, 0.007]) 
 set(gca,'FontSize',fontsize)
 set(gca,'TickLabelInterpreter','latex')
-annotation('rectangle',[0.677777777777778 0.117004680187207 0.196527777777778 0.324492979719189],...
-           'LineWidth',2.5,'LineStyle','--');
+% annotation('rectangle',[0.677777777777778 0.117004680187207 0.196527777777778 0.324492979719189],...
+%            'LineWidth',2.5,'LineStyle','--');
 
 % Set colorbar attributes
 cb = colorbar;
