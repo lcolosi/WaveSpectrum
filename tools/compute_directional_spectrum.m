@@ -1,14 +1,15 @@
-function [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_north, vel_up, time, f, df, dtheta, nfft, fe, toolbox, variables, scaling, dir_con)
+function [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_north, vel_up, time, f, df, dtheta, nfft, fe, toolbox, variables, scaling, dir_con, method)
 
     %%%%
-    % [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_north, vel_up, time, f, df, dtheta, nfft, fe, toolbox, variables, scaling, dir_con)
+    % [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_north, vel_up, time, f, df, dtheta, nfft, fe, toolbox, variables, scaling, dir_con, method)
     %
-    % Function for computing the directional wave spectrum from the motion 
+    % Function for computing the directional wave spectrum from the motion
     % of an autonomous platform (vertical dispacement (heave), and
-    % vertical and horizontal velocity ). Directional Spectrum is 
+    % vertical and horizontal velocity). Directional Spectrum is
     % calculated using one of two toolboxes: CDIP toolbox (maximum entropy
-    % method only) or WAFO toolbox. The maximum entropy method is used for
-    % spectrum estimate. Heave and velocity data must be properly
+    % method only) or WAFO toolbox. The method for computing the 
+    % spectrum estimate may be choosen (MEM, MLM, etc.) for the WAFO 
+    % toolbox. Heave and velocity data must be properly
     % interoplated (NO NAN VALUES!) and filtered (high pass or low pass 
     % filter depending your data; heave and velocity components time
     % series are detrended within function) for spectral analysis. 
@@ -55,14 +56,23 @@ function [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_no
     %                 (3) zero angle reference direction = 'rn' (reference
     %                     north), 're' (reference east)
     %             Note, dir_con must be a cell array.
-    %   
+    %   method : Specifies the method to derive the directional spectrum.
+    %            This only applies when using the WAFO toolbox; the CDIP 
+    %            toolbox only uses the Maximum Entropy method. Options
+    %            include: 
+    %                 (1) 'MEM' Maximum Entropy Method (recommended)
+    %                 (2) 'MLM' Maximum Likihood Method
+    %                 (3) 'BDM'  Bayesian Directional Spectrum Estimation Method 
+    %                 (4) 'IMLM' Iterative  Maximum Likelihood Method 
+    %                 (5) 'EMEM' Extended Maximum Entropy Method
+    %            The keyword argument must be a string. 
     %   Returns
     %   -------
     %   S : Directional Spectrum. Units: m^2 (Hz deg)^(-1).
     %   freq : Cyclical frequency. Units: Hz.
     %   theta : Azimutal direction for wave spectrum. Units: degrees 
     %           (directional convention set by dir_con).
-    % 
+    %
     %   Notes
     %   -----
     %   (1) Original directional convention of theta before converting
@@ -127,38 +137,38 @@ function [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_no
 
         % Create in structure with field variables for mem_est function
         in.freq = f;  % Frequency 
-        in.dir = ones(size(in.freq));                                       % Directions 
-        in.ener_dens = Szz*df;                                              % Energy  
-        in.a1 = a1;                                                         % First-order fourier coefficient
-        in.b1 = b1;                                                         % First-order fourier coefficient
-        in.a2 = a2;                                                         % Second-order fourier coefficient
-        in.b2 = b2;                                                         % Second-order fourier coefficient
+        in.dir = ones(size(in.freq));  % Directions 
+        in.ener_dens = Szz*df;  % Energy Density 
+        in.a1 = a1;  % First-order fourier coefficient
+        in.b1 = b1;  % First-order fourier coefficient
+        in.a2 = a2;  % Second-order fourier coefficient
+        in.b2 = b2;  % Second-order fourier coefficient
 
-        % Compute directional spectrum 
+        % Compute directional spectrum using MEM
         [cdip,~] = mem_est(in);
 
         % Rename fields in cdip structure
-        freq = cdip.freq;                                                   % Frequency
-        theta = cdip.dir';                                                  % Directions
-        S = cdip.ds;                                                        % Directional Wave Spectrum 
+        freq = cdip.freq;  % Frequency
+        theta = cdip.dir';  % Directions
+        S = cdip.ds;  % Directional Wave Spectrum 
 
-        % Set directional convention for 
+        % Set directional convention for
         %---- Clockwise/Counter-Clockwise ----%
         if strcmp(dir_con(1), 'CW')
             theta = -theta;
         end
-    
+
         %---- Going-to/Coming-from ----%
         if strcmp(dir_con(2), 'cf')
-            theta = theta + 180; 
+            theta = theta + 180;
         end
 
         %---- Reference North/East ----%
         if strcmp(dir_con(3), 'rn')
             theta = theta + 90;
         end
-        
-        % Make theta range from 0 to 360 
+
+        % Make theta range from 0 to 360
         theta = mod(theta,360);
 
         % Sort directions and the directional index of the Directional Wave Spectrum
@@ -175,7 +185,7 @@ function [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_no
     elseif strcmp(toolbox, 'WAFO')
     
         % Initialize variables
-        method_comp = 'MEM';
+        method_comp = method;
         bet = 1;                                                            % Theta given in terms of directions toward which waves travel
         ntheta = round(360/dtheta)+1;
         xyz = zeros(3,3);
@@ -199,27 +209,27 @@ function [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_no
         [E,~]  = pwelch(heave,nfft,nfft/2,nfft,fe);
 
         % Rename frequency, directions, and directional spectrum variables
-        freq = f;                                                           % Units: Hz
-        theta = wafo.theta * 180 / pi;                                      % Units: degrees
-        S = wafo.S;                                                         % Units: m^2/(Hz deg)
+        freq = f; % Units: Hz
+        theta = wafo.theta * 180 / pi; % Units: degrees
+        S = wafo.S; % Units: m^2/(Hz deg)
 
-        % Set directional convention for 
+        % Set directional convention for
         %---- Reference North/East ----%
         if strcmp(dir_con(3), 'rn')
             theta = theta - 90;
         end
-        
+
         %---- Clockwise/Counter-Clockwise ----%
         if strcmp(dir_con(1), 'CW')
             theta = -theta;
         end
-        
+
         %---- Going-to/Coming-from ----%
         if strcmp(dir_con(2), 'cf')
-            theta = theta + 180; 
+            theta = theta + 180;
         end
-        
-        % Make theta range from 0 to 360 
+
+        % Make theta range from 0 to 360
         theta = mod(theta,360);
 
         % Sort directions in ascending order 0 to 360 degrees and grabs unique
@@ -228,11 +238,11 @@ function [S, freq, theta] = compute_directional_spectrum(heave, vel_east, vel_no
         [theta,Iunique] = unique(theta);
 
         % Convert the Directional Wave Spectrum to units of m^2/Hz/deg
-        S = S(Isort(Iunique),:) / (2*pi);                                   % PSD in m^2/Hz/deg.
+        S = S(Isort(Iunique),:) / (2*pi);  % PSD in m^2/Hz/deg.
         
         % Scale ditrectional spectrum with variance from the heave power spectrum.
         if scaling == true
-            S = S * sum(E*df) / sum(sum(S*df,2)*dtheta);                    % scale with rectangular integration of the heave power spectrum 
+            S = S * sum(E*df) / sum(sum(S*df,2)*dtheta); % scale with rectangular integration of the heave power spectrum 
         end
         
     end
