@@ -182,4 +182,3 @@ saveas(gcf, [fig_path 'fig07.png'])
 disp(['Friction velocity: ' num2str(w_s.mfv(itime))])
 disp(['Equilibrium to saturation range frequency transition ' num2str(nov_s.fst(itime))])
 disp(['Relative angle between mean wave direction for high frequency waves and platform heading: ' num2str(nov_s.rel_theta_wave_legs(itime))])
-
