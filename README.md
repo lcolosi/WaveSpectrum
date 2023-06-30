@@ -1,3 +1,5 @@
+[Place Zenodo badge here!]
+
 # Source Code for: 
 
 Luke Colosi, Nicholas Pizzo, Laurent Grare, Nick Statom, and Luc Lenain. Observations of Surface Gravity Wave Spectra from Moving Platforms. Journal of Atmospheric and Oceanic Technology, under review. 
@@ -66,4 +68,4 @@ WaveSpectrum/
 
 If you wish to use the code from this repository, you may cite it as: 
 
-[put citation from zenodo]. 
+Colosi, Luke V. (2023, June 30). Source code for: 'Observations of Surface Gravity Wave Spectra from Moving Platforms'. Zenodo. (Place Zenodo DOI link) 
