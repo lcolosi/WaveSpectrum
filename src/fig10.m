@@ -55,9 +55,10 @@ dtheta = 5;                                                                 % An
 ntheta = 360/dtheta+1;                                                      % Number of angles
 lambda_c = 1.5613;                                                          % Wavelength cutoff (meters)
 f_noise = sqrt(g/(2*pi*lambda_c));                                          % Noise frequency cutoff 
-toolbox = 'WAFO';                                                           % Method used to compute directional spectrum 
+toolbox = 'WAFO';                                                           % Toolbox used to compute directional spectrum 
 variables = 'heave_velocity';                                               % Heave and horizontal velocity are used to compute the direction spectrum
 scaling = false;                                                            % Variance of directional spectrum is not scaled to match variance of heave spectrum 
+method = MEM;                                                               % Method used to compute directional spectrum 
 
 % Upload and process novatel and weather station data
 [nov_s, w_s, nlegs_s] = process_wg_data(vehicle, ROOT, date_o, dir_con,...
