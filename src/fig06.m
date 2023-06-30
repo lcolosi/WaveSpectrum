@@ -55,6 +55,7 @@ f_noise = sqrt(g/(2*pi*lambda_c));                                          % No
 toolbox = 'WAFO';                                                           % Method used to compute directional spectrum 
 variables = 'heave_velocity';                                               % Heave and horizontal velocity are used to compute the direction spectrum
 scaling = false;                                                            % Variance of directional spectrum is not scaled to match variance of heave spectrum 
+method = 'MEM';                                                             % Method used to compute directional spectrum 
 
 % Upload and process novatel and weather station data
 [nov_s, ~, nlegs_s] = process_wg_data(vehicle, ROOT, date_o, dir_con, [dt_n, dt_w]);
@@ -65,7 +66,7 @@ scaling = false;                                                            % Va
 for n = 1:nlegs_s
     
     % Compute Directional Spectrum  
-    eval(['[nov_s.Sd(:,:,n), nov_s.f, nov_s.theta] = compute_directional_spectrum(nov_s.L' num2str(n) '.heave, nov_s.L' num2str(n) '.VEL_east, nov_s.L' num2str(n) '.VEL_north, nov_s.L' num2str(n) '.VEL_up, nov_s.L' num2str(n) '.time_20hz, f, df, dtheta, nfft, fe_n, toolbox, variables, scaling, dir_con);']) 
+    eval(['[nov_s.Sd(:,:,n), nov_s.f, nov_s.theta] = compute_directional_spectrum(nov_s.L' num2str(n) '.heave, nov_s.L' num2str(n) '.VEL_east, nov_s.L' num2str(n) '.VEL_north, nov_s.L' num2str(n) '.VEL_up, nov_s.L' num2str(n) '.time_20hz, f, df, dtheta, nfft, fe_n, toolbox, variables, scaling, dir_con, method);']) 
     
 end
 
@@ -85,12 +86,12 @@ Nspokes = 13;                                                               % Nu
 Ncircles = 6;                                                               % Number of azimuthal circles
 pos = linspace(nov_s.f_ob(2), nov_s.f_ob(end), Ncircles);                   % Position of frequency labels
 theta_s = linspace(0,360,length(nov_s.theta));                              % Set theta for plotting
-Rticks = {'0.01 Hz','0.03 Hz','0.06 Hz','0.16 Hz', '0.40 Hz', '1 Hz'};                        % Frequency labels (obtained by logspace(log10(nov_p.f_in(2)), log10(nov_p.f_in(end)), Ncircles))
+Rticks = {'0.01 Hz','0.03 Hz','0.06 Hz','0.16 Hz', '0.40 Hz', '1 Hz'};      % Frequency labels (obtained by logspace(log10(nov_p.f_in(2)), log10(nov_p.f_in(end)), Ncircles))
 Contours = logspace(-9,-6.5,30);                                                   
 cmap = colormap(flipud(cbrewer2('RdYlBu', numel(Contours)))); 
 Contours_n = [10^-16, Contours];
 cmap_n = cat(1,cmap(1,:), cmap);
-fontsize = 24;
+fontsize = 28;
 LineWidth = 0.5;
 LineColor = 'k';
 LineStyle = '-';
@@ -135,3 +136,70 @@ disp(['Time Frame: ' t_initial ' to ' t_final])
 
 % Save Figure
 saveas(gcf, [fig_path 'fig06.png'])
+
+%% Create figures illustrating the process of computing Directional and Omni-directional wave Spectra
+close all
+
+% Set plotting variables 
+fontsize = 28; 
+t_ticks = datetime('10-Sep-2020 00:00:00'):minutes(10):datetime('10-Sep-2020 00:20:00');
+
+%------------------- Input Data -------------------%
+
+% Create figure
+figure('units','normalized','outerposition',[0 0 0.8 0.8])
+
+%------------- Subplot 1 -------------%
+ax1 = subplot(3,1,1);
+
+% Plot heave
+plot(nov_s.L18.time_20hz, nov_s.L18.heave, '-b', 'LineWidth', 1.5, 'Color',[0 0.4470 0.7410])
+
+% Set figure attributes
+ylabel('$\eta \;(m)$', 'Interpreter', 'latex')
+xticks(datenum(t_ticks))
+datetick('x', 'HH:MM', 'keepticks')
+xlim([nov_s.L18.time_20hz(1), nov_s.L18.time_20hz(end)])
+ylim([-1,1])
+grid on 
+set(gca,'TickDir','out');
+set(gca,'FontSize',fontsize)
+set(gca,'TickLabelInterpreter','latex')
+
+%------------- Subplot 2 -------------%
+ax2 = subplot(3,1,2);
+
+% Plot u velocity
+plot(nov_s.L18.time_20hz, nov_s.L18.VEL_east, '-r', 'LineWidth', 1.5, 'Color', [0.6350 0.0780 0.1840])
+
+% Set figure attributes
+ylabel('$u \;(ms^{-1})$', 'Interpreter', 'latex')
+xticks(datenum(t_ticks))
+datetick('x', 'HH:MM', 'keepticks')
+xlim([nov_s.L18.time_20hz(1), nov_s.L18.time_20hz(end)])
+ylim([-1.5,1.5])
+grid on 
+set(gca,'TickDir','out');
+set(gca,'FontSize',fontsize)
+set(gca,'TickLabelInterpreter','latex')
+
+%------------- Subplot 3 -------------%
+ax3 = subplot(3,1,3);
+
+% Plot heave
+plot(nov_s.L18.time_20hz, nov_s.L18.VEL_north, '-', 'LineWidth', 1.5, 'Color', [199, 144, 16]/256)
+
+% Set figure attributes
+xlabel('UTC time since 09 Sep 2020', 'Interpreter', 'latex')
+ylabel('$v \;(ms^{-1})$', 'Interpreter', 'latex')
+xticks(datenum(t_ticks))
+datetick('x', 'HH:MM', 'keepticks')
+xlim([nov_s.L18.time_20hz(1), nov_s.L18.time_20hz(end)])
+ylim([-1.5,1.5])
+grid on 
+set(gca,'TickDir','out');
+set(gca,'FontSize',fontsize)
+set(gca,'TickLabelInterpreter','latex')
+
+% Save Figure
+saveas(gcf, [fig_path 'heave_velocity_ts.png'])
