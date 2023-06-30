@@ -50,6 +50,7 @@ f_noise = sqrt(g/(2*pi*lambda_c));                                          % No
 toolbox = 'WAFO';                                                           % Method used to compute directional spectrum 
 variables = 'heave_velocity';                                               % Heave and horizontal velocity are used to compute the direction spectrum
 scaling = false;                                                            % Variance of directional spectrum is not scaled to match variance of heave spectrum 
+method = 'MEM';                                                             % Method used to compute directional spectrum 
 
 %% Call Data
 
@@ -163,7 +164,7 @@ for is = 1:length(T0)
     kr = kr + 1;
     
     % Compute directional spectrum  
-    [nov_s.Sd(:,:,kr), nov_s.f, nov_s.theta] = compute_directional_spectrum(nov_s.heave, nov_s.VEL_east, nov_s.VEL_north, nov_s.VEL_up, nov_s.time_20hz, f, df, dtheta, nfft, fe_n, toolbox, variables, scaling, dir_con);
+    [nov_s.Sd(:,:,kr), nov_s.f, nov_s.theta] = compute_directional_spectrum(nov_s.heave, nov_s.VEL_east, nov_s.VEL_north, nov_s.VEL_up, nov_s.time_20hz, f, df, dtheta, nfft, fe_n, toolbox, variables, scaling, dir_con, method);
 
     % Compute the Omni-directional Spectra from directional wave spectra 
     nov_s.spectrogram_omni(:,kr) = sum(nov_s.Sd(:,:,kr) * dtheta, 1);
