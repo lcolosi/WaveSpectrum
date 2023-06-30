@@ -66,10 +66,14 @@ f_noise = sqrt(g/(2*pi*lambda_c));                                          % No
 toolbox = 'WAFO';                                                           % Method used to compute directional spectrum 
 variables = 'heave_velocity';                                               % Heave and horizontal velocity are used to compute the direction spectrum
 scaling = false;                                                            % Variance of directional spectrum is not scaled to match variance of heave spectrum 
+method = 'MEM';                                                             % Method used to compute directional spectrum 
 
 % Upload and process novatel and weather station data
 [nov_s, ~, nlegs_s] = process_wg_data(vehicle, ROOT, date_o, dir_con,...
                                      [dt_n, dt_w]);
+
+% Compute a running mean for platform direction with a 5 minute window
+nov_s.true_course_rm = mod(atan2d(movmean(sind(nov_s.true_course), fe_n*60*5), movmean(cosd(nov_s.true_course), fe_n*60*5)),360);  %convention: CW, going towards, ref north
 
 %% Compute Wave Spectra
 
@@ -77,7 +81,7 @@ scaling = false;                                                            % Va
 for n = 1:nlegs_s
     
     % Compute Directional Spectrum  
-    eval(['[nov_s.Sd(:,:,n), nov_s.f, nov_s.theta] = compute_directional_spectrum(nov_s.L' num2str(n) '.heave, nov_s.L' num2str(n) '.VEL_east, nov_s.L' num2str(n) '.VEL_north, nov_s.L' num2str(n) '.VEL_up, nov_s.L' num2str(n) '.time_20hz, f, df, dtheta, nfft, fe_n, toolbox, variables, scaling, dir_con);']) 
+    eval(['[nov_s.Sd(:,:,n), nov_s.f, nov_s.theta] = compute_directional_spectrum(nov_s.L' num2str(n) '.heave, nov_s.L' num2str(n) '.VEL_east, nov_s.L' num2str(n) '.VEL_north, nov_s.L' num2str(n) '.VEL_up, nov_s.L' num2str(n) '.time_20hz, f, df, dtheta, nfft, fe_n, toolbox, variables, scaling, dir_con, method);']) 
     
     % Compute the Omni-directional Spectra from directional wave spectra 
     nov_s.spectrogram_omni(:,n) = sum(nov_s.Sd(:,:,n) * dtheta, 1);
@@ -107,7 +111,8 @@ nov_s.sat_spectrogram_omni_f_ob = nov_s.spectrogram_omni_f_ob .* (nov_s.f_ob').^
 %% Grab data from small box trajectory and split into with and against waves legs
 
 % Obtain latitude indicies for small box cutoff
-Ilat_s = find(nov_s.mlat_legs < 32.93);  % Indices for legs in small box
+Ilat_s = find(nov_s.mlat_legs < 32.93);                                     % Indices for legs in small box
+Ilat_20hz =  find(nov_s.latitude < 32.93); 
 
 % Grab mean course direction, time and saturation spectrogram for small box
 mD_small = nov_s.mD_legs(Ilat_s); 
@@ -140,6 +145,11 @@ sat_spec_against = sat_spec_small(:,idx_against);
 av_sat_spec_with = mean(sat_spec_small(:,8:9),2);
 av_sat_spec_against = mean(sat_spec_small(:,6:7),2);
 
+% Compute average saturation spectra for all with and against legs
+% respectively
+av_sat_spec_with_all = mean(sat_spec_with,2);
+av_sat_spec_against_all = mean(sat_spec_against,2);
+
 %% Plot mean platform direction saturation wave spectrogram, and case study of two saturation spectrum 
 
 % Set plotting variables
@@ -161,8 +171,8 @@ figure('units','normalized','outerposition',[0 0 1 0.7])
 %------------- Subplot 1 -------------%
 ax1 = subplot(2,2,1);
 
-% Plot mean direction per leg
-plot(nov_s.time_legs(Ilat_s), nov_s.mD_legs(Ilat_s), '-k', 'LineWidth', 2);
+% Plot platform propagation direction at 20 hz 
+plot(nov_s.time_20hz(Ilat_20hz), nov_s.true_course_rm(Ilat_20hz), '.k', 'MarkerSize', 5);
 
 hold on 
     pc1 = plot(time_against, mD_against, '^', 'MarkerSize', 10, 'MarkerFaceColor', blue, 'MarkerEdgeColor', 'k'); 
@@ -253,6 +263,13 @@ pc1 = loglog(nov_s.f_ob, av_sat_spec_against, '-', 'LineWidth', 2, 'color', blue
 hold on
 pc2 = loglog(nov_s.f_ob, av_sat_spec_with, '-', 'LineWidth', 2, 'color', red);
 hold off
+
+% Plot average saturation spectra for all with and against legs resp.  
+% pc1 = loglog(nov_s.f_ob, av_sat_spec_against_all, '-', 'LineWidth', 2, 'color', blue);
+% 
+% hold on
+% pc2 = loglog(nov_s.f_ob, av_sat_spec_with_all, '-', 'LineWidth', 2, 'color', red);
+% hold off
 
 % Set figure Attributes
 title('(c)')
