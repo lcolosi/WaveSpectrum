@@ -58,7 +58,7 @@ f_noise = sqrt(g/(2*pi*lambda_c));                                          % No
 toolbox = 'WAFO';                                                           % Toolbox used to compute directional spectrum 
 variables = 'heave_velocity';                                               % Heave and horizontal velocity are used to compute the direction spectrum
 scaling = false;                                                            % Variance of directional spectrum is not scaled to match variance of heave spectrum 
-method = MEM;                                                               % Method used to compute directional spectrum 
+method = 'MEM';                                                             % Method used to compute directional spectrum 
 
 % Upload and process novatel and weather station data
 [nov_s, w_s, nlegs_s] = process_wg_data(vehicle, ROOT, date_o, dir_con,...
@@ -70,7 +70,7 @@ method = MEM;                                                               % Me
 for n = 1:nlegs_s
     
     % Compute Directional Spectrum  
-    eval(['[nov_s.Sd(:,:,n), nov_s.f, nov_s.theta] = compute_directional_spectrum(nov_s.L' num2str(n) '.heave, nov_s.L' num2str(n) '.VEL_east, nov_s.L' num2str(n) '.VEL_north, nov_s.L' num2str(n) '.VEL_up, nov_s.L' num2str(n) '.time_20hz, f, df, dtheta, nfft, fe_n, toolbox, variables, scaling, dir_con);']) 
+    eval(['[nov_s.Sd(:,:,n), nov_s.f, nov_s.theta] = compute_directional_spectrum(nov_s.L' num2str(n) '.heave, nov_s.L' num2str(n) '.VEL_east, nov_s.L' num2str(n) '.VEL_north, nov_s.L' num2str(n) '.VEL_up, nov_s.L' num2str(n) '.time_20hz, f, df, dtheta, nfft, fe_n, toolbox, variables, scaling, dir_con, method);']) 
     
     % Compute the Omni-directional Spectra from directional wave spectra 
     nov_s.spectrogram_omni(:,n) = sum(nov_s.Sd(:,:,n) * dtheta, 1);
