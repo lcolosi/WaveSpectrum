@@ -1,7 +1,6 @@
 function [S_fin, f_int, f_b] = map_dir_spectrum(S_fob, f_obs, f_cut, U, theta_r)
     
     %%%%
-    %
     % [S_fin, f_int, f_b] = map_dir_spectrum(S_fob, f_obs, f_cut, U, theta_r)
     %
     % Function for mapping observed frequency (frequency measured in the 
@@ -9,11 +8,11 @@ function [S_fin, f_int, f_b] = map_dir_spectrum(S_fob, f_obs, f_cut, U, theta_r)
     % (frequency measured in the absence of platform motion) for deep water
     % surface gravity waves. The function also maps the observed 2D 
     % spectrum S_ob(f_ob, theta) (i.e., the directional-frequency spectrum)
-    % into intrinsic frequency space as the intrinsic 2D spectrum 
-    % S_in(f_in, theta). The observed 2D spectrum may be computed from 
+    % into intrinsic frequency space thus computing intrinsic 2D spectrum 
+    % S_in(f_in, theta). The observed 2D spectrum may be estimated from 
     % vertical displacement of a platform and horizontal cartesian 
     % components of velocity using a maximum extropy or maximum likelyhood
-    % method.
+    % method. However, other method exist. 
     %
     %   Parameters
     %   ----------
@@ -21,8 +20,10 @@ function [S_fin, f_int, f_b] = map_dir_spectrum(S_fob, f_obs, f_cut, U, theta_r)
     %   f_obs : Observed frequency.  Units: Hz. 
     %   f_cut : Noise cutoff frequency for the platform. For the SV3 wave
     %           gliders, f_cut is nominally ~1 Hz (corresponds to waves 
-    %           with a wavelength half the length of the waveglider).
-    %           Units Hz. 
+    %           with a wavelength half the length of the waveglider). Other
+    %           more conservative cutoff frequencies may be used. This is 
+    %           dependent on the frequency response and the sampling rate
+    %           of the platform. Units Hz. 
     %   U : Propagation speed of the observer. Computed by time averaging 
     %       the speed of the platform projected onto the mean platform
     %       heading. Units: ms^(-1). 
@@ -36,32 +37,50 @@ function [S_fin, f_int, f_b] = map_dir_spectrum(S_fob, f_obs, f_cut, U, theta_r)
     %   S_fin : Intrinsic 2D spectrum. Units: m^2 (Hz deg)^(-1).
     %   f_int : Intrinsic frequency (computed for each direction). 
     %           Units: Hz.
-    %   f_b : Bifurcation frequency and last frequency not an NaN (blocking 
+    %   f_b : Bifurcation frequency and last frequency not an NaN (f_b 
     %         frequency). The bifircation frequency exists for branches 3-5
     %         (platform moving in direction of wave propagation) and is NaN
-    %         for branches 1-2. The bocking frequency is set by the
+    %         for branches 1-2. The f_b frequency is set by the
     %         jacobian, the linear interpolation and the bifurcation
     %         frequency. The Bifurcation frequency is saved in first column
-    %         f_bifurcation = f_b(:,1) and blocking frequency is saved in
-    %         second column f_block = f_b(:,2). Units: Hz.
-    %         Units: Hz. 
+    %         f_bifurcation = f_b(:,1) and f_b frequency is saved in
+    %         second column f_b = f_b(:,2). Units: Hz. 
     % 
     %   Notes
-    %   -----
-    %   (1) Adding a spectral tail to the directional spectrum requires
-    %       information about the deirectional dependence of the spectral
+    %   -----  
+    %   (1) ** A note on mapping to other reference frames ** 
+    %       Mapping into another reference frame (other than the frame 
+    %       absent of platform motion as suggested above) may be done by
+    %       changing the variables U and theta_r. These quantities set the
+    %       Doppler shift velocity. I recommend the researcher to compute 
+    %       the Doppler shift velocity of their choice (nominally the 
+    %       relative speed between frames) and then compute speed and
+    %       direction from this velocity vector. This allows you to apply
+    %       other mapping approaches such as from Hanson et al. 1997 
+    %       which maps into the reference frame moving with the mean 
+    %       currents.    
+    % 
+    %       IMPORTANT: Make sure to take the difference between the
+    %       direction of the Doppler shift velocity and each wave
+    %       direction.
+    % 
+    %   (1) ** Decision about adding a spectral tail **  
+    %       Adding a spectral tail to the directional spectrum requires
+    %       information about the directional dependence of the spectral
     %       slope in the equilibirum and saturation ranges. The
-    %       conventional spectral forms of the spectra (i.e., f^-4 and f^-5)
-    %       do not include this information. Therefore, the functional form
+    %       conventional spectral forms of the spectra (i.e., f^-4 and 
+    %       f^-5 from Phillips 1985 spectral model) do not include this 
+    %       information. Therefore, the functional form
     %       must be either updated to include directional dependence or the
     %       spectral tail attachment must be preformed on the
-    %       omni-directional spectrum. I choose the latter. 
-    %
-    %   (2) Comparing the total variance in the intrinsic and observed
+    %       omni-directional spectrum. I choose the latter.
+    % 
+    %   (2) ** Discussion about conservation of variance ** 
+    %       Comparing the total variance in the intrinsic and observed
     %       reference frames requires integrating the observed and
     %       intrinsic 2D spectrum over equivalent frequency bands given
     %       that the integrands S_ob and S_in = S_ob*df_ob/df_in are 
-    %       equivalent (see equation 14 in main text). We use the mapping
+    %       equivalent (see equation 15 in main text). We use the mapping
     %       function (see equation 7 in main text) to obtain the limits of 
     %       integration after the change of variable to intrinsic 
     %       frequency.  In the head-sea and perpendicular-to-wave cases, 
@@ -74,13 +93,19 @@ function [S_fin, f_int, f_b] = map_dir_spectrum(S_fob, f_obs, f_cut, U, theta_r)
     %       Therefore, the total variance is intrinsically not conserved
     %       for the following-seas mapping. We could constrain our
     %       integral to a low frequency band where the mapping is
-    %       bijective, however, this bijective mapping region is dependent
-    %       on the speed and relative direction of the platform. Therefore,
+    %       bijective. Note, this bijective mapping region is dependent
+    %       on the speed and relative direction of the platform.
     %       I choose to not compute the total variance. In the future, I
     %       could implement code that works backwards from the integral of
     %       the intrinsic 2D spectrum setting the limits of intergation to
     %       the bijective region and mapping these limits back into
-    %       observed frequency. 
+    %       observed frequency.
+    % 
+    %   Contact Information
+    %   -------------------
+    %   If you run into any diffculties using this code, please reach out
+    %   to me via email at lcolosi@ucsd.edu. I'd be happy to help in any
+    %   way I can! 
     %
     %%%%
     
@@ -104,8 +129,6 @@ function [S_fin, f_int, f_b] = map_dir_spectrum(S_fob, f_obs, f_cut, U, theta_r)
         % Compute the Doppler shift speed projected onto the ith wave
         % direction
         c_p = U*cosd(itheta_r); 
-    
-        %------- Branch Conditional statements -------%
 
         %---------- Branch 1 : Moving against waves ----------%
         if cosd(itheta_r) < 0 && U > 0
@@ -187,7 +210,7 @@ function [S_fin, f_int, f_b] = map_dir_spectrum(S_fob, f_obs, f_cut, U, theta_r)
             end
         end
         
-        %-- Compute Intrinsic Frequency Power Spectrum S(f_int, theta) --%
+        %-- Compute Intrinsic Frequency Power Spectrum S(f_in, theta) --%
 
         % Compute f_int differentials via finite differencing
         df_int = diff(f_int(:,iangle));
@@ -209,7 +232,7 @@ function [S_fin, f_int, f_b] = map_dir_spectrum(S_fob, f_obs, f_cut, U, theta_r)
         % Set the non-nan values for the intrinsic frequency 
         f_truc = f_obs(idx_nan);
 
-        % Set blocking frequency
+        % Set f_b frequency
         f_b(iangle,2) = f_truc(end);
              
     end  
