@@ -43,7 +43,7 @@ All figures in Colosi et al. (2023) can be reproduced using the MatLab scripts f
 
 1. Make a local copy of this repository by either cloning or downloading it.
 
-2. Download the processed [data](https://doi.org/10.6075/J0C829GC), untar the files, and move all directories to `data` in the project root. After doing so, your directory tree should look like this:
+2. Download the processed [data](https://doi.org/10.6075/J0C829GC), unzip the files, and move all directories to `data` in the project root. After doing so, your directory tree should look like this:
 
 ```
 WaveSpectrum/
