@@ -1,0 +1,27 @@
+{
+  "title": "Source code for: 'Observations of Surface Gravity Wave Spectra from Moving Platforms'",
+  "creators": [
+    {
+      "name": "Colosi, Luke V.",
+      "affiliation": "Scripps Institution of Oceanography",
+      "orcid": "0000-0002-0571-4358"
+    }
+  ],
+  "contributors": [
+    {
+      "type": "Sponsor",
+      "name": "Office of Naval Research, grant N00014-19-1-2635"
+    },
+    {
+      "type": "Sponsor",
+      "name": "National Aeronautics and Space Administration, grant 80NSSC19K1688"
+    }
+  ],
+  "related_identifiers": [
+        {
+            "scheme": "doi",
+            "identifier": "10.6075/J0C829GC",
+            "relation": "isSupplementTo"
+        }
+    ]
+}
