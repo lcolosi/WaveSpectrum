@@ -1,4 +1,4 @@
-[Place Zenodo badge here!]
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8122035.svg)](https://doi.org/10.5281/zenodo.8122035)
 
 # Source Code for: 
 
