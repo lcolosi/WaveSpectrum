@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+title: "Source code for: Observations of Surface Gravity Wave Spectra from Moving Platforms"
+message: Please cite this code using the metadata below.
+authors:
+  - given-names: Luke V.
+    family-names: Colosi
+    affiliation: Scripps Institution of Oceanography 
+    orcid: https://orcid.org/0000-0002-0571-4358
+version: 0.1
+doi: 10.5281/zenodo.8122034
+date-released: 2023-07-06
+repository-code: https://github.com/lcolosi/WaveSpectrum
+license: mit
+references:
+  - title: "Data from: Observations of Surface Gravity Wave Spectra from Moving Platforms"
+    type: Data
+    doi: 10.6075/J0C829GC
