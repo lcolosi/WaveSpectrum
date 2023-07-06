@@ -39,7 +39,7 @@ This work was supported by the Office of Naval Research (Grant N00014-19-1-2635)
 
 # How to use this repository
 
-All figures in Colosi et al. (2023) can be reproduced using the MatLab scripts from this repository (or from [this](https://doi.org/10.5281/zenodo.8102880) Zenodo repository) and processed [data](https://doi.org/10.6075/J0C829GC) published to the UCSD library digital collections. To do so, follow these steps:
+All figures in Colosi et al. (2023) can be reproduced using the MatLab scripts from this repository (or from [this](https://doi.org/10.5281/zenodo.8122034) Zenodo repository) and processed [data](https://doi.org/10.6075/J0C829GC) published to the UCSD library digital collections. To do so, follow these steps:
 
 1. Make a local copy of this repository by either cloning or downloading it.
 
@@ -68,4 +68,4 @@ WaveSpectrum/
 
 If you wish to use the code from this repository, you may cite it as: 
 
-Colosi, Luke V. (2023, June 30). Source code for: 'Observations of Surface Gravity Wave Spectra from Moving Platforms'. Zenodo. (https://doi.org/10.5281/zenodo.8102880) 
+Colosi, Luke V. (2023, June 30). Source code for: 'Observations of Surface Gravity Wave Spectra from Moving Platforms'. Zenodo. (https://doi.org/10.5281/zenodo.8122034) 
