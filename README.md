@@ -23,6 +23,7 @@ The purpose of this study is to introduce a general approach that corrects obser
 * [Luc Lenain](https://scripps.ucsd.edu/profiles/llenain) <<llenain@ucsd.edu>>
 
 # Data
+All data needed to reproduce the analysis in this paper is available for download [here](https://doi.org/10.6075/J0W0963R).
 
 ## Experiments
 
@@ -39,7 +40,7 @@ This work was supported by the Office of Naval Research (Grant N00014-19-1-2635)
 
 # How to use this repository
 
-All figures in Colosi et al. (2023) can be reproduced using the MatLab scripts from this repository (or from [this](https://doi.org/10.5281/zenodo.8122034) Zenodo repository) and processed [data](https://doi.org/10.6075/J0C829GC) published to the UCSD library digital collections. To do so, follow these steps:
+All figures in Colosi et al. (2023) can be reproduced using the MatLab scripts from this repository (or from [Zenodo](https://doi.org/10.5281/zenodo.8122034)) and processed [data](https://doi.org/10.6075/J0C829GC) published to the UCSD library digital collections. To do so, follow these steps:
 
 1. Make a local copy of this repository by either cloning or downloading it.
 
@@ -58,7 +59,7 @@ WaveSpectrum/
 
 3. Make sure that you have downloaded the R2022a version of MATLAB. Other versions may work, but small differences in keyword argument and outputs of functions may arise.   
 
-4. If you follow the steps above you should be able to reproduce all figures, by running `figXX.m` from the `src` directory without having to adjust any paths.
+4. If you follow the steps above, you should be able to reproduce all figures, by running `figXX.m` from the `src` directory without having to adjust any paths.
 
 **Note on MatLab software version:** Code was developed using MatLab R2022a. Versions released before and after this may run into some errors. 
 
