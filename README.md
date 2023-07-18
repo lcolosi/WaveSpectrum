@@ -2,7 +2,7 @@
 
 # Source Code for: 
 
-Luke Colosi, Nicholas Pizzo, Laurent Grare, Nick Statom, and Luc Lenain. Observations of Surface Gravity Wave Spectra from Moving Platforms. Journal of Atmospheric and Oceanic Technology, under review. 
+Luke Colosi, Nicholas Pizzo, Laurent Grare, Nick Statom, and Luc Lenain. Observations of Surface Gravity Wave Spectra from Moving Platforms. Journal of Atmospheric and Oceanic Technology, accepted. 
 
 # Abstract 
 
