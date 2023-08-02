@@ -20,10 +20,11 @@ The purpose of this study is to introduce a general approach that corrects obser
 * [Luke Colosi](https://lcolosi.github.io/)<<lcolosi@ucsd.edu>>
 * [Nicholas Pizzo](https://scripps.ucsd.edu/profiles/npizzo) <<npizzo@ucsd.edu>>
 * [Laurent Grare](https://airsea.ucsd.edu/people/) <<lgrare@ucsd.edu>>
+* [Nicholas Statom](https://airsea.ucsd.edu/people/) <<nstatom@ucsd.edu>> 
 * [Luc Lenain](https://scripps.ucsd.edu/profiles/llenain) <<llenain@ucsd.edu>>
 
 # Data
-All data needed to reproduce the analysis in this paper is available for download [here](https://doi.org/10.6075/J0W0963R).
+All data needed to reproduce the analysis in this paper is available for download [here](https://doi.org/10.6075/J0C829GC).
 
 ## Experiments
 
