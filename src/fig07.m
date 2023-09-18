@@ -122,7 +122,7 @@ slope4 = Si_4*((nov_s.f_ob/fi).^(-4));
 slope5 = Si_5*((nov_s.f_ob/fi).^(-5));
 
 % Create figure
-figure('units','normalized','outerposition',[0 0 1 1])
+fig = figure('units','normalized','outerposition',[0 0 1 1]);
 
 %------------- Subplot 1 -------------%
 subplot(1,2,1);
@@ -176,7 +176,7 @@ t_final = eval(['datestr(nov_s.L' num2str(itime) '.time_20hz(end))']);
 disp(['Time Frame: ' t_initial ' to ' t_final])
 
 % Save Figure
-saveas(gcf, [fig_path 'fig07.png'])
+print(fig,'-depsc', [fig_path 'fig07.eps'], '-r300');                        % Resolution units: dpi (dots per inch); default resolution: 150 dpi 
 
 % Display pertinent variables
 disp(['Friction velocity: ' num2str(w_s.mfv(itime))])

@@ -316,4 +316,4 @@ pos3(4) = pos1(4);
 set(ax3,'Position',pos3)
 
 % Save Figure
-saveas(fig, strcat(fig_path, 'fig03.png'))
+print(fig,'-depsc', [fig_path 'fig03.eps'], '-r300');                        % Resolution units: dpi (dots per inch); default resolution: 150 dpi 

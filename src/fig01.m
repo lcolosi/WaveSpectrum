@@ -638,4 +638,4 @@ legend([pc1, pc2], 'Planck', 'Stokes', 'Interpreter', 'Latex', 'Location', 'nort
 set(gca, 'YGrid', 'off', 'XGrid', 'on') 
 
 % Save Figure
-saveas(fig, [fig_path 'fig01.png'])
+print(fig,'-depsc', [fig_path 'fig01.eps'], '-r300');                        % Resolution units: dpi (dots per inch); default resolution: 150 dpi 

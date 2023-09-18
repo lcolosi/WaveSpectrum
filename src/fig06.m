@@ -102,7 +102,7 @@ itime = 18;
 Sd_smooth = movmean(nov_s.Sd_f_ob(:,:,itime),3,2);
 
 % Create figure
-figure('units','normalized','outerposition',[0 0 1 1])
+fig = figure('units','normalized','outerposition',[0 0 1 1]);
 
 % Plot Directional spectra  
 [~,cb] = polarcontourf(nov_s.f_ob(2:end), theta_s, Sd_smooth(:,2:end), ...
@@ -135,4 +135,4 @@ t_final = eval(['datestr(nov_s.L' num2str(itime) '.time_20hz(end))']);
 disp(['Time Frame: ' t_initial ' to ' t_final])
 
 % Save Figure
-saveas(gcf, [fig_path 'fig06.png'])
+print(fig,'-depsc', [fig_path 'fig06.eps'], '-r300');                        % Resolution units: dpi (dots per inch); default resolution: 150 dpi 

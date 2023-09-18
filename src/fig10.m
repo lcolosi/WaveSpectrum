@@ -172,7 +172,7 @@ t_ticks = datenum(first:hours(1):last);
 fontsize = 18;
 
 % Create Figure and axes
-figure('units','normalized','outerposition',[0 0 0.45 1])
+fig = figure('units','normalized','outerposition',[0 0 0.45 1]);
 
 %------------------- Observed Frequency Saturation Spectrogram -------------------%
 ax1 = subplot(3,1,1);
@@ -306,7 +306,7 @@ set(ax2,'Position',pos2)
 set(ax3,'Position',pos3)
 
 % Save Figure
-saveas(gcf, [fig_path 'fig10.png'])
+print(fig,'-depsc', [fig_path 'fig10.eps'], '-r300');                        % Resolution units: dpi (dots per inch); default resolution: 150 dpi 
 
 %% Compute correlation coefficient to quantify skill of the methods
 

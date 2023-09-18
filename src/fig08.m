@@ -189,7 +189,7 @@ blue = [0 0.4470 0.7410];
 fontsize = 24;
 
 % Create figure
-figure('units','normalized','outerposition',[0 0 1 0.8])
+fig = figure('units','normalized','outerposition',[0 0 1 0.8]);
 
 %------------ Subplot 1 ------------% 
 ax1 = subplot(2,1,1); 
@@ -283,4 +283,4 @@ cb.TickLength = 0.03;
 cb.FontSize = fontsize;
 
 % Save Figure
-saveas(gcf, [fig_path 'fig08.png'])
+print(fig,'-depsc', [fig_path 'fig08.eps'], '-r300');                        % Resolution units: dpi (dots per inch); default resolution: 150 dpi 
