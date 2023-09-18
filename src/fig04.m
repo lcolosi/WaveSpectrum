@@ -48,7 +48,7 @@ LineStyle = '-';
 fontsize = 15;
 
 % Create Figure and axes
-figure('units','normalized','outerposition',[0 0 1 1], 'Name', 'Birfurcation frequency in polar space');
+fig = figure('units','normalized','outerposition',[0 0 1 1], 'Name', 'Birfurcation frequency in polar space');
 
 %------------------- Subplot 1 -------------------%
 subplot(1,2,1)
@@ -250,4 +250,4 @@ annotation('textbox',dim,'String',str,'FitBoxToText','on', ...
            'Fontsize', fontsize, 'Rotation',90);
 
 % Save Figure
-saveas(gcf, [fig_path 'fig04.png'])
+print(fig,'-depsc', [fig_path 'fig04.eps'], '-r300');                        % Resolution units: dpi (dots per inch); default resolution: 150 dpi 

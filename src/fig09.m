@@ -166,7 +166,7 @@ red = [0.6350 0.0780 0.1840];
 blue = [0 0.4470 0.7410];
 
 % Create Figure and axes
-figure('units','normalized','outerposition',[0 0 1 0.7])
+fig = figure('units','normalized','outerposition',[0 0 1 0.7]);
 
 %------------- Subplot 1 -------------%
 ax1 = subplot(2,2,1);
@@ -294,4 +294,4 @@ pos1(3) = pos2(3);
 set(ax1,'Position',pos1)
 
 % Save Figure
-saveas(gcf, [fig_path 'fig09.png'])
+print(fig,'-depsc', [fig_path 'fig09.eps'], '-r300');                        % Resolution units: dpi (dots per inch); default resolution: 150 dpi 

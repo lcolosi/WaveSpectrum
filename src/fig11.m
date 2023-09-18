@@ -64,7 +64,7 @@ t_ticks_sm = datetime('29-Oct-2021 00:00:00'):days(1):datetime('04-Nov-2021 00:0
 fontsize = 16;
 
 % Create figure
-figure('units','normalized','outerposition',[0 0 0.4 1])
+fig = figure('units','normalized','outerposition',[0 0 0.4 1]);
 
 %------------ Subplot 1 ------------% 
 ax1 = subplot(4,1,1);
@@ -253,4 +253,4 @@ set(ax3,'Position',pos3)
 set(ax4,'Position',pos4)
 
 % Save Figure
-saveas(gcf, [fig_path 'fig11.png'])
+print(fig,'-depsc', [fig_path 'fig11.eps'], '-r300');                        % Resolution units: dpi (dots per inch); default resolution: 150 dpi 

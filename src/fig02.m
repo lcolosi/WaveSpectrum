@@ -635,4 +635,4 @@ set(gca,'TickLabelInterpreter','latex')
 set(gca, 'YGrid', 'off', 'XGrid', 'on') 
 
 % Save Figure
-saveas(fig, [fig_path 'fig02.png'])
+print(fig,'-depsc', [fig_path 'fig02.eps'], '-r300');                        % Resolution units: dpi (dots per inch); default resolution: 150 dpi 

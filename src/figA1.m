@@ -184,4 +184,4 @@ grid on
 set(gca,'FontSize',fontsize)
 
 % Save Figure
-saveas(gcf, [fig_path 'figA1.png'])
+print(fig,'-depsc', [fig_path 'figA1.eps'], '-r300');                        % Resolution units: dpi (dots per inch); default resolution: 150 dpi 
