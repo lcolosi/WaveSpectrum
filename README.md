@@ -50,7 +50,7 @@ All figures in Colosi et al. (2023) can be reproduced using the MatLab scripts f
 ```
 WaveSpectrum/
 ├── data
-│   ├── DelMAR2020
+│   ├── DElMAR2020
 │   ├── SMODE2021
 │   └── BATHY
 ├── figs
