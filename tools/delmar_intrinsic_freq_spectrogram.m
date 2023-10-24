@@ -42,7 +42,7 @@ nfft = fe_n/df;                                                             % Wi
 f = (0:df:fn);                                                              % Observed frequency (Hz)
 dtheta = 5;                                                                 % Angular resolution (degrees)
 ntheta = 360/dtheta+1;                                                      % Number of angles
-lambda_c = 1.5613;                                                          % % Wavelength cutoff (meters)
+lambda_c = 1.5613;                                                          % Wavelength cutoff (meters)
 f_noise = sqrt(g/(2*pi*lambda_c));                                          % Noise frequency cutoff 
 toolbox = 'WAFO';                                                           % Method used to compute directional spectrum 
 variables = 'heave_velocity';                                               % Heave and horizontal velocity are used to compute the direction spectrum
@@ -248,3 +248,7 @@ nov_s.sat_spectrogram_omni_f_in = nov_s.spectrogram_omni_f_in .* (nov_s.f_ob').^
 % Save spectrograms to mat file
 time = nov_s.time_legs; f = nov_s.f_ob; spec_ob = nov_s.sat_spectrogram_omni_f_ob; spec_in = nov_s.sat_spectrogram_omni_f_in;
 save([ROOT vehicle '/DELMAR2020_spec_' vehicle '.mat'], 'time', 'f', 'spec_ob', 'spec_in')
+
+% Save data for 2D method tutorial 
+f_ob = nov_s.f_ob;  S_fob = permute(nov_s.Sd_f_ob,[2,1,3]); f_cut = f_noise; U_bar = nov_s.mspeed_proj; theta_r = nov_s.rel_theta;
+save([ROOT vehicle '/2D_method_tutorial_data.mat'], 'time', 'f_ob', 'S_fob', 'f_cut', 'U_bar', 'theta_r')
